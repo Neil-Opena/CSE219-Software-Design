@@ -37,7 +37,7 @@ public class Recitation1 extends Application {
 			
 			@Override
 			public void handle(ActionEvent event){
-				System.out.println("Goodbye Curel World!");
+				System.out.println("Goodbye Cruel World!");
 			}
 		});
 
