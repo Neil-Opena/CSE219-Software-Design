@@ -37,7 +37,7 @@ import javax.json.JsonReader;
  */
 public class RandomStudentPicker extends Application {
 
-    String STUDENT_NAMES_FILE = "./data/DebugTest.json";
+    String STUDENT_NAMES_FILE = "./data/CSE219_Spring2018_Students.json";
     HashMap<String, Image> images;
     int currentIndex = 0;
 
