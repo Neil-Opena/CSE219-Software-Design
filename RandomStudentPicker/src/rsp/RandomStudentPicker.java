@@ -37,7 +37,7 @@ import javax.json.JsonReader;
  */
 public class RandomStudentPicker extends Application {
 
-    String STUDENT_NAMES_FILE = "./data/CSE219_Spring2018_Students.json";
+    String STUDENT_NAMES_FILE = "./data/DebugTest.json";
     HashMap<String, Image> images;
     int currentIndex = 0;
 
@@ -123,13 +123,15 @@ public class RandomStudentPicker extends Application {
 			for (int i = 0; i < maxCount; i++) {
 			    if (event.getSource() == prevButton)
 			    {
-				currentIndex += 1;
+				currentIndex -= 1;
 				if (currentIndex < 0)
 				    currentIndex = students.size() - 1;
 			    }
 			    else if (event.getSource() == nextButton)
 			    {
 				currentIndex += 1;
+				if(currentIndex > students.size() - 1)
+					currentIndex = 0;
 			    }
 			    else
 			    {
