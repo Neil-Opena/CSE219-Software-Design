@@ -44,7 +44,7 @@ public class RandomStudentPicker extends Application {
     // THESE ARE OUR ONLY CONTROLS, A BUTTON AND A DISPLAY LABEL
     Button prevButton = new Button("Previous");
     Button pickButton = new Button("Random");
-    Button nextButton;
+    Button nextButton = new Button("Next");
     ArrayList<String> students = new ArrayList<>();
     final Label studentNameLabel = new Label();
     final ImageView studentImageView = new ImageView();
