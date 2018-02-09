@@ -23,18 +23,57 @@ __InvalidXMLFileFormatException__
 ## vlij Module
 
 ### components 
-__ActionComponent__ <br />
+__ActionComponent__ [Interface] <br />
+_Defines (minimal) behavior of core actions_
+1. void handleNewRequest()
+2. void handleSaveRequest()
+3. void handleLoadRequest()
+4. void handleExitRequest()
+5. void handlePrintRequest()
 
-__ConfirmationDialog__ <br />
+__ConfirmationDialog__ (extends --> Stage, implements --> Dialog) <br />
+_Provides template for displaying 3 way confirmation messages_
+_Essentially this class is like a stage that set allows you to customize the title and the message_
+1. enum Option{ YES, NO, CANCEL } 
+2. __(static) getDialog()__
+    - Returns dialog
+3. __init(__ _Stage owner_ __)__
+    - Completely initializes the dialog to be used, owner = window on top of which dialog will be displayed
+4. __show(__ _String dialogTitle, String message_ __)__
+    - Loads the specified title and message into the dialog and then displays the dialog
+5. __getSelectedOption()__
+    - Returns the Option selected
 
-__DataComponent__ <br />
+__DataComponent__ [Interface] <br />
+_Defines (minimal) methods for data management_
+1. void loadData(Path dataFilePath)
+2. void saveData(Path dataFilePath)
+3. clear()
 
-__Dialog__ <br />
+__Dialog__ [Interface] <br />
+_Defines (minimal) behavior of pop up dialogs_
+1. enum DialogType{ ERROR, CONFIRMATION }
+2. void show(String title, String message)
+3. void init(Stage owner)
 
 __ErrorDialog__ <br />
+_Provides the template for displaying error messages, only has close button_
+_Essentially this class is another stage that allows you to customize the title and the message_
+2. __init(__ _Stage owner_ __)__
+    - Completely initializes the error dialog 
+3. __show(__ _String errorDialogTitle, String errorMessage_ __)__
+    - Loads the specified title and message into the dialog and then displays the dialog
 
-__UIComponent__ <br />
+__UIComponent__ [Interface] <br />
+_Defines (minimal) functionality of graphical user interface of a ViliJ application
+1. Stage getPrimaryWindow()
+2. Scene getPrimaryScene()
+3. String getTitle()
+4. void initialize()
+5. void clear()
+
 ### propertymanager
+
 
 ### settings
 
