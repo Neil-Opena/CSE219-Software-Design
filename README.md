@@ -8,13 +8,20 @@ _"Development of the basic concepts and techniques learned in CSE 114 Computer S
 __(Private from January 31, 2018 - current)__
 
 ## Project ##
+__DataViliJ: Data Visualization Application__ 
 
 ## Homeworks ##
 
 1. __Homework 1__ <br />
     - Data Visualizer crash fix
+    - DataViliJ user interface set up
+    - Responsive toolbar buttons added
+    - Data deletion confirmation / deletion
+    - Error handling
 
 ## Recitations ##
 
 1. __Recitation 1__ <br />
-    - Set up of repository using Git and Gitlab
+    - Set up of repository using Git and Gitlab -
+2. __Recitation 2__ <br />
+    - Debugging on Netbeans
