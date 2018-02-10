@@ -2,6 +2,7 @@ package ui;
 
 import actions.AppActions;
 import dataprocessors.AppData;
+import static java.io.File.separator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.NumberAxis;
@@ -15,6 +16,10 @@ import javafx.stage.Stage;
 import vilij.components.Dialog;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
+
+import static settings.AppPropertyTypes.*;
+import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
+import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 
 /**
  * This is the application's user interface implementation.
@@ -53,6 +58,12 @@ public final class AppUI extends UITemplate {
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
         // TODO for homework 1
 	super.setToolBar(applicationTemplate);
+
+	String iconsPath = "/" + String.join(separator, applicationTemplate.manager.getPropertyValue(GUI_RESOURCE_PATH.name()),applicationTemplate.manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
+	String scrnshotIconPath = iconsPath + separator + applicationTemplate.manager.getPropertyValue(SCREENSHOT_ICON.name());
+
+	scrnshotButton = setToolbarButton(scrnshotIconPath,applicationTemplate.manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()),true);
+	toolBar.getItems().add(scrnshotButton);
     }
 
     @Override
@@ -63,6 +74,7 @@ public final class AppUI extends UITemplate {
         loadButton.setOnAction(e -> applicationTemplate.getActionComponent().handleLoadRequest());
         exitButton.setOnAction(e -> applicationTemplate.getActionComponent().handleExitRequest());
         printButton.setOnAction(e -> applicationTemplate.getActionComponent().handlePrintRequest());
+	scrnshotButton.setOnAction(e -> System.out.println("HI"));
     }
 
     @Override
