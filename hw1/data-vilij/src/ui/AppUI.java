@@ -122,6 +122,15 @@ public final class AppUI extends UITemplate {
         // TODO for homework 1
 	applicationTemplate.setDataComponent(new AppData(applicationTemplate));
 
+	//if textArea has content, enable newbutton
+	textArea.textProperty().addListener(e -> {
+		if(textArea.getText().isEmpty()){
+			newButton.setDisable(true);
+		}else{
+			newButton.setDisable(false);
+		} //TODO if one line, just update if statement
+	}); 
+
 	displayButton.setOnAction(event -> {
 		String test = textArea.textProperty().getValue().trim();
 		hasNewText = !test.equals(data);
@@ -130,7 +139,6 @@ public final class AppUI extends UITemplate {
 			((AppData) applicationTemplate.getDataComponent()).clear();
 			try{
 				((AppData) applicationTemplate.getDataComponent()).loadData(data);
-				newButton.setDisable(false);
 				saveButton.setDisable(false);
 			}catch(Exception e){
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
