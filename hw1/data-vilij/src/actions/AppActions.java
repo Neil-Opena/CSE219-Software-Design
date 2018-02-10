@@ -26,6 +26,8 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleNewRequest() {
         // TODO for homework 1
+	    System.out.println("New Button pressed");
+	    applicationTemplate.getUIComponent().clear();
     }
 
     @Override

@@ -87,6 +87,8 @@ public final class AppUI extends UITemplate {
     public void clear() {
         // TODO for homework 1
 	((AppData) applicationTemplate.getDataComponent()).clear();
+	textArea.clear();
+	newButton.setDisable(true);
     }
 
     private void layout() {
@@ -125,9 +127,10 @@ public final class AppUI extends UITemplate {
 		hasNewText = !test.equals(data);
 		if(hasNewText){
 			data = textArea.getText();
-			clear();
+			((AppData) applicationTemplate.getDataComponent()).clear();
 			try{
 				((AppData) applicationTemplate.getDataComponent()).loadData(data);
+				newButton.setDisable(false);
 			}catch(Exception e){
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 				errorDialog.show("Invalid Data", e.getMessage());
