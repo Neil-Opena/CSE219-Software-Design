@@ -126,8 +126,10 @@ public final class AppUI extends UITemplate {
 	textArea.textProperty().addListener(e -> {
 		if(textArea.getText().isEmpty()){
 			newButton.setDisable(true);
+			saveButton.setDisable(true);
 		}else{
 			newButton.setDisable(false);
+			saveButton.setDisable(false);
 		} //TODO if one line, just update if statement
 	}); 
 
@@ -139,7 +141,6 @@ public final class AppUI extends UITemplate {
 			((AppData) applicationTemplate.getDataComponent()).clear();
 			try{
 				((AppData) applicationTemplate.getDataComponent()).loadData(data);
-				saveButton.setDisable(false);
 			}catch(Exception e){
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 				errorDialog.show("Invalid Data", e.getMessage());
