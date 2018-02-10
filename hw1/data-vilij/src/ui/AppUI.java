@@ -1,9 +1,15 @@
 package ui;
 
 import actions.AppActions;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
@@ -24,6 +30,9 @@ public final class AppUI extends UITemplate {
     private Button                       displayButton;  // workspace button to display data on the chart
     private TextArea                     textArea;       // text area for new data input
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
+
+    private VBox 			 inputRegion;
+    private Label		 	 inputTitle;
 
     public ScatterChart<Number, Number> getChart() { return chart; }
 
@@ -66,6 +75,28 @@ public final class AppUI extends UITemplate {
 
     private void layout() {
         // TODO for homework 1
+
+	workspace = new FlowPane();
+
+	inputRegion = new VBox();
+	inputRegion.setPrefWidth(300);
+	inputRegion.setAlignment(Pos.TOP_CENTER);
+
+	inputTitle = new Label("Data File");
+	inputTitle.setAlignment(Pos.CENTER);
+	inputTitle.getStyleClass().add("chart-title");
+	textArea = new TextArea();
+	textArea.setPrefHeight(130);
+	VBox.setMargin(textArea, new Insets(10));
+	displayButton = new Button("Display");
+	inputRegion.getChildren().addAll(inputTitle, textArea, displayButton);
+
+	chart = new ScatterChart<>(new NumberAxis(), new NumberAxis());
+	chart.setTitle("Data Visualization");
+	chart.setPrefSize(700, 500);
+
+	workspace.getChildren().addAll(inputRegion, chart);
+	appPane.getChildren().add(workspace);
     }
 
     private void setWorkspaceActions() {
