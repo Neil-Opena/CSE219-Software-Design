@@ -1,6 +1,7 @@
 package ui;
 
 import actions.AppActions;
+import dataprocessors.AppData;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.NumberAxis;
@@ -33,6 +34,7 @@ public final class AppUI extends UITemplate {
 
     private VBox 			 inputRegion;
     private Label		 	 inputTitle;
+    private String			 input;
 
     public ScatterChart<Number, Number> getChart() { return chart; }
 
@@ -49,7 +51,7 @@ public final class AppUI extends UITemplate {
     @Override
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
         // TODO for homework 1
-	super.setToolBar(applicationTemplate);
+		super.setToolBar(applicationTemplate);
     }
 
     @Override
@@ -75,7 +77,7 @@ public final class AppUI extends UITemplate {
 
     private void layout() {
         // TODO for homework 1
-
+	
 	workspace = new FlowPane();
 
 	inputRegion = new VBox();
@@ -87,6 +89,7 @@ public final class AppUI extends UITemplate {
 	inputTitle.getStyleClass().add("chart-title");
 	textArea = new TextArea();
 	textArea.setPrefHeight(130);
+	textArea.setWrapText(true);
 	VBox.setMargin(textArea, new Insets(10));
 	displayButton = new Button("Display");
 	inputRegion.getChildren().addAll(inputTitle, textArea, displayButton);
@@ -101,5 +104,12 @@ public final class AppUI extends UITemplate {
 
     private void setWorkspaceActions() {
         // TODO for homework 1
+	applicationTemplate.setDataComponent(new AppData(applicationTemplate));
+
+	displayButton.setOnAction(event -> {
+		String temp = textArea.getText();
+		((AppData) applicationTemplate.getDataComponent()).loadData(temp);
+		hasNewText = false;
+	});
     }
 }
