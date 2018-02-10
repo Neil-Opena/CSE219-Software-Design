@@ -117,7 +117,26 @@ _PRIVATE CONSTRUCTOR_ -basically can only create instance in the PropertyManager
     - Basically, this method loads all the properties and the property options for each property in the Property Manager's hashmap
 
 ### settings
-
+__PropertyTypes__ <br />
+_This enumerable type, lists the various high-level property types listed in the initial set of properties to be loaded from the global properties xml file specified by the initialization parameters_
+1. It is an enum of PropertyTypes, view file for specific property types. Property types include:
+    - high-level user interface properties
+    - resource files and folders
+    - user interface icon file names
+    - tooltips for user interface buttons
+    - error titles (these reflect the type of error encountered)
+    - error messages for errors that require an argument
+    - standard labels and titles
+__InitializationParams__ <br />
+_This is the set of parameters specified for the proper initialization of a Vilij application_
+_Two error-specific parameters are included to handle the case when the property file(s) cannot be loaded (which are the other parameters)_
+1. enum InitializationParams (Each InitializationParams has a getParameterName() method, returns string)
+    - LOAD\_ERROR\_TITLE("Load Error")
+    - PROPERTIES\_LOAD\_ERROR\_MESSAGE("An error occured while loading the property file")
+    - PROPERTIES\_XML("properties.xml")
+    - WORKSPACE\_PROPERTIES\_XML("app-properties.xml")
+    - SCHEMA\_DEFINITION("property-schema.xsd")
+    
 ### templates
 
 
