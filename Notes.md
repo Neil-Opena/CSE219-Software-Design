@@ -141,6 +141,7 @@ _This enumerable type, lists the various high-level property types listed in the
     - error titles (these reflect the type of error encountered)
     - error messages for errors that require an argument
     - standard labels and titles
+
 __InitializationParams__ <br />
 _This is the set of parameters specified for the proper initialization of a Vilij application_
 _Two error-specific parameters are included to handle the case when the property file(s) cannot be loaded (which are the other parameters)_
@@ -176,23 +177,83 @@ _This class defines and creates a user interface using the ApplicationTemplate c
 
 1. __UITemplate(__ _Stage primaryStage, ApplicationTemplate applicationTemplate_ __)__ (Constructor)
     - Creates the minimal user interface. It uses the window height and width properties and creates a toolbar with the required buttons. (More details are above) Methods called are:
-        -setResourcePaths(applicationTemplate)
-        -setToolBar(applicationTemplate)
-        -setToolbarHandlers(applicationTemplate)
-        -setWindow(applicationTemplate)
+        - setResourcePaths(applicationTemplate)
+        - setToolBar(applicationTemplate)
+        - setToolbarHandlers(applicationTemplate)
+        - setWindow(applicationTemplate)
 2. Methods from UIComponent are overriden (__getPrimaryWindow()__, __getPrimaryScene()__, __getTitle()__, and __initialize()__)
-    -initialize method designed to throw an exception because it is a template
+    - initialize method designed to throw an exception because it is a template
 3. __setToolBar(__ _ApplicationTemplate applicationTemplate_ __)__
-    -Initialize the top toolbar by calling __setToolBar(...)__ method for each button on the toolbar
+    - Initialize the top toolbar by calling __setToolBar(...)__ method for each button on the toolbar
 4. __setToolBarButton(__ _String iconPath, String tooptip, boolean disabled_ __)__
-    -Returns and initializes button based on arguments
+    - Returns and initializes button based on arguments
 5. __setResourcePaths(__ _ApplicationTemplate applicationTemplate_ __)__
-    -Sets the correct paths to all the required resources, which are the class fields/properties
+    - Sets the correct paths to all the required resources, which are the class fields/properties
 6. __setToolBarHandlers(__ _ApplicationTemplate applicationTemplate_ __)__
-    -implementation must be done in child class
+    - implementation must be done in child class
 7. __clear()__
-    -implementation must be donte in child class
+    - implementation must be donte in child class
 8. __setWindow(__ _Application applicationTemplate_ __)__
-    -starts the app window (without the application-specific workspace)
+    - starts the app window (without the application-specific workspace)
 
 ## data-vlij Module
+
+### actions
+__AppActions__ (implements --> ActionComponent) <br />
+_This is the concrete implementation of the action handlers required by the application_
+    - dataFilePath (package private) Path variable
+1. __AppActions(__ _ApplicationTemplate applicationTemplate_ __)__ (Constructor)
+    - Sets the application template
+2. other methods are parts of the HW
+
+### dataprocessors
+__AppData__ (implements --> DataComponent) <br />
+_This is the concrete application-specific implementation of the data component defined by the Vilij framework_
+1. __AppData(__ _ApplicationTemplate applicationTemplate_ __)__ (Constructor)
+    - Sets the application template and instantiates TSDProcessor
+2. __displayData()__
+    - Calls TSDProcessor to display data
+3. other methods are parts of the HW
+
+__TSDProcessor__ (FINAL class) <br />
+_The data files used by this data visualization applications follow a tab-separated format, where each data point is named, labeled, and has a specific location in the 2-dimensional X-Y plane._
+_This class handles the parsing and processing of such data. It also handles exporting the data to a 2-D point._
+__SAMPLE FILE IN FORMAT IS IN resources/data folder__
+1. __TSDProcessor()__ (Constructor)
+    - Initializes dataLabelss map (String, String) and dataPoints map (String, Point2D)
+2. __processString(__ _String tsdString_ __)__
+    - Processes the data and populate the two maps with the data, can throw Exception if error occurs
+    - dataLabels.put(name, label)
+    - dataPoints.put(name, point)
+3. __toCharData(__ _XYZChart<Number, Number> chart_ __)__
+    - Exports the data to the specified 2-D chart
+4. __clear()__
+    - Clears the dataPoints and dataLabels hashMaps
+
+### settings
+__AppPropertyTypes__ <br />
+_This enumerable type lists the various application-specific property types listed in the initial set of properties to be loaded from the workspace properties xml file specified by the initialization parameters_
+1. View the file for specific property types. Property types include:
+    - resource files and folders
+    - user interface icon file names
+    - tooltips for user interface buttons
+    - error messages
+    - application-specific message titles
+    - application-specific messages
+    - application-specific parameters
+
+### ui
+__AppUI__ (extends --> UITemplate) <br />
+_The application's user interface implementation_
+    - ApplicationTemplate applicationTemplate (package private class member/field)
+1. __AppUI(__ _Stage primaryStage, ApplicationTemplate applicationTemplate_ __)__
+    - Calls super method and initializes application template
+2. __getChart()__
+    - Returns chart (ScatterChart<Number, Number>)
+3. __setResourcePaths(__ _ApplicationTemplate applicationTemplate_ __)__
+4. __setToolbarHandlers(__ _ApplicationTemplate applicationTemplate_ __)__
+    - Gives buttons handlers
+5. other methods are for hws
+
+__DataVisualizer__ (extends --> ApplicationTemplate) <br />
+_The main class for which the application is run. The  various components used here must be concred implementations of types defined in vlij.components_
