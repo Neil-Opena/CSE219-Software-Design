@@ -1,6 +1,19 @@
 # Notes
 Created to help me understand the frameworks provided
 <br />
+-The ApplicationTemplate has a PropertyManager, an ErrorDialog, and ConfirmationDialog
+-When start method is called, the ErrorDialog and ConfirmationDialog instances are initiated on the primaryStage
+-Before proceeding, it checks the propertyManger if null (look below) or if error occurred when loading the properties from properties.xml, if not, the userInterface is audited.
+-If error occured while loading data, errorDialog is shown
+-ApplicationTemplate then creates a new UI component by calling the constructor of UITemplate (window, height, title are instantiated by the properties from the propertymanager)
+-The UITemplate does the following:
+    -The correct paths to all the required resources are set (resources such as newiconPath, saveiconPath, etc.)
+    -Initialize the top toolbar
+    -Set the toolbar button handlers
+        -INITIIALIZATION IS NOT PROVIDED AT THE TEMPLATE-LEVEL, AND MUST BE IMPLEMENTED BY A CHILD CLASS
+    -Start the app window (without the application-specific workspace)
+-Will display an error dialog because it is a template
+___
 
 ## xmlutil Module
 ### xmlutil
@@ -15,14 +28,14 @@ _Provides methods for interaction with XML data_
 4. __getTextData(__ _Document doc, String tagName_ __)__
     - Returns String representation of Node in the Document specified by tag name, else null
 5. __getChildrenWithName(__ _Node parent, String tagName_ __)__
-    - Returns all children of the specified parent node with the specified tag name, 
-    
+    - Returns all children of the specified parent node with the specified tag name,
+
 __InvalidXMLFileFormatException__
     - Exception class that occurs when file is not valid according to the defined schema
-    
+
 ## vlij Module
 
-### components 
+### components
 __ActionComponent__ [Interface] <br />
 _Defines (minimal) behavior of core actions_
 1. void handleNewRequest()
@@ -35,7 +48,7 @@ __ConfirmationDialog__ (extends --> Stage, implements --> Dialog) <br />
 _Provides template for displaying 3 way confirmation messages_
 _Essentially this class is like a stage that set allows you to customize the title and the message_
 _PRIVATE CONSTRUCTOR_ -basically can only create instance in the ConfirmationDialog class
-1. enum Option{ YES, NO, CANCEL } 
+1. enum Option{ YES, NO, CANCEL }
 2. __(static) getDialog()__
     - Returns dialog --> this is also where the instance is created
 3. __init(__ _Stage owner_ __)__
@@ -62,7 +75,7 @@ _Provides the template for displaying error messages, only has close button_
 _Essentially this class is another stage that allows you to customize the title and the message_
 _PRIVATE CONSTRUCTOR_ -basically can only create instance in the ErrorDialog class
 1. __init(__ _Stage owner_ __)__
-    - Completely initializes the error dialog 
+    - Completely initializes the error dialog
 2. __show(__ _String errorDialogTitle, String errorMessage_ __)__
     - Loads the specified title and message into the dialog and then displays the dialog
 
@@ -90,9 +103,10 @@ _PRIVATE CONSTRUCTOR_ -basically can only create instance in the PropertyManager
     - PROPERTIES\_RESOURCE\_RELATIVE\_PATH = "properties"
 3. __(static) getManager() __
     - Returns PropertyManager --> this is where the instance is also created (can be null if the initialization xml is not validated to the initialization schema)
+    - This also loads calls the loadProperties method
     - Creates HashMap of properties and another one of propertyOptions
 4. __addProperty(__ _String property, String value_ __)__
-    - Adds the property to PropertyManager's HashMap 
+    - Adds the property to PropertyManager's HashMap
 5. __getPropertyValue(__ _String property_ __)__
     - Returns property value as a String, based on the string property name
 6. __getPropertyValuesAsInt(__ _String property_ __)__
@@ -113,7 +127,7 @@ _PRIVATE CONSTRUCTOR_ -basically can only create instance in the PropertyManager
     - For each property from the XML, NamedNodeMap (kinda like a list of attributes of the property) gets the name and value pairs and puts them in the properties HashMap of the PropertyManager
     - propertyOptionsListNode retrieved, if exists, a list of the property options are retrieved
     - For each node in the property options list, the name of the property is retrieved
-    - For each option of the property, the option is added to the array list of the property in the property Options HashMap 
+    - For each option of the property, the option is added to the array list of the property in the property Options HashMap
     - Basically, this method loads all the properties and the property options for each property in the Property Manager's hashmap
 
 ### settings
@@ -136,8 +150,49 @@ _Two error-specific parameters are included to handle the case when the property
     - PROPERTIES\_XML("properties.xml")
     - WORKSPACE\_PROPERTIES\_XML("app-properties.xml")
     - SCHEMA\_DEFINITION("property-schema.xsd")
-    
-### templates
 
+### templates
+__ApplicationTemplate__ (extends --> Application) <br />
+_This class is the minimal template for a Vilij application. It does not create an actual workspace within the window and does not perform any actions_
+_LOOK AT NOTES ABOVE_
+_UIComponent initialized by constructor of UITemplate
+1. __getDataComponent()__
+    - Returns DataComponent
+2. __getUIComponent()__
+    - Returns UIComponent
+3. __getActionComponent()__
+    - Returns ActionComponent
+4. __setDataComponent(__ _DataComponent component_ __)__
+    - Set DataComponent
+5. __setUIComponent(__ _UIComponent component_ __)__
+    - Set UIComponent
+6. __setActionComponent(__ _ActionComponent component_ __)__
+    - Set Action Component
+7. __getDialog(__ _Dialog.DialogType dialogType_ __)__
+    - Return dialog based on argument
+
+__UITemplate__ (implements --> UIComponent) <br />
+_This class defines and creates a user interface using the ApplicationTemplate class. The interface created here at the framework-level does not instantiate an actual workspace (which must be done by any applicatiion using this framework)_
+
+1. __UITemplate(__ _Stage primaryStage, ApplicationTemplate applicationTemplate_ __)__ (Constructor)
+    - Creates the minimal user interface. It uses the window height and width properties and creates a toolbar with the required buttons. (More details are above) Methods called are:
+        -setResourcePaths(applicationTemplate)
+        -setToolBar(applicationTemplate)
+        -setToolbarHandlers(applicationTemplate)
+        -setWindow(applicationTemplate)
+2. Methods from UIComponent are overriden (__getPrimaryWindow()__, __getPrimaryScene()__, __getTitle()__, and __initialize()__)
+    -initialize method designed to throw an exception because it is a template
+3. __setToolBar(__ _ApplicationTemplate applicationTemplate_ __)__
+    -Initialize the top toolbar by calling __setToolBar(...)__ method for each button on the toolbar
+4. __setToolBarButton(__ _String iconPath, String tooptip, boolean disabled_ __)__
+    -Returns and initializes button based on arguments
+5. __setResourcePaths(__ _ApplicationTemplate applicationTemplate_ __)__
+    -Sets the correct paths to all the required resources, which are the class fields/properties
+6. __setToolBarHandlers(__ _ApplicationTemplate applicationTemplate_ __)__
+    -implementation must be done in child class
+7. __clear()__
+    -implementation must be donte in child class
+8. __setWindow(__ _Application applicationTemplate_ __)__
+    -starts the app window (without the application-specific workspace)
 
 ## data-vlij Module
