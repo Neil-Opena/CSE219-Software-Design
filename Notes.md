@@ -1,18 +1,18 @@
 # Notes
 Created to help me understand the frameworks provided
 <br />
--The ApplicationTemplate has a PropertyManager, an ErrorDialog, and ConfirmationDialog
--When start method is called, the ErrorDialog and ConfirmationDialog instances are initiated on the primaryStage
--Before proceeding, it checks the propertyManger if null (look below) or if error occurred when loading the properties from properties.xml, if not, the userInterface is audited.
--If error occured while loading data, errorDialog is shown
--ApplicationTemplate then creates a new UI component by calling the constructor of UITemplate (window, height, title are instantiated by the properties from the propertymanager)
--The UITemplate does the following:
-    -The correct paths to all the required resources are set (resources such as newiconPath, saveiconPath, etc.)
-    -Initialize the top toolbar
-    -Set the toolbar button handlers
-        -INITIIALIZATION IS NOT PROVIDED AT THE TEMPLATE-LEVEL, AND MUST BE IMPLEMENTED BY A CHILD CLASS
-    -Start the app window (without the application-specific workspace)
--Will display an error dialog because it is a template
+- The ApplicationTemplate has a PropertyManager, an ErrorDialog, and ConfirmationDialog
+- When start method is called, the ErrorDialog and ConfirmationDialog instances are initiated on the primaryStage
+- Before proceeding, it checks the propertyManger if null (look below) or if error occurred when loading the properties from properties.xml, if not, the userInterface is audited.
+- If error occured while loading data, errorDialog is shown
+- ApplicationTemplate then creates a new UI component by calling the constructor of UITemplate (window, height, title are instantiated by the properties from the propertymanager)
+- The UITemplate does the following:
+    - The correct paths to all the required resources are set (resources such as newiconPath, saveiconPath, etc.)
+    - Initialize the top toolbar
+    - Set the toolbar button handlers
+        - INITIIALIZATION IS NOT PROVIDED AT THE TEMPLATE-LEVEL, AND MUST BE IMPLEMENTED BY A CHILD CLASS
+    - Start the app window (without the application-specific workspace)
+- Will display an error dialog because it is a template
 ___
 
 ## xmlutil Module
