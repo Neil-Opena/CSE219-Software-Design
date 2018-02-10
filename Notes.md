@@ -34,9 +34,10 @@ _Defines (minimal) behavior of core actions_
 __ConfirmationDialog__ (extends --> Stage, implements --> Dialog) <br />
 _Provides template for displaying 3 way confirmation messages_
 _Essentially this class is like a stage that set allows you to customize the title and the message_
+_PRIVATE CONSTRUCTOR_ -basically can only create instance in the ConfirmationDialog class
 1. enum Option{ YES, NO, CANCEL } 
 2. __(static) getDialog()__
-    - Returns dialog
+    - Returns dialog --> this is also where the instance is created
 3. __init(__ _Stage owner_ __)__
     - Completely initializes the dialog to be used, owner = window on top of which dialog will be displayed
 4. __show(__ _String dialogTitle, String message_ __)__
@@ -59,13 +60,14 @@ _Defines (minimal) behavior of pop up dialogs_
 __ErrorDialog__ <br />
 _Provides the template for displaying error messages, only has close button_
 _Essentially this class is another stage that allows you to customize the title and the message_
-2. __init(__ _Stage owner_ __)__
+_PRIVATE CONSTRUCTOR_ -basically can only create instance in the ErrorDialog class
+1. __init(__ _Stage owner_ __)__
     - Completely initializes the error dialog 
-3. __show(__ _String errorDialogTitle, String errorMessage_ __)__
+2. __show(__ _String errorDialogTitle, String errorMessage_ __)__
     - Loads the specified title and message into the dialog and then displays the dialog
 
 __UIComponent__ [Interface] <br />
-_Defines (minimal) functionality of graphical user interface of a ViliJ application
+_Defines (minimal) functionality of graphical user interface of a ViliJ application_
 1. Stage getPrimaryWindow()
 2. Scene getPrimaryScene()
 3. String getTitle()
@@ -73,7 +75,46 @@ _Defines (minimal) functionality of graphical user interface of a ViliJ applicat
 5. void clear()
 
 ### propertymanager
-
+__PropertyManager__ <br />
+_Core class that defines all the global properties to be used by the Vilij framework_
+_PRIVATE CONSTRUCTOR_ -basically can only create instance in the PropertyManager class
+1. Constants required to load the elements and their properties from the XML properties file
+    - PROPERTY_ELEMENT = "property"
+    - PROPERTY\_LIST\_ELEMENT = "property_list"
+    - PROPERTY\_OPTIONS\_LIST\_ELEMENT = "property\_options\_list"
+    - PROPERTY\_OPTIONS\_ELEMENT = "property_options"
+    - OPTION_ELEMENT = "option"
+    - NAME_ATTRIBUTE = "name"
+    - VALUE_ATTRIBUTE = "value"
+2. Path of the properties resource folder, relative to the root resource folder for the application
+    - PROPERTIES\_RESOURCE\_RELATIVE\_PATH = "properties"
+3. __(static) getManager() __
+    - Returns PropertyManager --> this is where the instance is also created (can be null if the initialization xml is not validated to the initialization schema)
+    - Creates HashMap of properties and another one of propertyOptions
+4. __addProperty(__ _String property, String value_ __)__
+    - Adds the property to PropertyManager's HashMap 
+5. __getPropertyValue(__ _String property_ __)__
+    - Returns property value as a String, based on the string property name
+6. __getPropertyValuesAsInt(__ _String property_ __)__
+    - Returns property value as an integer, based on the string property name --> can throw Exceptions (NullPointer, NumberFormat)
+7. __getPropertyValueAsBoolean(__ _String property_ __)__
+    - Returns true if property value is "true" (ignoring case) based on the string property name
+8. __addPropertyOption(__ _String property, String option_ __)__
+    - Throws exception if property does not exist (NoSuchElement)
+    - Add property option to specified string property name
+9. __getPropertyOptions(__ _String propterty_ __)__
+    - Throws exception if property does not exist (NoSUchElement)
+    - Returns a list of property options (strings)
+10. __hasProperty(__ _Object property_ __)__
+    - Returns true if property exists (Notice that the parameter is an Object!)
+11. __loadProperties(__ _Class klass, String xmlfilename, String schemafilename_ __)__
+    - Parameters are strings of the file names
+    - Document created so that a propertyListNode is retrieved such that its children are the properties.
+    - For each property from the XML, NamedNodeMap (kinda like a list of attributes of the property) gets the name and value pairs and puts them in the properties HashMap of the PropertyManager
+    - propertyOptionsListNode retrieved, if exists, a list of the property options are retrieved
+    - For each node in the property options list, the name of the property is retrieved
+    - For each option of the property, the option is added to the array list of the property in the property Options HashMap 
+    - Basically, this method loads all the properties and the property options for each property in the Property Manager's hashmap
 
 ### settings
 
