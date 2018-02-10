@@ -13,7 +13,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import vilij.components.Dialog;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
 
@@ -139,12 +138,8 @@ public final class AppUI extends UITemplate {
 		if(hasNewText){
 			data = textArea.getText();
 			((AppData) applicationTemplate.getDataComponent()).clear();
-			try{
-				((AppData) applicationTemplate.getDataComponent()).loadData(data);
-			}catch(Exception e){
-				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-				errorDialog.show("Invalid Data", e.getMessage());
-			}
+			((AppData) applicationTemplate.getDataComponent()).loadData(data);
+			
 		}
 	});
     }

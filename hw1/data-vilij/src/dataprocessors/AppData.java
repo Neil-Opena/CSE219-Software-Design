@@ -5,6 +5,7 @@ import vilij.components.DataComponent;
 import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
+import vilij.components.Dialog;
 
 /**
  * This is the concrete application-specific implementation of the data component defined by the Vilij framework.
@@ -27,9 +28,14 @@ public class AppData implements DataComponent {
         // TODO: NOT A PART OF HW 1
     }
 
-    public void loadData(String dataString) throws Exception{
+    public void loadData(String dataString){
         // TODO for homework 1
-	processor.processString(dataString);
+	try{
+		processor.processString(dataString);
+	}catch(Exception e){
+		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+		errorDialog.show("Invalid Data", e.getMessage());
+	}
 	displayData();
 
     }
