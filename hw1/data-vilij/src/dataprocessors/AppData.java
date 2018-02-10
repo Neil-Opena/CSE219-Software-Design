@@ -32,7 +32,8 @@ public class AppData implements DataComponent {
 	try{
 		processor.processString(dataString);
 	}catch(Exception e){
-		//error dialog?
+		//FIXME errordialog?
+		//FIXME spaces used?
 		e.printStackTrace();
 	}
 	displayData();
@@ -47,6 +48,7 @@ public class AppData implements DataComponent {
     @Override
     public void clear() {
         processor.clear();
+	((AppUI) applicationTemplate.getUIComponent()).getChart().getData().clear();
     }
 
     public void displayData() {

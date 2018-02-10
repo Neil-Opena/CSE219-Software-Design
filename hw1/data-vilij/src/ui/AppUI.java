@@ -34,7 +34,7 @@ public final class AppUI extends UITemplate {
 
     private VBox 			 inputRegion;
     private Label		 	 inputTitle;
-    private String			 input;
+    private String			 data;
 
     public ScatterChart<Number, Number> getChart() { return chart; }
 
@@ -107,9 +107,13 @@ public final class AppUI extends UITemplate {
 	applicationTemplate.setDataComponent(new AppData(applicationTemplate));
 
 	displayButton.setOnAction(event -> {
-		String temp = textArea.getText();
-		((AppData) applicationTemplate.getDataComponent()).loadData(temp);
-		hasNewText = false;
+		String test = textArea.textProperty().getValue().trim();
+		hasNewText = !test.equals(data);
+		if(hasNewText){
+			data = textArea.getText();
+			((AppData) applicationTemplate.getDataComponent()).clear();
+			((AppData) applicationTemplate.getDataComponent()).loadData(data);
+		}
 	});
     }
 }
