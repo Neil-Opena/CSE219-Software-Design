@@ -12,6 +12,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import vilij.components.Dialog;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
 
@@ -51,7 +52,7 @@ public final class AppUI extends UITemplate {
     @Override
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
         // TODO for homework 1
-		super.setToolBar(applicationTemplate);
+	super.setToolBar(applicationTemplate);
     }
 
     @Override
@@ -73,6 +74,7 @@ public final class AppUI extends UITemplate {
     @Override
     public void clear() {
         // TODO for homework 1
+	((AppData) applicationTemplate.getDataComponent()).clear();
     }
 
     private void layout() {
@@ -111,8 +113,13 @@ public final class AppUI extends UITemplate {
 		hasNewText = !test.equals(data);
 		if(hasNewText){
 			data = textArea.getText();
-			((AppData) applicationTemplate.getDataComponent()).clear();
-			((AppData) applicationTemplate.getDataComponent()).loadData(data);
+			clear();
+			try{
+				((AppData) applicationTemplate.getDataComponent()).loadData(data);
+			}catch(Exception e){
+				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+				errorDialog.show("Invalid Data", e.getMessage());
+			}
 		}
 	});
     }

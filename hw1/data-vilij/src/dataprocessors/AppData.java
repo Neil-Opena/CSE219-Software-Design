@@ -27,15 +27,9 @@ public class AppData implements DataComponent {
         // TODO: NOT A PART OF HW 1
     }
 
-    public void loadData(String dataString) {
+    public void loadData(String dataString) throws Exception{
         // TODO for homework 1
-	try{
-		processor.processString(dataString);
-	}catch(Exception e){
-		//FIXME errordialog?
-		//FIXME spaces used?
-		e.printStackTrace();
-	}
+	processor.processString(dataString);
 	displayData();
 
     }
