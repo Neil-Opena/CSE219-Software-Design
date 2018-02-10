@@ -131,6 +131,7 @@ public final class AppUI extends UITemplate {
 			try{
 				((AppData) applicationTemplate.getDataComponent()).loadData(data);
 				newButton.setDisable(false);
+				saveButton.setDisable(false);
 			}catch(Exception e){
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 				errorDialog.show("Invalid Data", e.getMessage());
