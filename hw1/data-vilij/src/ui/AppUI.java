@@ -102,7 +102,7 @@ public final class AppUI extends UITemplate {
 	inputTitle.setAlignment(Pos.CENTER);
 	inputTitle.getStyleClass().add("chart-title");
 	textArea = new TextArea();
-	textArea.setPrefHeight(130);
+	textArea.setPrefHeight(150);
 	textArea.setWrapText(true);
 	VBox.setMargin(textArea, new Insets(10));
 	displayButton = new Button("Display");
@@ -134,7 +134,7 @@ public final class AppUI extends UITemplate {
 	displayButton.setOnAction(event -> {
 		String test = textArea.textProperty().getValue().trim();
 		hasNewText = !test.equals(data);
-		if(hasNewText){
+		if(hasNewText || chart.getData().isEmpty()){
 			data = textArea.getText();
 			((AppData) applicationTemplate.getDataComponent()).clear();
 			((AppData) applicationTemplate.getDataComponent()).loadData(data);

@@ -62,7 +62,7 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleExitRequest() {
         // TODO for homework 1
-	//FIXME save data?
+	//FIXME save data prompt?
 	Platform.exit();
     }
 
