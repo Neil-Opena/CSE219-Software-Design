@@ -73,7 +73,6 @@ public final class AppUI extends UITemplate {
         loadButton.setOnAction(e -> applicationTemplate.getActionComponent().handleLoadRequest());
         exitButton.setOnAction(e -> applicationTemplate.getActionComponent().handleExitRequest());
         printButton.setOnAction(e -> applicationTemplate.getActionComponent().handlePrintRequest());
-	scrnshotButton.setOnAction(e -> System.out.println("HI"));
     }
 
     @Override
@@ -139,7 +138,6 @@ public final class AppUI extends UITemplate {
 			data = textArea.getText();
 			((AppData) applicationTemplate.getDataComponent()).clear();
 			((AppData) applicationTemplate.getDataComponent()).loadData(data);
-			
 		}
 	});
     }
