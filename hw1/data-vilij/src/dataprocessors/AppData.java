@@ -34,11 +34,11 @@ public class AppData implements DataComponent {
         // TODO for homework 1
 	try{
 		processor.processString(dataString);
+		displayData();
 	}catch(Exception e){
 		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 		errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name()));
 	}
-	displayData();
 
     }
 
