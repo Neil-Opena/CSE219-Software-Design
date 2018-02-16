@@ -6,6 +6,7 @@ import vilij.templates.ApplicationTemplate;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -36,14 +37,9 @@ public final class AppActions implements ActionComponent {
 	manager = applicationTemplate.manager;
 	this.fileChooser = new FileChooser();
 	fileChooser.getExtensionFilters().add(new ExtensionFilter(manager.getPropertyValue(DATA_FILE_EXT_DESC.name()), manager.getPropertyValue(DATA_FILE_EXT.name())));
-	/* String iconsPath = "/" + String.join(separator,
-                                             manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
-                                             manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
-	File a = new File(iconsPath + "/");
-	    //System.out.println(a);
-	    //fileChooser.setInitialDirectory(a);
-
-	*/
+	Path current = Paths.get(".").toAbsolutePath();
+	Path defaultDirectory = current.resolve(manager.getPropertyValue(DATA_RESOURCE_PATH.name()));
+	fileChooser.setInitialDirectory(new File(defaultDirectory.toString()));
     }
 
     @Override
