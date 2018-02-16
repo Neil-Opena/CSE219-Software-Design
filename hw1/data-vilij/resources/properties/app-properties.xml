@@ -22,6 +22,8 @@ functionality within the main workspace. -->
 	<property name="INVALID_DATA_TITLE" value="Invalid Data"/>
 	<property name="INVALID_DATA_MESSAGE" value="The data in the text area does not follow the .tsd format. Each line of data must follow the following format: @[name] [label] [x,y]. Each component separated by a tab. " />
 	<property name="NO_DATA_MESSAGE" value="There is nothing to display" />
+	<property name="IO_ERROR_TITLE" value="Something went wrong" />
+    	<property name="IO_ERROR_MESSAGE" value="File could not be saved." />
 
         <!-- APPLICATION-SPECIFIC MESSAGE TITLES -->
         <property name="SAVE_UNSAVED_WORK_TITLE" value="Save Current Work"/>

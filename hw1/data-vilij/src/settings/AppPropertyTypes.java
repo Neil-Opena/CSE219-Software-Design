@@ -23,6 +23,8 @@ public enum AppPropertyTypes {
     INVALID_DATA_TITLE,
     INVALID_DATA_MESSAGE,
     NO_DATA_MESSAGE,
+    IO_ERROR_TITLE,
+    IO_ERROR_MESSAGE,
 
     /* application-specific message titles */
     SAVE_UNSAVED_WORK_TITLE,

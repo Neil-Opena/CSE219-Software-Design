@@ -13,6 +13,7 @@ import static settings.AppPropertyTypes.*;
 import vilij.components.ConfirmationDialog;
 import vilij.components.ConfirmationDialog.Option;
 import vilij.components.Dialog;
+import vilij.propertymanager.PropertyManager;
 
 /**
  * This is the concrete implementation of the action handlers required by the application.
@@ -25,14 +26,24 @@ public final class AppActions implements ActionComponent {
     private ApplicationTemplate applicationTemplate;
     
     private FileChooser fileChooser;
+    private PropertyManager manager;
 
     /** Path to the data file currently active. */
     Path dataFilePath;
 
     public AppActions(ApplicationTemplate applicationTemplate) {
         this.applicationTemplate = applicationTemplate;
+	manager = applicationTemplate.manager;
 	this.fileChooser = new FileChooser();
-	fileChooser.getExtensionFilters().add(new ExtensionFilter(applicationTemplate.manager.getPropertyValue(DATA_FILE_EXT_DESC.name()), applicationTemplate.manager.getPropertyValue(DATA_FILE_EXT.name())));
+	fileChooser.getExtensionFilters().add(new ExtensionFilter(manager.getPropertyValue(DATA_FILE_EXT_DESC.name()), manager.getPropertyValue(DATA_FILE_EXT.name())));
+	/* String iconsPath = "/" + String.join(separator,
+                                             manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+                                             manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
+	File a = new File(iconsPath + "/");
+	    //System.out.println(a);
+	    //fileChooser.setInitialDirectory(a);
+
+	*/
     }
 
     @Override
@@ -42,16 +53,21 @@ public final class AppActions implements ActionComponent {
 		if(promptToSave()){
 			applicationTemplate.getUIComponent().clear();
 		}
-	}catch(Exception e){
-		e.printStackTrace();
-		//FIXME error dialog
+	}catch(IOException e){
+		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+		errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
 	}
     }
 
     @Override
     public void handleSaveRequest() {
         // TODO: NOT A PART OF HW 1
-	File saveFile = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+	try{
+		promptToSave();
+	}catch(IOException e){
+		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+		errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
+	}
     }
 
     @Override
@@ -62,7 +78,6 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleExitRequest() {
         // TODO for homework 1
-	//FIXME save data prompt?
 	Platform.exit();
     }
 
@@ -91,7 +106,7 @@ public final class AppActions implements ActionComponent {
         // TODO for homework 1
         // TODO remove the placeholder line below after you have implemented this method
 	ConfirmationDialog confirmDialog = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
-	confirmDialog.show(applicationTemplate.manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), applicationTemplate.manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
+	confirmDialog.show(manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
 
 	Option option = confirmDialog.getSelectedOption();
 
@@ -99,7 +114,13 @@ public final class AppActions implements ActionComponent {
 		return false;
 	}else{
 		if(option == Option.YES){
-			handleSaveRequest();
+			File saveFile = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+			try{
+				saveFile.createNewFile();
+				dataFilePath = saveFile.toPath();
+			}catch(NullPointerException e){
+				return false;
+			}
 		}
 		return true;
 	}
