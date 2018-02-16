@@ -147,9 +147,6 @@ public final class AppUI extends UITemplate {
 			((AppData) applicationTemplate.getDataComponent()).clear();
 			((AppData) applicationTemplate.getDataComponent()).loadData(data);
 		}
-
-		//TODO if additional line after valid data is invalid, the display still works
-		//TODO if there's empty line, it still displays data
 	});
     }
 }
