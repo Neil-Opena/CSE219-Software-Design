@@ -5,6 +5,8 @@ import vilij.components.DataComponent;
 import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
+import static settings.AppPropertyTypes.INVALID_DATA_MESSAGE;
+import static settings.AppPropertyTypes.INVALID_DATA_TITLE;
 import vilij.components.Dialog;
 
 /**
@@ -34,7 +36,7 @@ public class AppData implements DataComponent {
 		processor.processString(dataString);
 	}catch(Exception e){
 		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-		errorDialog.show("Invalid Data", e.getMessage());
+		errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name()));
 	}
 	displayData();
 

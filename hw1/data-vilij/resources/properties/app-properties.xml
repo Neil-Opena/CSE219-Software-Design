@@ -5,7 +5,7 @@ functionality within the main workspace. -->
 <properties>
     <property_list>
         <!-- RESOURCE FILES AND FOLDERS -->
-        <property name="DATA_RESOURCE_PATH" value="data"/>
+        <property name="DATA_RESOURCE_PATH" value="data"/> <!--- package name for data resource --> 
 
         <!-- USER INTERFACE ICON FILES -->
         <property name="SCREENSHOT_ICON" value="screenshot.png"/>
@@ -19,6 +19,8 @@ functionality within the main workspace. -->
 
         <!-- ERROR MESSAGES -->
         <property name="RESOURCE_SUBDIR_NOT_FOUND" value="Directory not found under resources."/>
+	<property name="INVALID_DATA_TITLE" value="Invalid Data"/>
+	<property name="INVALID_DATA_MESSAGE" value="The data in the text area does not follow the .tsd format. Each line of data must follow the following format: @[name] [label] [x,y]. Each component separated by a tab. " />
 
         <!-- APPLICATION-SPECIFIC MESSAGE TITLES -->
         <property name="SAVE_UNSAVED_WORK_TITLE" value="Save Current Work"/>
