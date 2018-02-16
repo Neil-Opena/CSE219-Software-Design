@@ -125,23 +125,14 @@ public final class AppUI extends UITemplate {
 
 	//if textArea has content, enable newbutton
 	textArea.textProperty().addListener(e -> {
-		/*
+		
 		if(textArea.getText().isEmpty()){
 			newButton.setDisable(true);
 			saveButton.setDisable(true);
 		}else{
 			newButton.setDisable(false);
 			saveButton.setDisable(false);
-		} //uncomment if 1 line = any text
-		*/
-		if(textArea.getText().contains("\n")){
-			newButton.setDisable(false);
-			saveButton.setDisable(false);
-		}else{
-			newButton.setDisable(true);
-			saveButton.setDisable(true);
-		} //uncomment if 1 line = appearance of "\n"
-		
+		}
 	}); 
 
 	displayButton.setOnAction(event -> {
