@@ -39,7 +39,6 @@ public enum AppPropertyTypes {
     SPECIFIED_FILE,
 
     /* layout user interface*/
-    TEXT_AREA_TITLE,
     TITLE_STYLE,
     DISPLAY_BUTTON,
     CHART_TITLE,

@@ -34,11 +34,10 @@ functionality within the main workspace. -->
         <!-- APPLICATION-SPECIFIC PARAMETERS -->
         <property name="DATA_FILE_EXT" value=".tsd"/>
         <property name="DATA_FILE_EXT_DESC" value="Tab-Separated Data File"/>
-        <property name="TEXT_AREA" value="text area"/>
+        <property name="TEXT_AREA" value="Data File"/>
         <property name="SPECIFIED_FILE" value=" specified file"/>
 
 	<!-- LAYOUT USER INTERFACE -->
-	<property name="TEXT_AREA_TITLE" value="Data File"/>
 	<property name="TITLE_STYLE" value="chart-title"/>
 	<property name="DISPLAY_BUTTON" value="Display"/>
 	<property name="CHART_TITLE" value="Data Visualization"/>

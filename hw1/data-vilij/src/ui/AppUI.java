@@ -102,7 +102,7 @@ public final class AppUI extends UITemplate {
 	inputRegion.setPrefWidth(300);
 	inputRegion.setAlignment(Pos.TOP_CENTER);
 
-	inputTitle = new Label(manager.getPropertyValue(TEXT_AREA_TITLE.name()));
+	inputTitle = new Label(manager.getPropertyValue(TEXT_AREA.name()));
 	inputTitle.setAlignment(Pos.CENTER);
 	inputTitle.getStyleClass().add(manager.getPropertyValue(TITLE_STYLE.name()));
 	textArea = new TextArea();
