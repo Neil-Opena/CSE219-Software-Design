@@ -17,6 +17,7 @@ import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
 
 import static settings.AppPropertyTypes.*;
+import vilij.components.Dialog;
 import vilij.propertymanager.PropertyManager;
 import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
@@ -138,7 +139,10 @@ public final class AppUI extends UITemplate {
 	displayButton.setOnAction(event -> {
 		String test = textArea.textProperty().getValue().trim();
 		hasNewText = !test.equals(data);
-		if(hasNewText || chart.getData().isEmpty()){
+		if(test.isEmpty()){
+			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+			errorDialog.show(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
+		}else if(hasNewText || chart.getData().isEmpty()){
 			data = textArea.getText();
 			((AppData) applicationTemplate.getDataComponent()).clear();
 			((AppData) applicationTemplate.getDataComponent()).loadData(data);

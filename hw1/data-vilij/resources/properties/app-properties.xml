@@ -21,6 +21,7 @@ functionality within the main workspace. -->
         <property name="RESOURCE_SUBDIR_NOT_FOUND" value="Directory not found under resources."/>
 	<property name="INVALID_DATA_TITLE" value="Invalid Data"/>
 	<property name="INVALID_DATA_MESSAGE" value="The data in the text area does not follow the .tsd format. Each line of data must follow the following format: @[name] [label] [x,y]. Each component separated by a tab. " />
+	<property name="NO_DATA_MESSAGE" value="There is nothing to display" />
 
         <!-- APPLICATION-SPECIFIC MESSAGE TITLES -->
         <property name="SAVE_UNSAVED_WORK_TITLE" value="Save Current Work"/>
