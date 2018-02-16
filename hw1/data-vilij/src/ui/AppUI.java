@@ -48,6 +48,7 @@ public final class AppUI extends UITemplate {
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
         super(primaryStage, applicationTemplate);
         this.applicationTemplate = applicationTemplate;
+	manager = applicationTemplate.manager;
     }
 
     @Override
@@ -60,10 +61,10 @@ public final class AppUI extends UITemplate {
         // TODO for homework 1
 	super.setToolBar(applicationTemplate);
 
-	String iconsPath = "/" + String.join(separator, applicationTemplate.manager.getPropertyValue(GUI_RESOURCE_PATH.name()),applicationTemplate.manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
-	String scrnshotIconPath = iconsPath + separator + applicationTemplate.manager.getPropertyValue(SCREENSHOT_ICON.name());
+	String iconsPath = "/" + String.join(separator, manager.getPropertyValue(GUI_RESOURCE_PATH.name()), manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
+	String scrnshotIconPath = iconsPath + separator + manager.getPropertyValue(SCREENSHOT_ICON.name());
 
-	scrnshotButton = setToolbarButton(scrnshotIconPath,applicationTemplate.manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()),true);
+	scrnshotButton = setToolbarButton(scrnshotIconPath, manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()),true);
 	toolBar.getItems().add(scrnshotButton);
     }
 
@@ -95,7 +96,6 @@ public final class AppUI extends UITemplate {
         // TODO for homework 1
 	
 	workspace = new FlowPane();
-	manager = applicationTemplate.manager;
 
 	inputRegion = new VBox();
 	inputRegion.setPrefWidth(300);
