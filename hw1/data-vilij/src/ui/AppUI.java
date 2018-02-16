@@ -17,6 +17,7 @@ import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
 
 import static settings.AppPropertyTypes.*;
+import vilij.propertymanager.PropertyManager;
 import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 
@@ -40,6 +41,7 @@ public final class AppUI extends UITemplate {
     private VBox 			 inputRegion;
     private Label		 	 inputTitle;
     private String			 data;
+    private PropertyManager		 manager;
 
     public ScatterChart<Number, Number> getChart() { return chart; }
 
@@ -93,23 +95,24 @@ public final class AppUI extends UITemplate {
         // TODO for homework 1
 	
 	workspace = new FlowPane();
+	manager = applicationTemplate.manager;
 
 	inputRegion = new VBox();
 	inputRegion.setPrefWidth(300);
 	inputRegion.setAlignment(Pos.TOP_CENTER);
 
-	inputTitle = new Label("Data File");
+	inputTitle = new Label(manager.getPropertyValue(TEXT_AREA_TITLE.name()));
 	inputTitle.setAlignment(Pos.CENTER);
-	inputTitle.getStyleClass().add("chart-title");
+	inputTitle.getStyleClass().add(manager.getPropertyValue(TITLE_STYLE.name()));
 	textArea = new TextArea();
 	textArea.setPrefHeight(150);
 	textArea.setWrapText(true);
 	VBox.setMargin(textArea, new Insets(10));
-	displayButton = new Button("Display");
+	displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
 	inputRegion.getChildren().addAll(inputTitle, textArea, displayButton);
 
 	chart = new ScatterChart<>(new NumberAxis(), new NumberAxis());
-	chart.setTitle("Data Visualization");
+	chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));
 	chart.setPrefSize(700, 500);
 
 	workspace.getChildren().addAll(inputRegion, chart);
@@ -149,6 +152,9 @@ public final class AppUI extends UITemplate {
 			((AppData) applicationTemplate.getDataComponent()).clear();
 			((AppData) applicationTemplate.getDataComponent()).loadData(data);
 		}
+
+		//TODO if additional line after valid data is invalid, the display still works
+		//TODO if there's empty line, it still displays data
 	});
     }
 }
