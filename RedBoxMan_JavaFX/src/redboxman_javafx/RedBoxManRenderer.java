@@ -127,7 +127,7 @@ public class RedBoxManRenderer extends Application {
 
 
 
-	    String headColor = "#DD0000";
+	    String headColor = "#40E0D0";
 	    String outlineColor = "#000000";
 	    int headW = 115;
 	    int headH = 88;

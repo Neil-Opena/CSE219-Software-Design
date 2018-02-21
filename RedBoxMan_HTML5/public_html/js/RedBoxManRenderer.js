@@ -85,6 +85,75 @@ function updateMousePosition(event) {
     render();
 }
 
+function renderShapesRedRoundMan(location){
+ //Draw Body
+	   var bodyX = location.x + (25);
+	   var bodyY = location.y + (70);
+	   var bodyW = 60;
+	   var bodyH = 30;
+	   gc.fillStyle = "#000000";
+	   gc.fillRect(bodyX, bodyY, bodyW, bodyH);
+	   gc.fillRect(bodyX + 7.5, bodyY + 20, 45, 20);
+	   gc.fillRect(bodyX - 2, bodyY + 35, 10, 10);
+	   gc.fillRect(bodyX + bodyW - 8, bodyY +35, 10, 10);
+	   gc.beginPath();
+
+	    var headColor = "#40E0D0";
+	    var outlineColor = "#000000";
+	    var headW = 115;
+	    var headH = 88;
+
+	    //Draw his red head
+	    gc.fillStyle = headColor;
+	    gc.fillRect(location.x, location.y, headW, headH);
+	    gc.beginPath();
+	    gc.strokeStyle = outlineColor;
+	    gc.lineWidth = 1;
+	    gc.rect(location.x, location.y, headW, headH);
+	    gc.stroke();
+
+	    //Draw his eyes
+	    var eyeColor = "#FFFF00";
+	    var eyeW = 30;
+	    var eyeH = 20;
+
+	    var leftX = location.x + (15);
+	    var leftY = location.y + (25);
+	    var rightX = location.x + (65);
+	    var rightY= leftY;
+
+	    gc.fillStyle = eyeColor;
+	    gc.fillRect(leftX, leftY, eyeW, eyeH);
+	    gc.fillRect(rightX, rightY, eyeW, eyeH);
+	    gc.beginPath();
+	    gc.rect(leftX, leftY, eyeW, eyeH);
+	    gc.rect(rightX, rightY, eyeW, eyeH);
+	    gc.stroke();
+
+	    //Draw pupils
+	    var black = "#000000";
+	    var pupilW = 10;
+	    var pupilH = 5;
+	    var pupilLeftX = leftX + 9;
+	    var pupilLeftY = leftY + 8;
+	    var pupilRightX = rightX + 9;
+	    var pupilRightY = pupilLeftY;
+
+	    gc.fillStyle = black;
+	    gc.fillRect(pupilLeftX, pupilLeftY, pupilW, pupilH);
+	    gc.fillRect(pupilRightX, pupilRightY, pupilW, pupilH);
+	    gc.beginPath();
+
+
+	   //Draw mouth
+	   var mouthX = location.x + 20;
+	   var mouthY = location.y + 60;
+	   var mouthW = 70;
+	   var mouthH = 7;
+	   gc.fillRect(mouthX, mouthY, mouthW, mouthH);
+	   gc.beginPath();
+}
+
 function renderShapesRedBoxMan(location) {
     var headColor = "#DD0000";
     var outlineColor = "#000000";
@@ -121,7 +190,8 @@ function render() {
     clearCanvas();
     for (var i = 0; i < shapesRedBoxManLocations.length; i++) {
 	var location = shapesRedBoxManLocations[i];
-	renderShapesRedBoxMan(location);
+	renderShapesRedRoundMan(location);
+	//renderShapesRedBoxMan(location);
     }
     for (var j = 0; j < imagesRedBoxManLocations.length; j++) {
 	var location = imagesRedBoxManLocations[j];
