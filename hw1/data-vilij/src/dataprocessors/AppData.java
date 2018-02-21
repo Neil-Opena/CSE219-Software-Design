@@ -1,5 +1,8 @@
 package dataprocessors;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import ui.AppUI;
 import vilij.components.DataComponent;
 import vilij.templates.ApplicationTemplate;
@@ -45,6 +48,16 @@ public class AppData implements DataComponent {
     @Override
     public void saveData(Path dataFilePath) {
         // TODO: NOT A PART OF HW 1
+	File file = dataFilePath.toFile();
+	try{
+		FileWriter writer = new FileWriter(file);
+		writer.append(((AppUI) applicationTemplate.getUIComponent()).getTextAreaData());
+		writer.close();
+	}catch(IOException e){
+		System.out.println("something went wrong");
+		e.printStackTrace();
+		//FIXME
+	}
     }
 
     @Override

@@ -1,7 +1,7 @@
 package actions;
 
+import dataprocessors.AppData;
 import java.io.File;
-import java.io.FileWriter;
 import vilij.components.ActionComponent;
 import vilij.templates.ApplicationTemplate;
 
@@ -113,8 +113,9 @@ public final class AppActions implements ActionComponent {
 		if(option == Option.YES){
 			File saveFile = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 			try{
-				FileWriter writer = new FileWriter(saveFile);
+				saveFile.createNewFile();
 				dataFilePath = saveFile.toPath();
+				((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
 			}catch(NullPointerException e){
 				return false;
 			}
