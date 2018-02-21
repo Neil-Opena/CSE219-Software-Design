@@ -12,6 +12,7 @@ import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
 import java.util.stream.Stream;
+import javafx.scene.control.TextArea;
 import static settings.AppPropertyTypes.INVALID_DATA_MESSAGE;
 import static settings.AppPropertyTypes.INVALID_DATA_TITLE;
 import vilij.components.Dialog;
@@ -36,11 +37,15 @@ public class AppData implements DataComponent {
     public void loadData(Path dataFilePath) {
         // TODO: NOT A PART OF HW 1
 	File file = dataFilePath.toFile();
+	TextArea textArea = ((AppUI) applicationTemplate.getUIComponent()).getTextArea();
 	try{
+		clear(); // clear the chart and text area first
+		textArea.clear();
+
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		Stream<String> dataLines = reader.lines();
 		dataLines.forEach(line -> {
-			((AppUI) applicationTemplate.getUIComponent()).getTextArea().appendText(line + "\n");
+			textArea.appendText(line + "\n");
 			System.out.println(line);
 		});
 		
