@@ -98,6 +98,10 @@ public final class AppUI extends UITemplate {
 	    return textArea;
     }
 
+    public Button getSaveButton(){
+	    return saveButton;
+    }
+
     private void layout() {
         // TODO for homework 1
 	
@@ -131,13 +135,25 @@ public final class AppUI extends UITemplate {
 
 	//if textArea has content, enable newbutton
 	textArea.textProperty().addListener(e -> {
-		
-		if(textArea.getText().isEmpty()){
-			newButton.setDisable(true);
-			saveButton.setDisable(true);
+		//FIXME
+		String savedData = ((AppData) applicationTemplate.getDataComponent()).getSavedData();
+		System.out.println(savedData);
+		if(savedData == null){
+			if(textArea.getText().isEmpty()){
+				newButton.setDisable(true);
+				saveButton.setDisable(true);
+			}else{
+				newButton.setDisable(false);
+				saveButton.setDisable(false);
+			}
 		}else{
-			newButton.setDisable(false);
-			saveButton.setDisable(false);
+			//current file has been saved
+			if(textArea.getText().equals(savedData)){
+				saveButton.setDisable(true);
+				//FIXME how about new button?
+			}else{
+				saveButton.setDisable(false);
+			}
 		}
 	}); 
 

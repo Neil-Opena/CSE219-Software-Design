@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import static settings.AppPropertyTypes.*;
+import ui.AppUI;
 import vilij.components.ConfirmationDialog;
 import vilij.components.ConfirmationDialog.Option;
 import vilij.components.Dialog;
@@ -60,7 +61,7 @@ public final class AppActions implements ActionComponent {
     public void handleSaveRequest() {
         // TODO: NOT A PART OF HW 1
 	try{
-		promptToSave();
+		promptToSave(); //FIXME, no need to prompt
 	}catch(IOException e){
 		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 		errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
@@ -70,7 +71,6 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleLoadRequest() {
         // TODO: NOT A PART OF HW 1
-	//((AppData) applicationTemplate.getDataComponent()).loadData(dataFilePath);
 	File file = fileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 	try{
 		((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
@@ -123,6 +123,7 @@ public final class AppActions implements ActionComponent {
 				saveFile.createNewFile();
 				dataFilePath = saveFile.toPath();
 				((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+				((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
 			}catch(NullPointerException e){
 				return false;
 			}

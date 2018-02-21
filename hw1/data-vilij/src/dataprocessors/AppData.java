@@ -28,9 +28,15 @@ public class AppData implements DataComponent {
     private TSDProcessor        processor;
     private ApplicationTemplate applicationTemplate;
 
+    private String		savedData;
+
     public AppData(ApplicationTemplate applicationTemplate) {
         this.processor = new TSDProcessor();
         this.applicationTemplate = applicationTemplate;
+    }
+
+    public String getSavedData(){
+	    return savedData;
     }
 
     @Override
@@ -79,14 +85,19 @@ public class AppData implements DataComponent {
 	File file = dataFilePath.toFile();
 	try{
 		FileWriter writer = new FileWriter(file);
-		writer.append(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText());
+		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText();
+		savedData = text;
+		writer.append(text);
 		writer.close();
+		//when saving, the data and text area should be the same
 	}catch(IOException e){
 		System.out.println("something went wrong");
 		e.printStackTrace();
 		//FIXME
 	}
     }
+
+    //if data saved is different from text area, save button should be enabled
 
     @Override
     public void clear() {
