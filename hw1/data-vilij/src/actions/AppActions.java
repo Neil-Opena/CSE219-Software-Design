@@ -70,6 +70,9 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleLoadRequest() {
         // TODO: NOT A PART OF HW 1
+	//((AppData) applicationTemplate.getDataComponent()).loadData(dataFilePath);
+	File file = fileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+	((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
     }
 
     @Override

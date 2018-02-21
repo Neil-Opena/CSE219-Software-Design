@@ -94,8 +94,8 @@ public final class AppUI extends UITemplate {
 	newButton.setDisable(true);
     }
 
-    public String getTextAreaData(){
-	    return textArea.getText();
+    public TextArea getTextArea(){
+	    return textArea;
     }
 
     private void layout() {

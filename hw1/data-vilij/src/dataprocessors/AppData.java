@@ -1,6 +1,9 @@
 package dataprocessors;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import ui.AppUI;
@@ -8,6 +11,7 @@ import vilij.components.DataComponent;
 import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
+import java.util.stream.Stream;
 import static settings.AppPropertyTypes.INVALID_DATA_MESSAGE;
 import static settings.AppPropertyTypes.INVALID_DATA_TITLE;
 import vilij.components.Dialog;
@@ -31,6 +35,25 @@ public class AppData implements DataComponent {
     @Override
     public void loadData(Path dataFilePath) {
         // TODO: NOT A PART OF HW 1
+	File file = dataFilePath.toFile();
+	try{
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		Stream<String> dataLines = reader.lines();
+		dataLines.forEach(line -> {
+			((AppUI) applicationTemplate.getUIComponent()).getTextArea().appendText(line + "\n");
+			System.out.println(line);
+		});
+		
+		reader.close();
+	}catch(FileNotFoundException e){
+		System.out.println("file not found");
+		e.printStackTrace();
+		//FIXME
+	}catch(IOException e){
+		System.out.println("Something went wrong");
+		e.printStackTrace();
+		//FIXME
+	}
     }
 
     public void loadData(String dataString){
@@ -51,7 +74,7 @@ public class AppData implements DataComponent {
 	File file = dataFilePath.toFile();
 	try{
 		FileWriter writer = new FileWriter(file);
-		writer.append(((AppUI) applicationTemplate.getUIComponent()).getTextAreaData());
+		writer.append(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText());
 		writer.close();
 	}catch(IOException e){
 		System.out.println("something went wrong");
