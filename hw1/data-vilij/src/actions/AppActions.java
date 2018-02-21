@@ -72,7 +72,11 @@ public final class AppActions implements ActionComponent {
         // TODO: NOT A PART OF HW 1
 	//((AppData) applicationTemplate.getDataComponent()).loadData(dataFilePath);
 	File file = fileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
-	((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
+	try{
+		((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
+	}catch(NullPointerException e){
+		//load cancelled
+	}
     }
 
     @Override
