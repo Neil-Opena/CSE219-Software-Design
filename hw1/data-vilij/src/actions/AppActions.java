@@ -60,15 +60,14 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleSaveRequest() {
         // TODO: NOT A PART OF HW 1
-	//try{
-		//promptToSave(); //FIXME, no need to prompt
-	//}catch(IOException e){
-		//Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-		//errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
-	//}
-
+	    System.out.println(dataFilePath);
 	if(dataFilePath == null){
-		//promptoSave() ?
+		try{
+			showSaveDialog();
+		}catch(IOException e){
+			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+			errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
+		}
 	}else{
 		((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
 		((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable Save Button
@@ -81,6 +80,7 @@ public final class AppActions implements ActionComponent {
 	File file = fileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 	try{
 		((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
+		dataFilePath = file.toPath();
 		((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
 	}catch(NullPointerException e){
 		//load cancelled
@@ -126,18 +126,23 @@ public final class AppActions implements ActionComponent {
 		return false;
 	}else{
 		if(option == Option.YES){
-			File saveFile = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
-			try{
-				saveFile.createNewFile();
-				dataFilePath = saveFile.toPath();
-				((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-				((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
-			}catch(NullPointerException e){
-				return false;
-			}
+			return showSaveDialog();
 		}
 		return true;
 	}
 
+    }
+
+    private boolean showSaveDialog() throws IOException{
+	    File saveFile = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+	    try{
+		saveFile.createNewFile();
+		dataFilePath = saveFile.toPath();
+		((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+		((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
+	    }catch(NullPointerException e){
+		return false; //save cancelled
+	    }
+	    return true;
     }
 }

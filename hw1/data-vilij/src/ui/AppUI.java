@@ -148,7 +148,7 @@ public final class AppUI extends UITemplate {
 		}else{
 			//current file has been saved
 			newButton.setDisable(false);
-			if(textArea.getText().equals(savedData)){
+			if(textArea.getText().trim().equals(savedData)){
 				saveButton.setDisable(true);
 				//FIXME how about new button?
 			}else{
@@ -158,7 +158,7 @@ public final class AppUI extends UITemplate {
 	}); 
 
 	displayButton.setOnAction(event -> {
-		String test = textArea.textProperty().getValue().trim();
+		String test = textArea.textProperty().getValue().trim(); //change to getText?
 		hasNewText = !test.equals(data);
 		if(test.isEmpty()){
 			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);

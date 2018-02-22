@@ -53,7 +53,7 @@ public class AppData implements DataComponent {
 		dataLines.forEach(line -> {
 			textArea.appendText(line + "\n");
 		});
-		savedData = textArea.getText();
+		savedData = textArea.getText().trim(); //or should it be property?
 		reader.close();
 	}catch(FileNotFoundException e){
 		System.out.println("file not found");
