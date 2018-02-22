@@ -50,6 +50,7 @@ public final class AppActions implements ActionComponent {
 	try{
 		if(promptToSave()){
 			applicationTemplate.getUIComponent().clear();
+			dataFilePath = null;
 		}
 	}catch(IOException e){
 		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
