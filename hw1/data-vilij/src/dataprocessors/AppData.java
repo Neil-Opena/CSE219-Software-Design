@@ -85,7 +85,7 @@ public class AppData implements DataComponent {
 	try{
 		FileWriter writer = new FileWriter(file);
 		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText();
-		savedData = text;
+		savedData = text.trim();
 		writer.append(text);
 		writer.close();
 		//when saving, the data and text area should be the same
@@ -100,6 +100,7 @@ public class AppData implements DataComponent {
 
     @Override
     public void clear() {
+	savedData = null;
         processor.clear();
 	((AppUI) applicationTemplate.getUIComponent()).getChart().getData().clear();
     }

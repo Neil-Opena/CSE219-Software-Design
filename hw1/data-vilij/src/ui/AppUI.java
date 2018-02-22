@@ -147,6 +147,7 @@ public final class AppUI extends UITemplate {
 			}
 		}else{
 			//current file has been saved
+			newButton.setDisable(false);
 			if(textArea.getText().equals(savedData)){
 				saveButton.setDisable(true);
 				//FIXME how about new button?
