@@ -52,9 +52,8 @@ public class AppData implements DataComponent {
 		Stream<String> dataLines = reader.lines();
 		dataLines.forEach(line -> {
 			textArea.appendText(line + "\n");
-			System.out.println(line);
 		});
-		
+		savedData = textArea.getText();
 		reader.close();
 	}catch(FileNotFoundException e){
 		System.out.println("file not found");

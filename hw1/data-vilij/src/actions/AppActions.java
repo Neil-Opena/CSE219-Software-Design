@@ -60,11 +60,18 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleSaveRequest() {
         // TODO: NOT A PART OF HW 1
-	try{
-		promptToSave(); //FIXME, no need to prompt
-	}catch(IOException e){
-		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-		errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
+	//try{
+		//promptToSave(); //FIXME, no need to prompt
+	//}catch(IOException e){
+		//Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+		//errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
+	//}
+
+	if(dataFilePath == null){
+		//promptoSave() ?
+	}else{
+		((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+		((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable Save Button
 	}
     }
 
@@ -74,6 +81,7 @@ public final class AppActions implements ActionComponent {
 	File file = fileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 	try{
 		((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
+		((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
 	}catch(NullPointerException e){
 		//load cancelled
 	}

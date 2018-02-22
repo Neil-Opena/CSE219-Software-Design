@@ -137,7 +137,6 @@ public final class AppUI extends UITemplate {
 	textArea.textProperty().addListener(e -> {
 		//FIXME
 		String savedData = ((AppData) applicationTemplate.getDataComponent()).getSavedData();
-		System.out.println(savedData);
 		if(savedData == null){
 			if(textArea.getText().isEmpty()){
 				newButton.setDisable(true);
