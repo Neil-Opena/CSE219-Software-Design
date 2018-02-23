@@ -35,6 +35,12 @@ public final class AppActions implements ActionComponent {
 	private PropertyManager manager;
 
 	/**
+	 * Variables to make file more readable.
+	 */
+	private AppData appData;
+	private AppUI appUI;
+
+	/**
 	 * Path to the data file currently active.
 	 */
 	Path dataFilePath;
@@ -42,6 +48,10 @@ public final class AppActions implements ActionComponent {
 	public AppActions(ApplicationTemplate applicationTemplate) {
 		this.applicationTemplate = applicationTemplate;
 		manager = applicationTemplate.manager;
+
+		appData = ((AppData) applicationTemplate.getDataComponent());
+		appUI = ((AppUI) applicationTemplate.getUIComponent());
+
 		this.fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(manager.getPropertyValue(DATA_FILE_EXT_DESC.name()), manager.getPropertyValue(DATA_FILE_EXT.name())));
 		Path current = Paths.get(".").toAbsolutePath();
@@ -51,7 +61,6 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleNewRequest() {
-		// TODO for homework 1
 		try {
 			if (promptToSave()) {
 				applicationTemplate.getUIComponent().clear();
@@ -65,28 +74,36 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleSaveRequest() {
-		// TODO: NOT A PART OF HW 1
-		if (dataFilePath == null) {
-			try {
-				showSaveDialog();
-			} catch (IOException e) {
-				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-				errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
+		String testData = appData.checkData(appUI.getTextArea().getText().trim());
+		if(testData == null){
+			if(dataFilePath == null){ //no save file yet
+				try{
+					showSaveDialog();
+				}catch(IOException e){
+					showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
+				}
+			}else{
+				appData.saveData(dataFilePath);
 			}
-		} else {
-			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable Save Button
+			appUI.getSaveButton().setDisable(true); //disable Save Button
+		}else{
+			showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData); //Invalid Data --> will not save
 		}
 	}
 
 	@Override
 	public void handleLoadRequest() {
-		// TODO: NOT A PART OF HW 1
 		File file = fileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		try {
-			((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
-			dataFilePath = file.toPath();
-			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
+			String fileData = appData.getFileText(file.toPath());
+			String testData = appData.checkData(fileData);
+			if(testData == null){
+				appData.loadData(file.toPath());
+				dataFilePath = file.toPath();
+			} else {
+				showErrorDialog("CANNOT LOAD", "Not a tsd file: cannot load because of invalid data \n" + testData); //Invalid Data --> will not load
+			}
+			appUI.getSaveButton().setDisable(true); //disable save button
 		} catch (NullPointerException e) {
 			//load cancelled
 		}
@@ -94,7 +111,6 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleExitRequest() {
-		// TODO for homework 1
 		Platform.exit();
 	}
 
@@ -125,8 +141,6 @@ public final class AppActions implements ActionComponent {
 	 * <code>true</code> otherwise.
 	 */
 	private boolean promptToSave() throws IOException {
-		// TODO for homework 1
-		// TODO remove the placeholder line below after you have implemented this method
 		ConfirmationDialog confirmDialog = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
 		confirmDialog.show(manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
 
@@ -136,24 +150,34 @@ public final class AppActions implements ActionComponent {
 			return false;
 		} else {
 			if (option == Option.YES) {
-				return showSaveDialog();
+				String testData = appData.checkData(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim());
+				if(testData == null){
+					return showSaveDialog();
+				}else{
+					showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData);
+					return false;
+				}
 			}
 			return true;
 		}
-
 	}
+	
 
 	private boolean showSaveDialog() throws IOException {
-		//FIXME don't want to show save dialog if data is invalid
 		File saveFile = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		try {
 			saveFile.createNewFile();
 			dataFilePath = saveFile.toPath();
-			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
+			appData.saveData(dataFilePath);
+			appUI.getSaveButton().setDisable(true); //disable save button
 		} catch (NullPointerException e) {
 			return false; //save cancelled
 		}
 		return true;
+	}
+
+	private void showErrorDialog(String title, String message) {
+		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+		errorDialog.show(title, message);
 	}
 }

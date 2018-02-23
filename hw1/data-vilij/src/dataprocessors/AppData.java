@@ -45,37 +45,12 @@ public class AppData implements DataComponent {
 		// TODO: NOT A PART OF HW 1
 		File file = dataFilePath.toFile();
 		TextArea textArea = ((AppUI) applicationTemplate.getUIComponent()).getTextArea();
-		try {
-			clear(); // clear the chart and text area first
-			textArea.clear();
+			
+		clear(); // clear the chart and text area first
+		textArea.clear();
 
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			Stream<String> dataLines = reader.lines();
-
-			StringBuilder data = new StringBuilder();
-
-			dataLines.forEach(line -> {
-				data.append(line + "\n");
-			});
-
-			String testData = checkData(data.toString());
-
-			if (testData == null) {
-				textArea.setText(data.toString());
-			} else {
-				showErrorDialog("CANNOT LOAD", "Not a tsd file: cannot load because of invalid data \n" + testData);
-			}
-			savedData = textArea.getText().trim(); //or should it be property?
-			reader.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("file not found");
-			e.printStackTrace();
-			//FIXME
-		} catch (IOException e) {
-			System.out.println("Something went wrong");
-			e.printStackTrace();
-			//FIXME
-		}
+		textArea.setText(getFileText(dataFilePath));
+		savedData = textArea.getText().trim();
 	}
 
 	public void loadData(String dataString) {
@@ -85,26 +60,24 @@ public class AppData implements DataComponent {
 		if (testData == null) {
 			displayData();
 		} else {
-			showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
+			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+			errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
 		}
 	}
 
 	@Override
 	public void saveData(Path dataFilePath) {
 		// TODO: NOT A PART OF HW 1
-		File file = dataFilePath.toFile();
 		try {
 			String text = ((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim();
-			String testData = checkData(text);
 
-			if (testData == null) {
-				FileWriter writer = new FileWriter(file);
-				savedData = text;
-				writer.append(text);
-				writer.close();
-			} else {
-				showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData);
-			}
+			File file = dataFilePath.toFile();
+				
+			FileWriter writer = new FileWriter(file);
+			savedData = text;
+			writer.append(text);
+			writer.close();
+			
 		} catch (IOException e) {
 			System.out.println("something went wrong");
 			e.printStackTrace();
@@ -123,7 +96,7 @@ public class AppData implements DataComponent {
 		processor.toChartData(((AppUI) applicationTemplate.getUIComponent()).getChart());
 	}
 
-	private String checkData(String data) {
+	public String checkData(String data) {
 		try {
 			processor.clear();
 			processor.processString(data);
@@ -137,8 +110,29 @@ public class AppData implements DataComponent {
 		}
 	}
 
-	private void showErrorDialog(String title, String message) {
-		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-		errorDialog.show(title, message);
+	public String getFileText(Path path){
+		File file = path.toFile();
+		try{
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			Stream<String> dataLines = reader.lines();
+
+			StringBuilder data = new StringBuilder();
+
+			dataLines.forEach(line -> {
+				data.append(line + "\n");
+			});
+			return data.toString();
+		}catch(FileNotFoundException e){
+			System.out.println("file not found");
+			e.printStackTrace();
+			//FIXME
+		}catch(IOException e){
+			System.out.println("Something went wrong");
+			e.printStackTrace();
+			//FIXME
+		}
+		return null;
 	}
+
+	
 }
