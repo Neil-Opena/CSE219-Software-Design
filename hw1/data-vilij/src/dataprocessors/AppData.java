@@ -50,6 +50,7 @@ public class AppData implements DataComponent {
 		textArea.clear();
 
 		textArea.setText(getFileText(dataFilePath));
+		System.out.println(getFileText(dataFilePath));
 		savedData = textArea.getText().trim();
 	}
 

@@ -37,8 +37,6 @@ public final class AppActions implements ActionComponent {
 	/**
 	 * Variables to make file more readable.
 	 */
-	private AppData appData;
-	private AppUI appUI;
 
 	/**
 	 * Path to the data file currently active.
@@ -48,9 +46,6 @@ public final class AppActions implements ActionComponent {
 	public AppActions(ApplicationTemplate applicationTemplate) {
 		this.applicationTemplate = applicationTemplate;
 		manager = applicationTemplate.manager;
-
-		appData = ((AppData) applicationTemplate.getDataComponent());
-		appUI = ((AppUI) applicationTemplate.getUIComponent());
 
 		this.fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(manager.getPropertyValue(DATA_FILE_EXT_DESC.name()), manager.getPropertyValue(DATA_FILE_EXT.name())));
@@ -74,7 +69,7 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleSaveRequest() {
-		String testData = appData.checkData(appUI.getTextArea().getText().trim());
+		String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim());
 		if(testData == null){
 			if(dataFilePath == null){ //no save file yet
 				try{
@@ -83,9 +78,9 @@ public final class AppActions implements ActionComponent {
 					showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
 				}
 			}else{
-				appData.saveData(dataFilePath);
+				((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
 			}
-			appUI.getSaveButton().setDisable(true); //disable Save Button
+			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable Save Button
 		}else{
 			showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData); //Invalid Data --> will not save
 		}
@@ -95,15 +90,15 @@ public final class AppActions implements ActionComponent {
 	public void handleLoadRequest() {
 		File file = fileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		try {
-			String fileData = appData.getFileText(file.toPath());
-			String testData = appData.checkData(fileData);
+			String fileData = ((AppData) applicationTemplate.getDataComponent()).getFileText(file.toPath());
+			String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(fileData);
 			if(testData == null){
-				appData.loadData(file.toPath());
+				((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
 				dataFilePath = file.toPath();
 			} else {
 				showErrorDialog("CANNOT LOAD", "Not a tsd file: cannot load because of invalid data \n" + testData); //Invalid Data --> will not load
 			}
-			appUI.getSaveButton().setDisable(true); //disable save button
+			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
 		} catch (NullPointerException e) {
 			//load cancelled
 		}
@@ -150,7 +145,7 @@ public final class AppActions implements ActionComponent {
 			return false;
 		} else {
 			if (option == Option.YES) {
-				String testData = appData.checkData(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim());
+				String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim());
 				if(testData == null){
 					return showSaveDialog();
 				}else{
@@ -168,8 +163,8 @@ public final class AppActions implements ActionComponent {
 		try {
 			saveFile.createNewFile();
 			dataFilePath = saveFile.toPath();
-			appData.saveData(dataFilePath);
-			appUI.getSaveButton().setDisable(true); //disable save button
+			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
 		} catch (NullPointerException e) {
 			return false; //save cancelled
 		}
