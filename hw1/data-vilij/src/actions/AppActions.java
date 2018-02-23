@@ -35,10 +35,6 @@ public final class AppActions implements ActionComponent {
 	private PropertyManager manager;
 
 	/**
-	 * Variables to make file more readable.
-	 */
-
-	/**
 	 * Path to the data file currently active.
 	 */
 	Path dataFilePath;
@@ -47,6 +43,7 @@ public final class AppActions implements ActionComponent {
 		this.applicationTemplate = applicationTemplate;
 		manager = applicationTemplate.manager;
 
+		//set up file chooser
 		this.fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new ExtensionFilter(manager.getPropertyValue(DATA_FILE_EXT_DESC.name()), manager.getPropertyValue(DATA_FILE_EXT.name())));
 		Path current = Paths.get(".").toAbsolutePath();

@@ -42,20 +42,16 @@ public class AppData implements DataComponent {
 
 	@Override
 	public void loadData(Path dataFilePath) {
-		// TODO: NOT A PART OF HW 1
-		File file = dataFilePath.toFile();
 		TextArea textArea = ((AppUI) applicationTemplate.getUIComponent()).getTextArea();
 			
 		clear(); // clear the chart and text area first
 		textArea.clear();
 
 		textArea.setText(getFileText(dataFilePath));
-		System.out.println(getFileText(dataFilePath));
 		savedData = textArea.getText().trim();
 	}
 
 	public void loadData(String dataString) {
-		// TODO for homework 1
 		String testData = checkData(dataString);
 
 		if (testData == null) {
@@ -68,7 +64,6 @@ public class AppData implements DataComponent {
 
 	@Override
 	public void saveData(Path dataFilePath) {
-		// TODO: NOT A PART OF HW 1
 		try {
 			String text = ((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim();
 
