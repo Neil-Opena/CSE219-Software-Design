@@ -61,7 +61,6 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleSaveRequest() {
         // TODO: NOT A PART OF HW 1
-	    System.out.println(dataFilePath);
 	if(dataFilePath == null){
 		try{
 			showSaveDialog();

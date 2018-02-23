@@ -150,7 +150,6 @@ public final class AppUI extends UITemplate {
 			newButton.setDisable(false);
 			if(textArea.getText().trim().equals(savedData)){
 				saveButton.setDisable(true);
-				//FIXME how about new button?
 			}else{
 				saveButton.setDisable(false);
 			}

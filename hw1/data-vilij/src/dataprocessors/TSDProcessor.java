@@ -53,17 +53,25 @@ public final class TSDProcessor {
                       String   label = list.get(1);
                       String[] pair  = list.get(2).split(",");
                       Point2D  point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
+		      if(dataPoints.containsKey(name)){
+			      String message = "Invalid Line " + (dataPoints.size() + 1);
+			      message = message + ": Duplicate name = " + name;
+			      throw new Exception(message);
+		      }
                       dataLabels.put(name, label);
                       dataPoints.put(name, point);
                   } catch (Exception e) {
                       errorMessage.setLength(0);
-                      errorMessage.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
+                      //errorMessage.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
+		      errorMessage.append(e.getMessage());
                       hadAnError.set(true);
                   }
               });
         if (errorMessage.length() > 0)
             throw new Exception(errorMessage.toString());
     }
+
+    //maybe modify the exception to add line number?
 
     /**
      * Exports the data to the specified 2-D chart.
