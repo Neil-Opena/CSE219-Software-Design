@@ -78,11 +78,16 @@ public class AppData implements DataComponent {
         // TODO: NOT A PART OF HW 1
 	File file = dataFilePath.toFile();
 	try{
-		FileWriter writer = new FileWriter(file);
-		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText();
-		savedData = text.trim();
-		writer.append(text);
-		writer.close();
+		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim();
+		if(checkData(text)){
+			FileWriter writer = new FileWriter(file);
+			savedData = text;
+			writer.append(text);
+			writer.close();
+		}else{
+			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+			errorDialog.show("CANNOT SAVE", "cannot save because of invalid data");
+		}
 	}catch(IOException e){
 		System.out.println("something went wrong");
 		e.printStackTrace();
@@ -92,6 +97,7 @@ public class AppData implements DataComponent {
 
     private boolean checkData(String data){
 	try{
+		processor.clear();
 		processor.processString(data);
 		return true;
 	}catch(Exception e){
