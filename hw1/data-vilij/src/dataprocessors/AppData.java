@@ -57,10 +57,12 @@ public class AppData implements DataComponent {
 			data.append(line + "\n");
 		});
 
-		if(checkData(data.toString())){
+		String testData = checkData(data.toString());
+
+		if(testData == null){
 			textArea.setText(data.toString());
 		}else{
-			showErrorDialog("CANNOT LOAD", "Not a tsd file: cannot load because of invalid data");
+			showErrorDialog("CANNOT LOAD", "Not a tsd file: cannot load because of invalid data \n" + testData);
 		}
 		savedData = textArea.getText().trim(); //or should it be property?
 		reader.close();
@@ -77,8 +79,12 @@ public class AppData implements DataComponent {
 
     public void loadData(String dataString){
         // TODO for homework 1
-	if(checkData(dataString)){
+	String testData = checkData(dataString);
+
+	if(testData == null){
 		displayData();
+	}else{
+		showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
 	}
     }
 
@@ -88,13 +94,15 @@ public class AppData implements DataComponent {
 	File file = dataFilePath.toFile();
 	try{
 		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim();
-		if(checkData(text)){
+		String testData = checkData(text);
+
+		if(testData == null){
 			FileWriter writer = new FileWriter(file);
 			savedData = text;
 			writer.append(text);
 			writer.close();
 		}else{
-			showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data");
+			showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData);
 		}
 	}catch(IOException e){
 		System.out.println("something went wrong");
@@ -116,18 +124,17 @@ public class AppData implements DataComponent {
     }  
     
     
-    private boolean checkData(String data){
+	private String checkData(String data){
 	try{
 		processor.clear();
 		processor.processString(data);
-		return true;
+		return null;
 	}catch(Exception e){
 		String message = e.getMessage();
 		if(message.length() < 9){
 			message = message + applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name());
 		}
-		showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), message);
-		return false;
+		return message;
 	}
     }
 
