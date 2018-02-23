@@ -13,6 +13,7 @@ import vilij.templates.ApplicationTemplate;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import javafx.scene.control.TextArea;
+import static settings.AppPropertyTypes.INVALID_DATA_MESSAGE;
 import static settings.AppPropertyTypes.INVALID_DATA_TITLE;
 import vilij.components.Dialog;
 
@@ -72,8 +73,12 @@ public class AppData implements DataComponent {
 		displayData();
     	}catch(Exception e){
 		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-		errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), e.getMessage()); 
-		//errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name()));
+		String message = e.getMessage();
+		if(message.length() < 9){
+			message = message + applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name());
+		}
+		errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), message); 
+		
 	}
 
     }

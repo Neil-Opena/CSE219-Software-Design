@@ -24,8 +24,17 @@ public final class TSDProcessor {
         private static final String NAME_ERROR_MSG = "All data instance names must start with the @ character.";
 
         public InvalidDataNameException(String name) {
-            super(String.format("Invalid name '%s'." + NAME_ERROR_MSG, name));
+            super(String.format("Invalid name '%s'. " + NAME_ERROR_MSG, name));
         }
+    }
+    
+    public static class DuplicateNameException extends Exception{
+
+	private static final String message = "Duplicate name = "; //FIXMElater
+
+	public DuplicateNameException(String name){
+		super(message + name);
+	}
     }
 
     private Map<String, String>  dataLabels;
@@ -54,16 +63,16 @@ public final class TSDProcessor {
                       String[] pair  = list.get(2).split(",");
                       Point2D  point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
 		      if(dataPoints.containsKey(name)){
-			      String message = "Invalid Line " + (dataPoints.size() + 1);
-			      message = message + ": Duplicate name = " + name;
-			      throw new Exception(message);
+			      throw new DuplicateNameException(name);
 		      }
                       dataLabels.put(name, label);
                       dataPoints.put(name, point);
                   } catch (Exception e) {
                       errorMessage.setLength(0);
-                      //errorMessage.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
-		      errorMessage.append(e.getMessage());
+		      errorMessage.append("Line " + (dataPoints.size() + 1) + ": ");
+		      if(e instanceof InvalidDataNameException || e instanceof DuplicateNameException){
+		      	errorMessage.append(e.getMessage());
+		      }
                       hadAnError.set(true);
                   }
               });
