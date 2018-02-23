@@ -22,6 +22,7 @@ import vilij.templates.UITemplate;
 import static settings.AppPropertyTypes.*;
 import vilij.components.Dialog;
 import vilij.propertymanager.PropertyManager;
+import static vilij.settings.PropertyTypes.CSS_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 
@@ -58,6 +59,11 @@ public final class AppUI extends UITemplate {
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
 		super(primaryStage, applicationTemplate);
 		this.applicationTemplate = applicationTemplate;
+		cssPath = "/" + String.join(separator,
+                                    manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+                                    manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
+                                    "data-vilij.css");
+		this.getPrimaryScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
 	}
 
 	@Override
@@ -67,7 +73,6 @@ public final class AppUI extends UITemplate {
 
 	@Override
 	protected void setToolBar(ApplicationTemplate applicationTemplate) {
-		// TODO for homework 1
 		super.setToolBar(applicationTemplate);
 		manager = applicationTemplate.manager;
 
@@ -96,7 +101,6 @@ public final class AppUI extends UITemplate {
 
 	@Override
 	public void clear() {
-		// TODO for homework 1
 		((AppData) applicationTemplate.getDataComponent()).clear();
 		textArea.clear();
 		newButton.setDisable(true);
@@ -111,8 +115,6 @@ public final class AppUI extends UITemplate {
 	}
 
 	private void layout() {
-		// TODO for homework 1
-
 		workspace = new FlowPane();
 
 		inputRegion = new VBox();
@@ -145,7 +147,6 @@ public final class AppUI extends UITemplate {
 	}
 
 	private void setWorkspaceActions() {
-		// TODO for homework 1
 		applicationTemplate.setDataComponent(new AppData(applicationTemplate));
 
 		//if textArea has content, enable newbutton
@@ -172,7 +173,7 @@ public final class AppUI extends UITemplate {
 		});
 
 		displayButton.setOnAction(event -> {
-			String test = textArea.textProperty().getValue().trim(); //change to getText?
+			String test = textArea.getText().trim();
 			hasNewText = !test.equals(data);
 			if (test.isEmpty()) {
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -187,10 +188,11 @@ public final class AppUI extends UITemplate {
 		readOnly.setOnAction(event -> {
 			if (readOnly.isSelected()) {
 				textArea.setEditable(false);
-				textArea.setStyle("-fx-text-fill: gray");
+				//change to css CHANGE OTHERS too, like title bar and shit
+				textArea.getStyleClass().add("gray");
 			} else {
 				textArea.setEditable(true);
-				textArea.setStyle(null);
+				textArea.getStyleClass().remove("gray");
 			}
 		});
 	}
