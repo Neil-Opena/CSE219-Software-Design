@@ -68,19 +68,9 @@ public class AppData implements DataComponent {
 
     public void loadData(String dataString){
         // TODO for homework 1
-	try{
-		processor.processString(dataString);
+	if(checkData(dataString)){
 		displayData();
-    	}catch(Exception e){
-		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-		String message = e.getMessage();
-		if(message.length() < 9){
-			message = message + applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name());
-		}
-		errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), message); 
-		
 	}
-
     }
 
     @Override
@@ -97,6 +87,21 @@ public class AppData implements DataComponent {
 		System.out.println("something went wrong");
 		e.printStackTrace();
 		//FIXME
+	}
+    }
+
+    private boolean checkData(String data){
+	try{
+		processor.processString(data);
+		return true;
+	}catch(Exception e){
+		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+		String message = e.getMessage();
+		if(message.length() < 9){
+			message = message + applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name());
+		}
+		errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), message);
+		return false;
 	}
     }
 
