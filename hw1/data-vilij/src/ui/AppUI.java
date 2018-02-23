@@ -186,9 +186,11 @@ public final class AppUI extends UITemplate {
 
 		readOnly.setOnAction(event -> {
 			if (readOnly.isSelected()) {
-				textArea.setText("ON");
+				textArea.setEditable(false);
+				textArea.setStyle("-fx-text-fill: gray");
 			} else {
-				textArea.setText("OFF");
+				textArea.setEditable(true);
+				textArea.setStyle(null);
 			}
 		});
 	}
