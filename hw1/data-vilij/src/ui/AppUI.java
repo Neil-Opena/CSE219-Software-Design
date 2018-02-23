@@ -9,9 +9,11 @@ import javafx.geometry.Pos;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import vilij.templates.ApplicationTemplate;
@@ -44,6 +46,8 @@ public final class AppUI extends UITemplate {
     private Label		 	 inputTitle;
     private String			 data;
     private PropertyManager		 manager;
+    private HBox			 controls;
+    private CheckBox			 readOnly;
 
     public ScatterChart<Number, Number> getChart() { return chart; }
 
@@ -118,8 +122,15 @@ public final class AppUI extends UITemplate {
 	textArea.setPrefHeight(150);
 	textArea.setWrapText(true);
 	VBox.setMargin(textArea, new Insets(10));
+	
+	controls = new HBox();
+	controls.setAlignment(Pos.CENTER);
+	controls.setSpacing(20);
 	displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
-	inputRegion.getChildren().addAll(inputTitle, textArea, displayButton);
+	readOnly = new CheckBox("Read only");
+	controls.getChildren().addAll(displayButton, readOnly);
+
+	inputRegion.getChildren().addAll(inputTitle, textArea, controls);
 
 	chart = new ScatterChart<>(new NumberAxis(), new NumberAxis());
 	chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));
@@ -166,6 +177,14 @@ public final class AppUI extends UITemplate {
 			data = textArea.getText();
 			((AppData) applicationTemplate.getDataComponent()).clear();
 			((AppData) applicationTemplate.getDataComponent()).loadData(data);
+		}
+	});
+	
+	readOnly.setOnAction(event ->{
+		if(readOnly.isSelected()){
+			textArea.setText("ON");
+		}else{
+			textArea.setText("OFF");
 		}
 	});
     }
