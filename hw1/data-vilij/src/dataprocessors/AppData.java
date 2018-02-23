@@ -50,9 +50,18 @@ public class AppData implements DataComponent {
 
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		Stream<String> dataLines = reader.lines();
+		
+		StringBuilder data = new StringBuilder();
+
 		dataLines.forEach(line -> {
-			textArea.appendText(line + "\n");
+			data.append(line + "\n");
 		});
+
+		if(checkData(data.toString())){
+			textArea.setText(data.toString());
+		}else{
+			showErrorDialog("CANNOT LOAD", "Not a tsd file: cannot load because of invalid data");
+		}
 		savedData = textArea.getText().trim(); //or should it be property?
 		reader.close();
 	}catch(FileNotFoundException e){
@@ -85,8 +94,7 @@ public class AppData implements DataComponent {
 			writer.append(text);
 			writer.close();
 		}else{
-			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-			errorDialog.show("CANNOT SAVE", "cannot save because of invalid data");
+			showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data");
 		}
 	}catch(IOException e){
 		System.out.println("something went wrong");
@@ -95,23 +103,6 @@ public class AppData implements DataComponent {
 	}
     }
 
-    private boolean checkData(String data){
-	try{
-		processor.clear();
-		processor.processString(data);
-		return true;
-	}catch(Exception e){
-		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-		String message = e.getMessage();
-		if(message.length() < 9){
-			message = message + applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name());
-		}
-		errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), message);
-		return false;
-	}
-    }
-
-    //if data saved is different from text area, save button should be enabled
 
     @Override
     public void clear() {
@@ -122,5 +113,26 @@ public class AppData implements DataComponent {
 
     public void displayData() {
         processor.toChartData(((AppUI) applicationTemplate.getUIComponent()).getChart());
+    }  
+    
+    
+    private boolean checkData(String data){
+	try{
+		processor.clear();
+		processor.processString(data);
+		return true;
+	}catch(Exception e){
+		String message = e.getMessage();
+		if(message.length() < 9){
+			message = message + applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name());
+		}
+		showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), message);
+		return false;
+	}
+    }
+
+    private void showErrorDialog(String title, String message){
+	Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+	errorDialog.show(title, message);
     }
 }
