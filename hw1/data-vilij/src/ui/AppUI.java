@@ -4,6 +4,7 @@ package ui;
 import actions.AppActions;
 import dataprocessors.AppData;
 import static java.io.File.separator;
+import java.io.IOException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.NumberAxis;
@@ -91,6 +92,14 @@ public final class AppUI extends UITemplate {
 		loadButton.setOnAction(e -> applicationTemplate.getActionComponent().handleLoadRequest());
 		exitButton.setOnAction(e -> applicationTemplate.getActionComponent().handleExitRequest());
 		printButton.setOnAction(e -> applicationTemplate.getActionComponent().handlePrintRequest());
+		scrnshotButton.setOnAction(e -> {
+			try {
+				((AppActions) applicationTemplate.getActionComponent()).handleScreenshotRequest();
+			} catch (IOException ex) {
+				//ERROR occurred 
+				//FIXME
+			}
+		});
 	}
 
 	@Override
@@ -104,6 +113,7 @@ public final class AppUI extends UITemplate {
 		((AppData) applicationTemplate.getDataComponent()).clear();
 		textArea.clear();
 		newButton.setDisable(true);
+		scrnshotButton.setDisable(true);
 	}
 
 	public TextArea getTextArea() {
@@ -182,6 +192,7 @@ public final class AppUI extends UITemplate {
 				data = textArea.getText();
 				((AppData) applicationTemplate.getDataComponent()).clear();
 				((AppData) applicationTemplate.getDataComponent()).loadData(data);
+				scrnshotButton.setDisable(false);
 			}
 		});
 
@@ -195,5 +206,6 @@ public final class AppUI extends UITemplate {
 				textArea.getStyleClass().remove("gray");
 			}
 		});
+		
 	}
 }

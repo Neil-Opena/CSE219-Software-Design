@@ -9,8 +9,14 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.Chart;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javax.imageio.ImageIO;
 import static settings.AppPropertyTypes.*;
 import ui.AppUI;
 import vilij.components.ConfirmationDialog;
@@ -31,7 +37,8 @@ public final class AppActions implements ActionComponent {
 	 */
 	private ApplicationTemplate applicationTemplate;
 
-	private FileChooser fileChooser;
+	private FileChooser tsdFileChooser;
+	private FileChooser screenShotChooser;
 	private PropertyManager manager;
 
 	/**
@@ -43,12 +50,18 @@ public final class AppActions implements ActionComponent {
 		this.applicationTemplate = applicationTemplate;
 		manager = applicationTemplate.manager;
 
-		//set up file chooser
-		this.fileChooser = new FileChooser();
-		fileChooser.getExtensionFilters().add(new ExtensionFilter(manager.getPropertyValue(DATA_FILE_EXT_DESC.name()), manager.getPropertyValue(DATA_FILE_EXT.name())));
+		//set up file chooser for tsd files
+		this.tsdFileChooser = new FileChooser();
+		tsdFileChooser.getExtensionFilters().add(new ExtensionFilter(manager.getPropertyValue(DATA_FILE_EXT_DESC.name()), manager.getPropertyValue(DATA_FILE_EXT.name())));
 		Path current = Paths.get(".").toAbsolutePath();
-		Path defaultDirectory = current.resolve(manager.getPropertyValue(DATA_RESOURCE_PATH.name()));
-		fileChooser.setInitialDirectory(new File(defaultDirectory.toString()));
+		Path dataDirectory = current.resolve(manager.getPropertyValue(DATA_RESOURCE_PATH.name()));
+		tsdFileChooser.setInitialDirectory(new File(dataDirectory.toString()));
+
+		//set up file chooser for screenshots
+		this.screenShotChooser = new FileChooser();
+		screenShotChooser.getExtensionFilters().add(new ExtensionFilter("PNG","*.png"));
+		Path screenshotDirectory = current.resolve("data-vilij/resources/screenshots");
+		screenShotChooser.setInitialDirectory(new File(screenshotDirectory.toString()));
 	}
 
 	@Override
@@ -85,11 +98,12 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleLoadRequest() {
-		File file = fileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		try {
 			String fileData = ((AppData) applicationTemplate.getDataComponent()).getFileText(file.toPath());
 			String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(fileData);
 			if(testData == null){
+				applicationTemplate.getUIComponent().clear();
 				((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
 				dataFilePath = file.toPath();
 			} else {
@@ -112,7 +126,16 @@ public final class AppActions implements ActionComponent {
 	}
 
 	public void handleScreenshotRequest() throws IOException {
-		// TODO: NOT A PART OF HW 1
+		Chart chart = ((AppUI) applicationTemplate.getUIComponent()).getChart();
+		File file = screenShotChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+		try{
+			WritableImage image = new WritableImage((int) chart.getWidth(), (int) chart.getHeight());
+			Image screenshot = chart.snapshot(new SnapshotParameters(), image);
+			ImageIO.write(SwingFXUtils.fromFXImage(screenshot, null), "png", file);
+
+		}catch(IllegalArgumentException e){
+			//save cancelled
+		}
 	}
 
 	/**
@@ -156,7 +179,7 @@ public final class AppActions implements ActionComponent {
 	
 
 	private boolean showSaveDialog() throws IOException {
-		File saveFile = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+		File saveFile = tsdFileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		try {
 			saveFile.createNewFile();
 			dataFilePath = saveFile.toPath();
