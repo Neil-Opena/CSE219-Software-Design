@@ -5,10 +5,14 @@ import actions.AppActions;
 import dataprocessors.AppData;
 import static java.io.File.separator;
 import java.io.IOException;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -194,6 +198,8 @@ public final class AppUI extends UITemplate {
 				((AppData) applicationTemplate.getDataComponent()).loadData(data);
 				scrnshotButton.setDisable(false);
 			}
+
+			addDataPointListeners();
 		});
 
 		readOnly.setOnAction(event -> {
@@ -207,5 +213,18 @@ public final class AppUI extends UITemplate {
 			}
 		});
 		
+	}
+
+	private void addDataPointListeners(){
+		for(Series series : chart.getData()){
+			for(Data point : (ObservableList<Data>) series.getData()){
+				point.getNode().setOnMouseEntered(e -> {
+					getPrimaryScene().setCursor(Cursor.HAND);
+				});
+				point.getNode().setOnMouseExited(e -> {
+					getPrimaryScene().setCursor(Cursor.DEFAULT);
+				});
+			}
+		}
 	}
 }

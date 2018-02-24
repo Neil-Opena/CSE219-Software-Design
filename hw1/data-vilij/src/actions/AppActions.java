@@ -132,6 +132,7 @@ public final class AppActions implements ActionComponent {
 			WritableImage image = new WritableImage((int) chart.getWidth(), (int) chart.getHeight());
 			Image screenshot = chart.snapshot(new SnapshotParameters(), image);
 			ImageIO.write(SwingFXUtils.fromFXImage(screenshot, null), "png", file);
+			//FIXMEcan't use swing
 
 		}catch(IllegalArgumentException e){
 			//save cancelled
