@@ -213,7 +213,7 @@ public final class AppUI extends UITemplate {
 				textArea.getStyleClass().remove("gray");
 			}
 		});
-		
+
 	}
 
 	private void addDataPointListeners(){
