@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -218,8 +219,11 @@ public final class AppUI extends UITemplate {
 	private void addDataPointListeners(){
 		for(Series series : chart.getData()){
 			for(Data point : (ObservableList<Data>) series.getData()){
+				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
+
 				point.getNode().setOnMouseEntered(e -> {
-					getPrimaryScene().setCursor(Cursor.HAND);
+					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
+					System.out.println(point.getNode().toString());
 				});
 				point.getNode().setOnMouseExited(e -> {
 					getPrimaryScene().setCursor(Cursor.DEFAULT);

@@ -40,8 +40,17 @@ public final class TSDProcessor {
 		}
 	}
 
+	private class DataPoint extends Point2D{
+		String name;
+
+		public DataPoint(double x, double y, String name){
+			super(x, y);
+			this.name = name;
+		}
+	}
+
 	private Map<String, String> dataLabels;
-	private Map<String, Point2D> dataPoints;
+	private Map<String, DataPoint> dataPoints;
 
 	public TSDProcessor() {
 		dataLabels = new HashMap<>();
@@ -66,7 +75,7 @@ public final class TSDProcessor {
 					String name = checkedname(list.get(0));
 					String label = list.get(1);
 					String[] pair = list.get(2).split(",");
-					Point2D point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
+					DataPoint point = new DataPoint(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]), name);
 					if (dataPoints.containsKey(name)) {
 						throw new DuplicateNameException(name);
 					}
@@ -98,8 +107,8 @@ public final class TSDProcessor {
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName(label);
 			dataLabels.entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
-				Point2D point = dataPoints.get(entry.getKey());
-				series.getData().add(new XYChart.Data<>(point.getX(), point.getY()));
+				DataPoint point = dataPoints.get(entry.getKey());
+				series.getData().add(new XYChart.Data<>(point.getX(), point.getY(), point.name));
 			});
 			chart.getData().add(series);
 		}
