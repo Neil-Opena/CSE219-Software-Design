@@ -43,6 +43,14 @@ public class AppData implements DataComponent {
 		return savedData;
 	}
 
+	public ArrayList<String> getTextAreaData(){
+		return textAreaData;
+	}
+
+	public ArrayList<String> getHiddenData(){
+		return hiddenData;
+	}
+
 	@Override
 	public void loadData(Path dataFilePath) {
 		TextArea textArea = ((AppUI) applicationTemplate.getUIComponent()).getTextArea();
@@ -120,6 +128,24 @@ public class AppData implements DataComponent {
 		return text.toString();
 	}
 
+	private void instantiateData(ArrayList<String> fullData){
+		textAreaData = new ArrayList<>();
+		hiddenData = new ArrayList<>();
+
+		try{
+			for(int i = 0; i < 10; i++){
+				textAreaData.add(fullData.get(i));
+				System.out.println(textAreaData.get(i));
+			}
+			for(int i = 10; i < fullData.size(); i++){
+				hiddenData.add(fullData.get(i));
+			}
+		}catch(IndexOutOfBoundsException e){
+
+		}
+
+	}
+
 	private ArrayList<String> getFileLines(Path path){
 		File file = path.toFile();
 		try{
@@ -131,8 +157,9 @@ public class AppData implements DataComponent {
 			dataLines.forEach(line -> {
 				temp.add(line);
 			});
-
-			return temp;
+			
+			instantiateData(temp);
+			return textAreaData; //hiddenData is still not displaying
 		}catch(FileNotFoundException e){
 			System.out.println("file not found");
 			e.printStackTrace();
