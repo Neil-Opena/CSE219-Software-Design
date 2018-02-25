@@ -12,7 +12,6 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.Chart;
-import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -130,9 +129,8 @@ public final class AppActions implements ActionComponent {
 		File file = screenShotChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		try{
 			WritableImage image = new WritableImage((int) chart.getWidth(), (int) chart.getHeight());
-			Image screenshot = chart.snapshot(new SnapshotParameters(), image);
+			WritableImage screenshot = chart.snapshot(new SnapshotParameters(), image);
 			ImageIO.write(SwingFXUtils.fromFXImage(screenshot, null), "png", file);
-			//FIXMEcan't use swing
 
 		}catch(IllegalArgumentException e){
 			//save cancelled

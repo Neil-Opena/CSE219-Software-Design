@@ -11,6 +11,7 @@ import vilij.components.DataComponent;
 import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.stream.Stream;
 import javafx.scene.control.TextArea;
 import static settings.AppPropertyTypes.INVALID_DATA_MESSAGE;
@@ -30,6 +31,8 @@ public class AppData implements DataComponent {
 	private ApplicationTemplate applicationTemplate;
 
 	private String savedData;
+	private ArrayList<String> textAreaData;
+	private ArrayList<String> hiddenData;
 
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
@@ -46,7 +49,7 @@ public class AppData implements DataComponent {
 			
 		clear(); // clear the chart and text area first
 		textArea.clear();
-
+		
 		textArea.setText(getFileText(dataFilePath));
 		savedData = textArea.getText().trim();
 	}
@@ -107,17 +110,29 @@ public class AppData implements DataComponent {
 	}
 
 	public String getFileText(Path path){
+
+		StringBuilder text = new StringBuilder();
+		ArrayList<String> lines = getFileLines(path);
+		for(String line : lines){
+			text.append(line + "\n");
+		}
+
+		return text.toString();
+	}
+
+	private ArrayList<String> getFileLines(Path path){
 		File file = path.toFile();
 		try{
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			Stream<String> dataLines = reader.lines();
 
-			StringBuilder data = new StringBuilder();
+			ArrayList<String> temp = new ArrayList<>();
 
 			dataLines.forEach(line -> {
-				data.append(line + "\n");
+				temp.add(line);
 			});
-			return data.toString();
+
+			return temp;
 		}catch(FileNotFoundException e){
 			System.out.println("file not found");
 			e.printStackTrace();
@@ -127,7 +142,7 @@ public class AppData implements DataComponent {
 			e.printStackTrace();
 			//FIXME
 		}
-		return null;
+		return null;	
 	}
 
 	
