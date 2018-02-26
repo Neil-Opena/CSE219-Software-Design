@@ -9,8 +9,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
@@ -46,7 +46,7 @@ public final class AppUI extends UITemplate {
 
 	@SuppressWarnings("FieldCanBeLocal")
 	private Button scrnshotButton; // toolbar button to take a screenshot of the data
-	private ScatterChart<Number, Number> chart;          // the chart where data will be displayed
+	private LineChart<Number, Number> chart;          // the chart where data will be displayed
 	private Button displayButton;  // workspace button to display data on the chart
 	private TextArea textArea;       // text area for new data input
 	private boolean hasNewText;     // whether or not the text area has any new data since last display
@@ -60,7 +60,7 @@ public final class AppUI extends UITemplate {
 
 	private String hiddenData;
 
-	public ScatterChart<Number, Number> getChart() {
+	public LineChart<Number, Number> getChart() {
 		return chart;
 	}
 
@@ -159,7 +159,7 @@ public final class AppUI extends UITemplate {
 
 		inputRegion.getChildren().addAll(inputTitle, textArea, controls);
 
-		chart = new ScatterChart<>(new NumberAxis(), new NumberAxis());
+		chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));
 		chart.setPrefSize(700, 500);
 
@@ -209,7 +209,7 @@ public final class AppUI extends UITemplate {
 					data = data + "\n" + hiddenData;
 				}
 
-				appData.loadData(data); //display what was in text area
+				appData.loadData(data); //display what was in text area and hidden
 				scrnshotButton.setDisable(false);
 			}
 
