@@ -202,11 +202,11 @@ public final class AppUI extends UITemplate {
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 				errorDialog.show(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
 			} else if (hasNewText || chart.getData().isEmpty()) {
-				data = textArea.getText();
+				data = textArea.getText().trim();
 				appData.clear();
 				
 				if(hiddenData != null){ //if hidden data has been instantiated
-					data = data + hiddenData;
+					data = data + "\n" + hiddenData;
 				}
 
 				appData.loadData(data); //display what was in text area
@@ -236,7 +236,6 @@ public final class AppUI extends UITemplate {
 
 				point.getNode().setOnMouseEntered(e -> {
 					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
-					System.out.println(point.getNode().toString());
 				});
 				point.getNode().setOnMouseExited(e -> {
 					getPrimaryScene().setCursor(Cursor.DEFAULT);

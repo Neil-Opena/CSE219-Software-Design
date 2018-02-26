@@ -33,6 +33,7 @@ public class AppData implements DataComponent {
 	private String savedData; //String to test whether the data was saved already
 	private String textAreaData;
 	private String hiddenData;
+	private int numLines;
 
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
@@ -54,6 +55,11 @@ public class AppData implements DataComponent {
 		getFileText(dataFilePath); //instantiates text area and hidden data
 		textArea.setText(textAreaData); //sets text area
 		savedData = textArea.getText().trim();
+
+		if(numLines > 10){
+			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+			errorDialog.show("Data Exceeded Capacity", "Loaded data consists of " + numLines + " lines. Showing only the first 10 in the text area.");
+		}
 
 		((AppUI) applicationTemplate.getUIComponent()).setHiddenData(hiddenData);
 	}
@@ -90,7 +96,10 @@ public class AppData implements DataComponent {
 
 	@Override
 	public void clear() {
-		savedData = null;
+		savedData = null; //reset every helper variables
+		textAreaData = null;
+		hiddenData = null;
+		numLines = 0;
 		processor.clear();
 		((AppUI) applicationTemplate.getUIComponent()).getChart().getData().clear();
 	}
@@ -136,6 +145,8 @@ public class AppData implements DataComponent {
 					fullDataBuilder.append(toAdd);
 				}
 			}else{
+				numLines = fullData.size();
+
 				for(int i = 0; i < 10; i++){
 					String toAdd = fullData.get(i) + "\n";
 					textAreaDataBuilder.append(toAdd);
@@ -146,6 +157,7 @@ public class AppData implements DataComponent {
 					hiddenDataBuilder.append(toAdd);
 					fullDataBuilder.append(toAdd);
 				}
+				
 			}
 			textAreaData = textAreaDataBuilder.toString();
 			hiddenData = hiddenDataBuilder.toString();
