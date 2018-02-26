@@ -5,6 +5,7 @@ import actions.AppActions;
 import dataprocessors.AppData;
 import static java.io.File.separator;
 import java.io.IOException;
+import java.util.ArrayList;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -57,6 +58,8 @@ public final class AppUI extends UITemplate {
 	private PropertyManager manager;
 	private HBox controls;
 	private CheckBox readOnly;
+
+	private ArrayList<String> fullData;
 
 	public ScatterChart<Number, Number> getChart() {
 		return chart;
