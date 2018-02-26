@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart.Data;
@@ -199,6 +200,7 @@ public final class AppUI extends UITemplate {
 			String test = textArea.getText().trim();
 			hasNewText = !test.equals(data);
 			if (test.isEmpty()) {
+				//FiXME, error if theres hidden data
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 				errorDialog.show(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
 			} else if (hasNewText || chart.getData().isEmpty()) {
@@ -231,6 +233,18 @@ public final class AppUI extends UITemplate {
 
 	private void addDataPointListeners(){
 		for(Series series : chart.getData()){
+			if(series.getName().equals("Average Y")){
+				Node average = series.getNode();
+				Tooltip.install(average, new Tooltip("Average")); //FIXME add name
+				average.setOnMouseEntered(e ->{
+					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
+				});
+				average.setOnMouseExited(e ->{
+					getPrimaryScene().setCursor(Cursor.DEFAULT);
+				});
+				
+				continue;
+			}
 			for(Data point : (ObservableList<Data>) series.getData()){
 				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
 

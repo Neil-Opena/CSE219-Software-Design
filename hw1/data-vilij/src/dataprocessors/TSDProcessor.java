@@ -6,6 +6,9 @@ import javafx.scene.chart.XYChart;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 
 /**
  * The data files used by this data visualization applications follow a
@@ -112,6 +115,48 @@ public final class TSDProcessor {
 			});
 			chart.getData().add(series);
 		}
+		displayAverageYValue(chart);
+	}
+
+	void displayAverageYValue(XYChart<Number, Number> chart){
+
+		double sum = 0;
+
+		Set<DataPoint> points = new HashSet<>(dataPoints.values());
+		double min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
+		double max = min;
+
+		for(Series serie : chart.getData()){
+			for(XYChart.Data point : (ObservableList<XYChart.Data>) serie.getData()){
+
+				sum += Double.parseDouble(point.getYValue().toString());
+				
+				double testXVal = Double.parseDouble(point.getXValue().toString());
+				if(testXVal < min){
+					min = testXVal;
+				}else if(testXVal > max){
+					max = testXVal;
+				}
+				
+			}
+		}
+
+		double average = sum / points.size();
+
+		Series averageY = new Series<>();
+		averageY.setName("Average Y");
+
+		Data minData = new Data(min, average, "OK");
+		Data maxData = new Data(max, average, "OK");
+		averageY.getData().add(minData);
+		averageY.getData().add(maxData);
+
+		chart.getData().add(averageY);
+
+		minData.getNode().getStyleClass().add("bruh"); //FIXMe 
+		maxData.getNode().getStyleClass().add("bruh");
+		averageY.getNode().getStyleClass().add("display-line");
+		//FIXME don't add listener to special series
 	}
 
 	void clear() {

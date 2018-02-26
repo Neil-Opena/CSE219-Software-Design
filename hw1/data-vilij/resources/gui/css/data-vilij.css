@@ -47,6 +47,18 @@ and open the template in the editor.
 	-fx-background-color: #888888, white;
 }
 
+.chart-series-line{
+	-fx-stroke: null;
+}
+
+.display-line{
+	-fx-stroke: dodgerblue;
+}
+
+.bruh{
+	-fx-background-color: null;
+}
+
 .axis{
 	-fx-tick-length: 15px;
 	-fx-tick-label-fill: darkorange;

@@ -85,7 +85,7 @@ public class AppData implements DataComponent {
 			FileWriter writer = new FileWriter(file);
 			savedData = text;
 			writer.append(text);
-			writer.append("\n" + hiddenData);
+			writer.append("\n" + hiddenData); //BUG: hash set count may be different
 			writer.close();
 			
 		} catch (IOException e) {
