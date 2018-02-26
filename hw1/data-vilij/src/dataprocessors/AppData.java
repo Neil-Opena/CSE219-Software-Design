@@ -49,7 +49,7 @@ public class AppData implements DataComponent {
 		AppUI appUI = ((AppUI) applicationTemplate.getUIComponent());
 		TextArea textArea = appUI.getTextArea();
 			
-		clear(); // clear the chart and text area first
+		reset(); // clear the chart and text area first
 		textArea.clear();
 		
 		getFileText(dataFilePath); //instantiates text area and hidden data
@@ -85,6 +85,7 @@ public class AppData implements DataComponent {
 			FileWriter writer = new FileWriter(file);
 			savedData = text;
 			writer.append(text);
+			writer.append("\n" + hiddenData);
 			writer.close();
 			
 		} catch (IOException e) {
@@ -96,10 +97,6 @@ public class AppData implements DataComponent {
 
 	@Override
 	public void clear() {
-		savedData = null; //reset every helper variables
-		textAreaData = null;
-		hiddenData = null;
-		numLines = 0;
 		processor.clear();
 		((AppUI) applicationTemplate.getUIComponent()).getChart().getData().clear();
 	}
@@ -174,6 +171,14 @@ public class AppData implements DataComponent {
 			//FIXME
 		}
 		return null;
+	}
+
+	private void reset(){
+		savedData = null; //reset every helper variables
+		textAreaData = null;
+		hiddenData = null;
+		numLines = 0;
+		clear();
 	}
 
 }
