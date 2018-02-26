@@ -30,9 +30,9 @@ public class AppData implements DataComponent {
 	private TSDProcessor processor;
 	private ApplicationTemplate applicationTemplate;
 
-	private String savedData;
-	private ArrayList<String> textAreaData;
-	private ArrayList<String> hiddenData;
+	private String savedData; //String to test whether the data was saved already
+	private String textAreaData;
+	private String hiddenData;
 
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
@@ -43,23 +43,19 @@ public class AppData implements DataComponent {
 		return savedData;
 	}
 
-	public ArrayList<String> getTextAreaData(){
-		return textAreaData;
-	}
-
-	public ArrayList<String> getHiddenData(){
-		return hiddenData;
-	}
-
 	@Override
 	public void loadData(Path dataFilePath) {
-		TextArea textArea = ((AppUI) applicationTemplate.getUIComponent()).getTextArea();
+		AppUI appUI = ((AppUI) applicationTemplate.getUIComponent());
+		TextArea textArea = appUI.getTextArea();
 			
 		clear(); // clear the chart and text area first
 		textArea.clear();
 		
-		textArea.setText(getFileText(dataFilePath));
+		getFileText(dataFilePath); //instantiates text area and hidden data
+		textArea.setText(textAreaData); //sets text area
 		savedData = textArea.getText().trim();
+
+		((AppUI) applicationTemplate.getUIComponent()).setHiddenData(hiddenData);
 	}
 
 	public void loadData(String dataString) {
@@ -117,49 +113,45 @@ public class AppData implements DataComponent {
 		}
 	}
 
-	public String getFileText(Path path){
-
-		StringBuilder text = new StringBuilder();
-		ArrayList<String> lines = getFileLines(path);
-		for(String line : lines){
-			text.append(line + "\n");
-		}
-
-		return text.toString();
-	}
-
-	private void instantiateData(ArrayList<String> fullData){
-		textAreaData = new ArrayList<>();
-		hiddenData = new ArrayList<>();
-
-		try{
-			for(int i = 0; i < 10; i++){
-				textAreaData.add(fullData.get(i));
-				System.out.println(textAreaData.get(i));
-			}
-			for(int i = 10; i < fullData.size(); i++){
-				hiddenData.add(fullData.get(i));
-			}
-		}catch(IndexOutOfBoundsException e){
-
-		}
-
-	}
-
-	private ArrayList<String> getFileLines(Path path){
+	public String getFileText(Path path){ //returns full string representation of data, also instantiates hidden data and text area data
 		File file = path.toFile();
 		try{
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			Stream<String> dataLines = reader.lines();
 
-			ArrayList<String> temp = new ArrayList<>();
+			ArrayList<String> fullData = new ArrayList<>();
 
 			dataLines.forEach(line -> {
-				temp.add(line);
+				fullData.add(line);
 			});
-			
-			instantiateData(temp);
-			return textAreaData; //hiddenData is still not displaying
+
+			StringBuilder hiddenDataBuilder = new StringBuilder();
+			StringBuilder textAreaDataBuilder = new StringBuilder();
+			StringBuilder fullDataBuilder = new StringBuilder();
+
+			if(fullData.size() <= 10){
+				for(String line : fullData){
+					String toAdd = line + "\n";
+					textAreaDataBuilder.append(toAdd);
+					fullDataBuilder.append(toAdd);
+				}
+			}else{
+				for(int i = 0; i < 10; i++){
+					String toAdd = fullData.get(i) + "\n";
+					textAreaDataBuilder.append(toAdd);
+					fullDataBuilder.append(toAdd);
+				}
+				for(int i = 10; i < fullData.size(); i++){
+					String toAdd = fullData.get(i) + "\n";
+					hiddenDataBuilder.append(toAdd);
+					fullDataBuilder.append(toAdd);
+				}
+			}
+			textAreaData = textAreaDataBuilder.toString();
+			hiddenData = hiddenDataBuilder.toString();
+
+			return fullDataBuilder.toString();
+
 		}catch(FileNotFoundException e){
 			System.out.println("file not found");
 			e.printStackTrace();
@@ -169,8 +161,7 @@ public class AppData implements DataComponent {
 			e.printStackTrace();
 			//FIXME
 		}
-		return null;	
+		return null;
 	}
 
-	
 }

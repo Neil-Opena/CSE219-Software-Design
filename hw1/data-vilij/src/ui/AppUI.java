@@ -5,7 +5,6 @@ import actions.AppActions;
 import dataprocessors.AppData;
 import static java.io.File.separator;
 import java.io.IOException;
-import java.util.ArrayList;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -59,7 +58,7 @@ public final class AppUI extends UITemplate {
 	private HBox controls;
 	private CheckBox readOnly;
 
-	private ArrayList<String> fullData;
+	private String hiddenData;
 
 	public ScatterChart<Number, Number> getChart() {
 		return chart;
@@ -132,6 +131,10 @@ public final class AppUI extends UITemplate {
 		return saveButton;
 	}
 
+	public void setHiddenData(String hiddenData){
+		this.hiddenData = hiddenData;
+	}
+
 	private void layout() {
 		workspace = new FlowPane();
 
@@ -191,6 +194,8 @@ public final class AppUI extends UITemplate {
 		});
 
 		displayButton.setOnAction(event -> {
+			AppData appData = ((AppData) applicationTemplate.getDataComponent());
+
 			String test = textArea.getText().trim();
 			hasNewText = !test.equals(data);
 			if (test.isEmpty()) {
@@ -198,8 +203,13 @@ public final class AppUI extends UITemplate {
 				errorDialog.show(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
 			} else if (hasNewText || chart.getData().isEmpty()) {
 				data = textArea.getText();
-				((AppData) applicationTemplate.getDataComponent()).clear();
-				((AppData) applicationTemplate.getDataComponent()).loadData(data);
+				appData.clear();
+				
+				if(hiddenData != null){ //if hidden data has been instantiated
+					data = data + hiddenData;
+				}
+
+				appData.loadData(data); //display what was in text area
 				scrnshotButton.setDisable(false);
 			}
 
