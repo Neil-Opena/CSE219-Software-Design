@@ -234,8 +234,9 @@ public final class AppUI extends UITemplate {
 	private void addDataPointListeners(){
 		for(Series series : chart.getData()){
 			if(series.getName().equals("Average Y")){
+				String averageValue = ((Data) series.getData().get(0)).getExtraValue().toString();
 				Node average = series.getNode();
-				Tooltip.install(average, new Tooltip("Average")); //FIXME add name
+				Tooltip.install(average, new Tooltip("Average Y Value = " + averageValue));
 				average.setOnMouseEntered(e ->{
 					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
 				});
@@ -243,7 +244,7 @@ public final class AppUI extends UITemplate {
 					getPrimaryScene().setCursor(Cursor.DEFAULT);
 				});
 				
-				continue;
+				continue; //should there be a separate button for the average?
 			}
 			for(Data point : (ObservableList<Data>) series.getData()){
 				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));

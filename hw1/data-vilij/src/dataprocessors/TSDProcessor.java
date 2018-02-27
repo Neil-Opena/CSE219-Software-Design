@@ -142,21 +142,19 @@ public final class TSDProcessor {
 		}
 
 		double average = sum / points.size();
-
 		Series averageY = new Series<>();
 		averageY.setName("Average Y");
 
-		Data minData = new Data(min, average, "OK");
-		Data maxData = new Data(max, average, "OK");
+		Data minData = new Data(min, average, average);
+		Data maxData = new Data(max, average, average);
 		averageY.getData().add(minData);
 		averageY.getData().add(maxData);
 
 		chart.getData().add(averageY);
 
-		minData.getNode().getStyleClass().add("bruh"); //FIXMe 
-		maxData.getNode().getStyleClass().add("bruh");
+		minData.getNode().getStyleClass().add("hide-symbol"); 
+		maxData.getNode().getStyleClass().add("hide-symbol");
 		averageY.getNode().getStyleClass().add("display-line");
-		//FIXME don't add listener to special series
 	}
 
 	void clear() {
