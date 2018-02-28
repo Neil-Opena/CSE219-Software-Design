@@ -69,6 +69,7 @@ public final class AppActions implements ActionComponent {
 			if (promptToSave()) {
 				applicationTemplate.getUIComponent().clear();
 				dataFilePath = null;
+				((AppUI) applicationTemplate.getUIComponent()).setHiddenData(null);
 			}
 		} catch (IOException e) {
 			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
