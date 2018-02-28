@@ -197,14 +197,15 @@ public final class AppUI extends UITemplate {
 				} else {
 					saveButton.setDisable(false);
 				}
+
 				if(!textData.equals(data)){
 					int n = textArea.getParagraphs().size();
 					int toGet = 10 - n;
 					if(toGet > 0){
-						//update text
-						newVal = newVal + ((AppData) applicationTemplate.getDataComponent()).getNumLines(toGet);
+//						//update text
+						newVal = ((AppData) applicationTemplate.getDataComponent()).loadNumLines(toGet);
 						textArea.setText(newVal);
-					}
+					} //BUG: when display is pressed, functionality of this stops
 				}
 			}
 		});

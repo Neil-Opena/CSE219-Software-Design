@@ -30,11 +30,8 @@ public class AppData implements DataComponent {
 	private ApplicationTemplate applicationTemplate;
 
 	private String savedData; //String to test whether the data was saved already
-	private String textAreaData;
-	private String hiddenData;
-	private int numLines;
-
-	private ArrayList<String> hiddenDataLines = new ArrayList<>();
+	private ArrayList<String> textAreaData; //helper list 
+	private ArrayList<String> fullData;
 
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
@@ -45,30 +42,43 @@ public class AppData implements DataComponent {
 		return savedData;
 	}
 
-	public String getNumLines(int n){
-		String temp = "";
+	public String loadNumLines(int n){
 		for(int i = 0; i < n; i++){
-			temp = temp + (hiddenDataLines.remove(0));
+			if(!fullData.isEmpty()){
+				textAreaData.add(fullData.remove(0));
+			}
 		}
-		return temp;
+		((AppUI) applicationTemplate.getUIComponent()).setHiddenData(getStringRepresentation(fullData));	
+		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText() + "\n" +  (getStringRepresentation(textAreaData));
+		textAreaData.clear();
+		return text;
 	}
 
 	@Override
 	public void loadData(Path dataFilePath) {
 		AppUI appUI = ((AppUI) applicationTemplate.getUIComponent());
-			
 		clear(); // clear the chart
-		
-		getFileText(dataFilePath); //instantiates text area and hidden data
-		appUI.setTextAreaText(textAreaData); //sets text area
-		savedData = appUI.getTextAreaText().trim();
+		initializeData(dataFilePath); //initializes Data from file
 
-		if(numLines > 10){
+		//when loading, only 10 are displayed on the text area
+		if(fullData.size() > 10){
 			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-			errorDialog.show("Data Exceeded Capacity", "Loaded data consists of " + numLines + " lines. Showing only the first 10 in the text area.");
+			errorDialog.show("Data Exceeded Capacity", "Loaded data consists of " + fullData.size() + " lines. Showing only the first 10 in the text area.");
+			for(int i = 0; i < 10; i++){
+				textAreaData.add(fullData.remove(0));
+			}
+		}else{
+			while(!fullData.isEmpty()){
+				textAreaData.add(fullData.remove(0));
+			}
 		}
 
-		((AppUI) applicationTemplate.getUIComponent()).setHiddenData(hiddenData);
+		appUI.setTextAreaText(getStringRepresentation(textAreaData)); //sets text area
+		textAreaData.clear();
+		savedData = appUI.getTextAreaText().trim();
+
+		((AppUI) applicationTemplate.getUIComponent()).setHiddenData(getStringRepresentation(fullData));
+		
 	}
 
 	public void loadData(String dataString) {
@@ -92,9 +102,9 @@ public class AppData implements DataComponent {
 			FileWriter writer = new FileWriter(file);
 			savedData = text;
 			writer.append(text);
-			if(hiddenData != null){
-				writer.append("\n" + hiddenData); //BUG: hash set count may be different
-			}
+//			if(hiddenData != null){
+//				writer.append("\n" + hiddenData); //BUG: hash set count may be different
+//			}
 			writer.close();
 			
 		} catch (IOException e) {
@@ -108,8 +118,6 @@ public class AppData implements DataComponent {
 	public void clear() {
 		savedData = null; //reset every helper variables
 		textAreaData = null;
-		hiddenData = null;
-		numLines = 0;
 		processor.clear();
 		((AppUI) applicationTemplate.getUIComponent()).getChart().getData().clear();
 	}
@@ -132,58 +140,35 @@ public class AppData implements DataComponent {
 		}
 	}
 
-	public String getFileText(Path path){ //returns full string representation of data, also instantiates hidden data and text area data
+	public String getFileText(Path path){ //returns full string representation of data
+		/*
+		Initially, hiddenDataList will contain all of the lines, when the file is loaded,
+		10 will be loaded to the textAreaDataList
+		*/
+		initializeData(path);
+		return getStringRepresentation(fullData);
+	}
+
+	private String getStringRepresentation(ArrayList<String> list){
+		String[] temp = new String[list.size()];
+		for(int i = 0; i < list.size(); i++){
+			temp[i] = list.get(i);
+		}
+		return String.join("\n", temp);
+	}
+
+	private void initializeData(Path path){ //Initializes full data from the path
 		File file = path.toFile();
 		try{
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			Stream<String> dataLines = reader.lines();
 
-			ArrayList<String> fullData = new ArrayList<>();
+			fullData = new ArrayList<>();
+			textAreaData = new ArrayList<>();
 
 			dataLines.forEach(line -> {
 				fullData.add(line);
 			});
-
-			StringBuilder hiddenDataBuilder = new StringBuilder();
-			StringBuilder textAreaDataBuilder = new StringBuilder();
-			StringBuilder fullDataBuilder = new StringBuilder();
-
-			if(fullData.size() <= 10){
-				for(int i = 0; i < fullData.size()-1; i++){ //make sure last line dont get newline character
-					String line = fullData.get(i) + "\n";
-					textAreaDataBuilder.append(line);
-					fullDataBuilder.append(line);
-				}
-				String lastLine = fullData.get(fullData.size() - 1);
-				textAreaDataBuilder.append(lastLine);
-				fullDataBuilder.append(lastLine);
-			}else{
-				numLines = fullData.size();
-
-				for(int i = 0; i < 9; i++){
-					String toAdd = fullData.get(i) + "\n";
-					textAreaDataBuilder.append(toAdd);
-					fullDataBuilder.append(toAdd);
-				}
-				String temp = fullData.get(9);
-				textAreaDataBuilder.append(temp);
-				fullDataBuilder.append(temp + "\n"); //for some reason numLines arent showing
-				for(int i = 10; i < fullData.size() - 1; i++){ //make sure last line dont get newline character
-					String line = fullData.get(i) + "\n";
-					hiddenDataBuilder.append(line);
-					fullDataBuilder.append(line);
-					hiddenDataLines.add(line);
-				}
-				String lastLine = fullData.get(fullData.size() - 1);
-				hiddenDataBuilder.append(lastLine);
-				fullDataBuilder.append(lastLine); //FIXME can shorten later
-				
-			}
-			textAreaData = textAreaDataBuilder.toString();
-			hiddenData = hiddenDataBuilder.toString();
-
-			return fullDataBuilder.toString();
-
 		}catch(FileNotFoundException e){
 			System.out.println("file not found");
 			e.printStackTrace();
@@ -193,7 +178,6 @@ public class AppData implements DataComponent {
 			e.printStackTrace();
 			//FIXME
 		}
-		return null;
 	}
 
 }
