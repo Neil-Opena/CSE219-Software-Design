@@ -178,7 +178,7 @@ public final class AppUI extends UITemplate {
 		applicationTemplate.setDataComponent(new AppData(applicationTemplate));
 
 		//if textArea has content, enable newbutton
-		textArea.textProperty().addListener(e -> {
+		textArea.textProperty().addListener((e, oldVal, newVal) -> {
 			String savedData = ((AppData) applicationTemplate.getDataComponent()).getSavedData();
 			if (savedData == null) {
 				if (textArea.getText().isEmpty()) {
@@ -188,7 +188,7 @@ public final class AppUI extends UITemplate {
 					newButton.setDisable(false);
 					saveButton.setDisable(false);
 				}
-			} else {
+			} else { //FIXME - bug - savedData may not be null at the beginning
 				//current file has been saved
 				String textData = textArea.getText().trim();
 				newButton.setDisable(false);
@@ -197,20 +197,22 @@ public final class AppUI extends UITemplate {
 				} else {
 					saveButton.setDisable(false);
 				}
-//				int n = countLines();
-//				int toGet = 10 - n;
-//				if(toGet > 0){
-//					String toAppend = ((AppData) applicationTemplate.getDataComponent()).getNumLines(toGet);
-//					textArea.appendText(toAppend + toGet);
-//				}
 				if(!textData.equals(data)){
 					int n = textArea.getParagraphs().size();
 					int toGet = 10 - n;
-					String toAppend = ((AppData) applicationTemplate.getDataComponent()).getNumLines(toGet);
+					if(toGet > 0){
+						//update text
+						String a = "\nHi";
+						for(int i = 0; i < toGet; i++){
+							newVal = newVal + a;
+						}
+						textArea.setText(newVal);
+					}
 				}
 			}
 		});
 
+		//FIXME, when all 10 lines are deleted and there is still hidden data, the display button should still work
 		displayButton.setOnAction(event -> {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 
