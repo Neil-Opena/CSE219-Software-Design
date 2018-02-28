@@ -69,14 +69,12 @@ public final class AppActions implements ActionComponent {
 			if (promptToSave()) {
 				applicationTemplate.getUIComponent().clear();
 				dataFilePath = null;
-				((AppUI) applicationTemplate.getUIComponent()).setHiddenData(null);
+				((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable Save Button
 			}
 		} catch (IOException e) {
 			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 			errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
 		}
-
-		//FIXMEwhen new is enabled --> hidden data should be cleared
 	}
 
 	@Override
@@ -91,8 +89,8 @@ public final class AppActions implements ActionComponent {
 				}
 			}else{
 				((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+				((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable Save Button
 			}
-			((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable Save Button
 		}else{
 			showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData); //Invalid Data --> will not save
 		}

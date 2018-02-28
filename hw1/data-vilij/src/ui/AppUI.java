@@ -122,6 +122,7 @@ public final class AppUI extends UITemplate {
 		textArea.clear();
 		newButton.setDisable(true);
 		scrnshotButton.setDisable(true);
+		hiddenData = null;
 	}
 
 	public String getTextAreaText(){
@@ -189,7 +190,6 @@ public final class AppUI extends UITemplate {
 				}
 			} else {
 				//current file has been saved
-				//FIXME - what if it was loaded
 				newButton.setDisable(false);
 				if (textArea.getText().trim().equals(savedData)) {
 					saveButton.setDisable(true);
@@ -210,7 +210,6 @@ public final class AppUI extends UITemplate {
 			String test = textArea.getText().trim();
 			hasNewText = !test.equals(data);
 			if (test.isEmpty()) {
-				//FiXME, error if theres hidden data
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 				errorDialog.show(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
 			} else if (hasNewText || chart.getData().isEmpty()) {

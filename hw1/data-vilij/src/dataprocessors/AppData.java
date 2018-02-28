@@ -47,7 +47,7 @@ public class AppData implements DataComponent {
 	public void loadData(Path dataFilePath) {
 		AppUI appUI = ((AppUI) applicationTemplate.getUIComponent());
 			
-		reset(); // clear the chart
+		clear(); // clear the chart
 		
 		getFileText(dataFilePath); //instantiates text area and hidden data
 		appUI.setTextAreaText(textAreaData); //sets text area
@@ -94,6 +94,10 @@ public class AppData implements DataComponent {
 
 	@Override
 	public void clear() {
+		savedData = null; //reset every helper variables
+		textAreaData = null;
+		hiddenData = null;
+		numLines = 0;
 		processor.clear();
 		((AppUI) applicationTemplate.getUIComponent()).getChart().getData().clear();
 	}
@@ -168,14 +172,6 @@ public class AppData implements DataComponent {
 			//FIXME
 		}
 		return null;
-	}
-
-	private void reset(){
-		savedData = null; //reset every helper variables
-		textAreaData = null;
-		hiddenData = null;
-		numLines = 0;
-		clear();
 	}
 
 }
