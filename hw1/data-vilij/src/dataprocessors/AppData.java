@@ -34,6 +34,8 @@ public class AppData implements DataComponent {
 	private String hiddenData;
 	private int numLines;
 
+	private ArrayList<String> hiddenDataLines = new ArrayList<>();
+
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
 		this.applicationTemplate = applicationTemplate;
@@ -44,7 +46,11 @@ public class AppData implements DataComponent {
 	}
 
 	public String getNumLines(int n){
-		return "TEST";
+		String temp = "";
+		for(int i = 0; i < n; i++){
+			temp = temp + (hiddenDataLines.remove(0));
+		}
+		return temp;
 	}
 
 	@Override
@@ -166,6 +172,7 @@ public class AppData implements DataComponent {
 					String line = fullData.get(i) + "\n";
 					hiddenDataBuilder.append(line);
 					fullDataBuilder.append(line);
+					hiddenDataLines.add(line);
 				}
 				String lastLine = fullData.get(fullData.size() - 1);
 				hiddenDataBuilder.append(lastLine);
