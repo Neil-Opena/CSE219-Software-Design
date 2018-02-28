@@ -150,14 +150,14 @@ public class AppData implements DataComponent {
 			}else{
 				numLines = fullData.size();
 
-				for(int i = 0; i < 10; i++){
+				for(int i = 0; i < 9; i++){
 					String toAdd = fullData.get(i) + "\n";
 					textAreaDataBuilder.append(toAdd);
 					fullDataBuilder.append(toAdd);
 				}
-				//String lastLine = fullData.get(9);
-				//textAreaDataBuilder.append(lastLine);
-				//fullDataBuilder.append(lastLine); BUGHERE
+				String temp = fullData.get(9);
+				textAreaDataBuilder.append(temp);
+				fullDataBuilder.append(temp + "\n"); //for some reason numLines arent showing
 				for(int i = 10; i < fullData.size() - 1; i++){ //make sure last line dont get newline character
 					String line = fullData.get(i) + "\n";
 					hiddenDataBuilder.append(line);
