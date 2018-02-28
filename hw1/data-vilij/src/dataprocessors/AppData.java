@@ -43,6 +43,10 @@ public class AppData implements DataComponent {
 		return savedData;
 	}
 
+	public String getNumLines(int n){
+		return "TEST";
+	}
+
 	@Override
 	public void loadData(Path dataFilePath) {
 		AppUI appUI = ((AppUI) applicationTemplate.getUIComponent());

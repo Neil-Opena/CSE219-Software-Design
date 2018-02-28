@@ -190,19 +190,25 @@ public final class AppUI extends UITemplate {
 				}
 			} else {
 				//current file has been saved
+				String textData = textArea.getText().trim();
 				newButton.setDisable(false);
-				if (textArea.getText().trim().equals(savedData)) {
+				if (textData.equals(savedData)) {
 					saveButton.setDisable(true);
 				} else {
 					saveButton.setDisable(false);
 				}
-				int n = countLines();
-				int toGet = 10 - n;
-				System.out.println(toGet);
+//				int n = countLines();
+//				int toGet = 10 - n;
+//				if(toGet > 0){
+//					String toAppend = ((AppData) applicationTemplate.getDataComponent()).getNumLines(toGet);
+//					textArea.appendText(toAppend + toGet);
+//				}
+				if(!textData.equals(data)){
+					int n = textArea.getParagraphs().size();
+					int toGet = 10 - n;
+					String toAppend = ((AppData) applicationTemplate.getDataComponent()).getNumLines(toGet);
+				}
 			}
-			//count num lines of "\n"
-			//if less than 10 --> call data component to add text to text area
-			//((AppData) applicationTemplate.getDataComponent()).addText(n);
 		});
 
 		displayButton.setOnAction(event -> {
@@ -268,10 +274,5 @@ public final class AppUI extends UITemplate {
 				});
 			}
 		}
-	}
-
-	private int countLines(){
-		String[] lines = textArea.getText().trim().split("\n");
-		return lines.length;
 	}
 }
