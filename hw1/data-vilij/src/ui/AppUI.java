@@ -122,14 +122,20 @@ public final class AppUI extends UITemplate {
 		textArea.clear();
 		newButton.setDisable(true);
 		scrnshotButton.setDisable(true);
+		hiddenData = null;
 	}
 
-	public TextArea getTextArea() {
-		return textArea;
+	public String getTextAreaText(){
+		return textArea.getText();
 	}
 
-	public Button getSaveButton() {
-		return saveButton;
+
+	public void setTextAreaText(String text){
+		textArea.setText(text);
+	}
+
+	public void disableSaveButton(){
+		saveButton.setDisable(true);
 	}
 
 	public void setHiddenData(String hiddenData){
@@ -172,8 +178,7 @@ public final class AppUI extends UITemplate {
 		applicationTemplate.setDataComponent(new AppData(applicationTemplate));
 
 		//if textArea has content, enable newbutton
-		textArea.textProperty().addListener(e -> {
-			//FIXME
+		textArea.textProperty().addListener((e, oldVal, newVal) -> {
 			String savedData = ((AppData) applicationTemplate.getDataComponent()).getSavedData();
 			if (savedData == null) {
 				if (textArea.getText().isEmpty()) {
@@ -183,24 +188,37 @@ public final class AppUI extends UITemplate {
 					newButton.setDisable(false);
 					saveButton.setDisable(false);
 				}
-			} else {
+			} else { //FIXME - bug - savedData may not be null at the beginning
 				//current file has been saved
+				String textData = textArea.getText().trim();
 				newButton.setDisable(false);
-				if (textArea.getText().trim().equals(savedData)) {
+				if (textData.equals(savedData)) {
 					saveButton.setDisable(true);
 				} else {
 					saveButton.setDisable(false);
 				}
+				if(!textData.equals(data)){
+					int n = textArea.getParagraphs().size();
+					int toGet = 10 - n;
+					if(toGet > 0){
+						//update text
+						String a = "\nHi";
+						for(int i = 0; i < toGet; i++){
+							newVal = newVal + a;
+						}
+						textArea.setText(newVal);
+					}
+				}
 			}
 		});
 
+		//FIXME, when all 10 lines are deleted and there is still hidden data, the display button should still work
 		displayButton.setOnAction(event -> {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 
 			String test = textArea.getText().trim();
 			hasNewText = !test.equals(data);
 			if (test.isEmpty()) {
-				//FiXME, error if theres hidden data
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 				errorDialog.show(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
 			} else if (hasNewText || chart.getData().isEmpty()) {
@@ -236,7 +254,8 @@ public final class AppUI extends UITemplate {
 			if(series.getName().equals("Average Y")){
 				String averageValue = ((Data) series.getData().get(0)).getExtraValue().toString();
 				Node average = series.getNode();
-				Tooltip.install(average, new Tooltip("Average Y Value = " + averageValue));
+				Tooltip.install(average, new Tooltip("Average Y Value = " + averageValue)); //FIXME should truncate value
+				//should also change css of average
 				average.setOnMouseEntered(e ->{
 					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
 				});

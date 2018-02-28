@@ -69,6 +69,7 @@ public final class AppActions implements ActionComponent {
 			if (promptToSave()) {
 				applicationTemplate.getUIComponent().clear();
 				dataFilePath = null;
+				((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable Save Button
 			}
 		} catch (IOException e) {
 			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -78,7 +79,7 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleSaveRequest() {
-		String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim());
+		String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
 		if(testData == null){
 			if(dataFilePath == null){ //no save file yet
 				try{
@@ -88,8 +89,8 @@ public final class AppActions implements ActionComponent {
 				}
 			}else{
 				((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+				((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable Save Button
 			}
-			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable Save Button
 		}else{
 			showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData); //Invalid Data --> will not save
 		}
@@ -108,7 +109,7 @@ public final class AppActions implements ActionComponent {
 			} else {
 				showErrorDialog("CANNOT LOAD", "Not a tsd file: cannot load because of invalid data \n" + testData); //Invalid Data --> will not load
 			}
-			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
+			((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable save button
 		} catch (NullPointerException e) {
 			//load cancelled
 		}
@@ -164,7 +165,7 @@ public final class AppActions implements ActionComponent {
 			return false;
 		} else {
 			if (option == Option.YES) {
-				String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim());
+				String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
 				if(testData == null){
 					return showSaveDialog();
 				}else{
@@ -183,7 +184,7 @@ public final class AppActions implements ActionComponent {
 			saveFile.createNewFile();
 			dataFilePath = saveFile.toPath();
 			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
+			((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable save button
 		} catch (NullPointerException e) {
 			return false; //save cancelled
 		}
@@ -194,4 +195,6 @@ public final class AppActions implements ActionComponent {
 		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 		errorDialog.show(title, message);
 	}
+
+	//FIXME sometimes error messages are shit
 }

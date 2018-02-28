@@ -13,7 +13,6 @@ import vilij.templates.ApplicationTemplate;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.stream.Stream;
-import javafx.scene.control.TextArea;
 import static settings.AppPropertyTypes.INVALID_DATA_MESSAGE;
 import static settings.AppPropertyTypes.INVALID_DATA_TITLE;
 import vilij.components.Dialog;
@@ -44,17 +43,19 @@ public class AppData implements DataComponent {
 		return savedData;
 	}
 
+	public String getNumLines(int n){
+		return "TEST";
+	}
+
 	@Override
 	public void loadData(Path dataFilePath) {
 		AppUI appUI = ((AppUI) applicationTemplate.getUIComponent());
-		TextArea textArea = appUI.getTextArea();
 			
-		reset(); // clear the chart and text area first
-		textArea.clear();
+		clear(); // clear the chart
 		
 		getFileText(dataFilePath); //instantiates text area and hidden data
-		textArea.setText(textAreaData); //sets text area
-		savedData = textArea.getText().trim();
+		appUI.setTextAreaText(textAreaData); //sets text area
+		savedData = appUI.getTextAreaText().trim();
 
 		if(numLines > 10){
 			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -78,14 +79,16 @@ public class AppData implements DataComponent {
 	@Override
 	public void saveData(Path dataFilePath) {
 		try {
-			String text = ((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim();
+			String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim();
 
 			File file = dataFilePath.toFile();
 				
 			FileWriter writer = new FileWriter(file);
 			savedData = text;
 			writer.append(text);
-			writer.append("\n" + hiddenData); //BUG: hash set count may be different
+			if(hiddenData != null){
+				writer.append("\n" + hiddenData); //BUG: hash set count may be different
+			}
 			writer.close();
 			
 		} catch (IOException e) {
@@ -97,6 +100,10 @@ public class AppData implements DataComponent {
 
 	@Override
 	public void clear() {
+		savedData = null; //reset every helper variables
+		textAreaData = null;
+		hiddenData = null;
+		numLines = 0;
 		processor.clear();
 		((AppUI) applicationTemplate.getUIComponent()).getChart().getData().clear();
 	}
@@ -136,24 +143,33 @@ public class AppData implements DataComponent {
 			StringBuilder fullDataBuilder = new StringBuilder();
 
 			if(fullData.size() <= 10){
-				for(String line : fullData){
-					String toAdd = line + "\n";
-					textAreaDataBuilder.append(toAdd);
-					fullDataBuilder.append(toAdd);
+				for(int i = 0; i < fullData.size()-1; i++){ //make sure last line dont get newline character
+					String line = fullData.get(i) + "\n";
+					textAreaDataBuilder.append(line);
+					fullDataBuilder.append(line);
 				}
+				String lastLine = fullData.get(fullData.size() - 1);
+				textAreaDataBuilder.append(lastLine);
+				fullDataBuilder.append(lastLine);
 			}else{
 				numLines = fullData.size();
 
-				for(int i = 0; i < 10; i++){
+				for(int i = 0; i < 9; i++){
 					String toAdd = fullData.get(i) + "\n";
 					textAreaDataBuilder.append(toAdd);
 					fullDataBuilder.append(toAdd);
 				}
-				for(int i = 10; i < fullData.size(); i++){
-					String toAdd = fullData.get(i) + "\n";
-					hiddenDataBuilder.append(toAdd);
-					fullDataBuilder.append(toAdd);
+				String temp = fullData.get(9);
+				textAreaDataBuilder.append(temp);
+				fullDataBuilder.append(temp + "\n"); //for some reason numLines arent showing
+				for(int i = 10; i < fullData.size() - 1; i++){ //make sure last line dont get newline character
+					String line = fullData.get(i) + "\n";
+					hiddenDataBuilder.append(line);
+					fullDataBuilder.append(line);
 				}
+				String lastLine = fullData.get(fullData.size() - 1);
+				hiddenDataBuilder.append(lastLine);
+				fullDataBuilder.append(lastLine); //FIXME can shorten later
 				
 			}
 			textAreaData = textAreaDataBuilder.toString();
@@ -171,14 +187,6 @@ public class AppData implements DataComponent {
 			//FIXME
 		}
 		return null;
-	}
-
-	private void reset(){
-		savedData = null; //reset every helper variables
-		textAreaData = null;
-		hiddenData = null;
-		numLines = 0;
-		clear();
 	}
 
 }
