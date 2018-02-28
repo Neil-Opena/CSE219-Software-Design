@@ -82,7 +82,9 @@ public class AppData implements DataComponent {
 			FileWriter writer = new FileWriter(file);
 			savedData = text;
 			writer.append(text);
-			writer.append("\n" + hiddenData); //BUG: hash set count may be different
+			if(hiddenData != null){
+				writer.append("\n" + hiddenData); //BUG: hash set count may be different
+			}
 			writer.close();
 			
 		} catch (IOException e) {
@@ -137,11 +139,14 @@ public class AppData implements DataComponent {
 			StringBuilder fullDataBuilder = new StringBuilder();
 
 			if(fullData.size() <= 10){
-				for(String line : fullData){
-					String toAdd = line + "\n";
-					textAreaDataBuilder.append(toAdd);
-					fullDataBuilder.append(toAdd);
+				for(int i = 0; i < fullData.size()-1; i++){ //make sure last line dont get newline character
+					String line = fullData.get(i) + "\n";
+					textAreaDataBuilder.append(line);
+					fullDataBuilder.append(line);
 				}
+				String lastLine = fullData.get(fullData.size() - 1);
+				textAreaDataBuilder.append(lastLine);
+				fullDataBuilder.append(lastLine);
 			}else{
 				numLines = fullData.size();
 
@@ -150,11 +155,17 @@ public class AppData implements DataComponent {
 					textAreaDataBuilder.append(toAdd);
 					fullDataBuilder.append(toAdd);
 				}
-				for(int i = 10; i < fullData.size(); i++){
-					String toAdd = fullData.get(i) + "\n";
-					hiddenDataBuilder.append(toAdd);
-					fullDataBuilder.append(toAdd);
+				//String lastLine = fullData.get(9);
+				//textAreaDataBuilder.append(lastLine);
+				//fullDataBuilder.append(lastLine); BUGHERE
+				for(int i = 10; i < fullData.size() - 1; i++){ //make sure last line dont get newline character
+					String line = fullData.get(i) + "\n";
+					hiddenDataBuilder.append(line);
+					fullDataBuilder.append(line);
 				}
+				String lastLine = fullData.get(fullData.size() - 1);
+				hiddenDataBuilder.append(lastLine);
+				fullDataBuilder.append(lastLine); //FIXME can shorten later
 				
 			}
 			textAreaData = textAreaDataBuilder.toString();

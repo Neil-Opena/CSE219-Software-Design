@@ -195,4 +195,6 @@ public final class AppActions implements ActionComponent {
 		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 		errorDialog.show(title, message);
 	}
+
+	//FIXME sometimes error messages are shit
 }

@@ -197,7 +197,8 @@ public final class AppUI extends UITemplate {
 					saveButton.setDisable(false);
 				}
 				int n = countLines();
-				System.out.println(n);
+				int toGet = 10 - n;
+				System.out.println(toGet);
 			}
 			//count num lines of "\n"
 			//if less than 10 --> call data component to add text to text area
