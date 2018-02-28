@@ -124,12 +124,17 @@ public final class AppUI extends UITemplate {
 		scrnshotButton.setDisable(true);
 	}
 
-	public TextArea getTextArea() {
-		return textArea;
+	public String getTextAreaText(){
+		return textArea.getText();
 	}
 
-	public Button getSaveButton() {
-		return saveButton;
+
+	public void setTextAreaText(String text){
+		textArea.setText(text);
+	}
+
+	public void disableSaveButton(){
+		saveButton.setDisable(true);
 	}
 
 	public void setHiddenData(String hiddenData){
@@ -173,7 +178,6 @@ public final class AppUI extends UITemplate {
 
 		//if textArea has content, enable newbutton
 		textArea.textProperty().addListener(e -> {
-			//FIXME
 			String savedData = ((AppData) applicationTemplate.getDataComponent()).getSavedData();
 			if (savedData == null) {
 				if (textArea.getText().isEmpty()) {
@@ -185,13 +189,19 @@ public final class AppUI extends UITemplate {
 				}
 			} else {
 				//current file has been saved
+				//FIXME - what if it was loaded
 				newButton.setDisable(false);
 				if (textArea.getText().trim().equals(savedData)) {
 					saveButton.setDisable(true);
 				} else {
 					saveButton.setDisable(false);
 				}
+				int n = countLines();
+				System.out.println(n);
 			}
+			//count num lines of "\n"
+			//if less than 10 --> call data component to add text to text area
+			//((AppData) applicationTemplate.getDataComponent()).addText(n);
 		});
 
 		displayButton.setOnAction(event -> {
@@ -236,7 +246,8 @@ public final class AppUI extends UITemplate {
 			if(series.getName().equals("Average Y")){
 				String averageValue = ((Data) series.getData().get(0)).getExtraValue().toString();
 				Node average = series.getNode();
-				Tooltip.install(average, new Tooltip("Average Y Value = " + averageValue));
+				Tooltip.install(average, new Tooltip("Average Y Value = " + averageValue)); //FIXME should truncate value
+				//should also change css of average
 				average.setOnMouseEntered(e ->{
 					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
 				});
@@ -257,5 +268,10 @@ public final class AppUI extends UITemplate {
 				});
 			}
 		}
+	}
+
+	private int countLines(){
+		String[] lines = textArea.getText().trim().split("\n");
+		return lines.length;
 	}
 }

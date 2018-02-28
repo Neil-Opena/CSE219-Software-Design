@@ -13,7 +13,6 @@ import vilij.templates.ApplicationTemplate;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.stream.Stream;
-import javafx.scene.control.TextArea;
 import static settings.AppPropertyTypes.INVALID_DATA_MESSAGE;
 import static settings.AppPropertyTypes.INVALID_DATA_TITLE;
 import vilij.components.Dialog;
@@ -47,14 +46,12 @@ public class AppData implements DataComponent {
 	@Override
 	public void loadData(Path dataFilePath) {
 		AppUI appUI = ((AppUI) applicationTemplate.getUIComponent());
-		TextArea textArea = appUI.getTextArea();
 			
-		reset(); // clear the chart and text area first
-		textArea.clear();
+		reset(); // clear the chart
 		
 		getFileText(dataFilePath); //instantiates text area and hidden data
-		textArea.setText(textAreaData); //sets text area
-		savedData = textArea.getText().trim();
+		appUI.setTextAreaText(textAreaData); //sets text area
+		savedData = appUI.getTextAreaText().trim();
 
 		if(numLines > 10){
 			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -78,7 +75,7 @@ public class AppData implements DataComponent {
 	@Override
 	public void saveData(Path dataFilePath) {
 		try {
-			String text = ((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim();
+			String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim();
 
 			File file = dataFilePath.toFile();
 				

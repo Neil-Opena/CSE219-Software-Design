@@ -74,11 +74,13 @@ public final class AppActions implements ActionComponent {
 			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 			errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
 		}
+
+		//FIXMEwhen new is enabled --> hidden data should be cleared
 	}
 
 	@Override
 	public void handleSaveRequest() {
-		String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim());
+		String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
 		if(testData == null){
 			if(dataFilePath == null){ //no save file yet
 				try{
@@ -89,7 +91,7 @@ public final class AppActions implements ActionComponent {
 			}else{
 				((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
 			}
-			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable Save Button
+			((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable Save Button
 		}else{
 			showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData); //Invalid Data --> will not save
 		}
@@ -108,7 +110,7 @@ public final class AppActions implements ActionComponent {
 			} else {
 				showErrorDialog("CANNOT LOAD", "Not a tsd file: cannot load because of invalid data \n" + testData); //Invalid Data --> will not load
 			}
-			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
+			((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable save button
 		} catch (NullPointerException e) {
 			//load cancelled
 		}
@@ -164,7 +166,7 @@ public final class AppActions implements ActionComponent {
 			return false;
 		} else {
 			if (option == Option.YES) {
-				String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextArea().getText().trim());
+				String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
 				if(testData == null){
 					return showSaveDialog();
 				}else{
@@ -183,7 +185,7 @@ public final class AppActions implements ActionComponent {
 			saveFile.createNewFile();
 			dataFilePath = saveFile.toPath();
 			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-			((AppUI) applicationTemplate.getUIComponent()).getSaveButton().setDisable(true); //disable save button
+			((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable save button
 		} catch (NullPointerException e) {
 			return false; //save cancelled
 		}
