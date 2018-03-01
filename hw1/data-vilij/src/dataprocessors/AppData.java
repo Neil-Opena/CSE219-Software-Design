@@ -41,23 +41,25 @@ public class AppData implements DataComponent {
 	public String getSavedData() {
 		return savedData;
 	}
-
+	/*
+	FIXME theres an error, where thers no load error yet, and the user tries to delete a line
+	nullpointer exception because textAreaData and fulldata does not exist yet
+	*/
 	public String loadNumLines(int n){
-		if(fullData == null){
+		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText();
+
+		if(fullData != null && textAreaData != null){
 			for(int i = 0; i < n; i++){
 				if(!fullData.isEmpty()){
 					textAreaData.add(fullData.remove(0));
 				}
 			}
 			((AppUI) applicationTemplate.getUIComponent()).setHiddenData(getStringRepresentation(fullData));	
+			if(!textAreaData.isEmpty()){
+				text = text + "\n" +  (getStringRepresentation(textAreaData));
+			}
+			textAreaData.clear();
 		}
-		
-		
-		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText();
-		if(!textAreaData.isEmpty()){
-			text = text + "\n" +  (getStringRepresentation(textAreaData));
-		}
-		textAreaData.clear();
 		return text;
 	}
 
