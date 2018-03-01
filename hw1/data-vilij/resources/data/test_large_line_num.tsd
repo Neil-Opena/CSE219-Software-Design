@@ -8,6 +8,10 @@
 @Instance8	label2	3.3,4.3
 @Instance9	label2	4.9,5.1
 @Instance10	label2	5.8,6.2
+@Instance51	label1	0.5,1
+@Instance52	label1	0.7,1
+@Instance53	label1	0.8,2
+@Instance54	label2	1.5,1
 @Instance11	label3	1.0,3.4
 @Instance12	label3	2.1,4.3
 @Instance13	label3	3.9,5.1

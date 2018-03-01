@@ -108,9 +108,9 @@ public class AppData implements DataComponent {
 			FileWriter writer = new FileWriter(file);
 			savedData = text;
 			writer.append(text);
-//			if(hiddenData != null){
-//				writer.append("\n" + hiddenData); //BUG: hash set count may be different
-//			}
+			if(!fullData.isEmpty()){
+				writer.append("\n" + getStringRepresentation(fullData));
+			}
 			writer.close();
 			
 		} catch (IOException e) {
