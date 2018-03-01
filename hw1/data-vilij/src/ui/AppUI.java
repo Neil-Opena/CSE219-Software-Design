@@ -197,8 +197,9 @@ public final class AppUI extends UITemplate {
 				} else {
 					saveButton.setDisable(false);
 				}
-
 				if(!textData.equals(data)){
+
+					//FIX this method
 					int n = textArea.getParagraphs().size();
 					int toGet = 10 - n;
 					if(toGet > 0){
@@ -210,13 +211,12 @@ public final class AppUI extends UITemplate {
 			}
 		});
 
-		//FIXME, when all 10 lines are deleted and there is still hidden data, the display button should still work
 		displayButton.setOnAction(event -> {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 
 			String test = textArea.getText().trim();
 			hasNewText = !test.equals(data);
-			if (test.isEmpty()) {
+			if (test.isEmpty() && hiddenData == null) {
 				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 				errorDialog.show(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
 			} else if (hasNewText || chart.getData().isEmpty()) {

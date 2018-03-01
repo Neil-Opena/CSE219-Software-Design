@@ -57,7 +57,7 @@ public class AppData implements DataComponent {
 	@Override
 	public void loadData(Path dataFilePath) {
 		AppUI appUI = ((AppUI) applicationTemplate.getUIComponent());
-		clear(); // clear the chart
+		reset(); // reset App Data
 		initializeData(dataFilePath); //initializes Data from file
 
 		//when loading, only 10 are displayed on the text area
@@ -72,6 +72,8 @@ public class AppData implements DataComponent {
 				textAreaData.add(fullData.remove(0));
 			}
 		}
+
+		//when loaded, should data be set in AppUI?
 
 		appUI.setTextAreaText(getStringRepresentation(textAreaData)); //sets text area
 		textAreaData.clear();
@@ -116,8 +118,6 @@ public class AppData implements DataComponent {
 
 	@Override
 	public void clear() {
-		savedData = null; //reset every helper variables
-		textAreaData = null;
 		processor.clear();
 		((AppUI) applicationTemplate.getUIComponent()).getChart().getData().clear();
 	}
@@ -180,4 +180,9 @@ public class AppData implements DataComponent {
 		}
 	}
 
+	private void reset(){
+		savedData = null; //reset every helper variables
+		fullData = null;
+		clear();
+	}
 }
