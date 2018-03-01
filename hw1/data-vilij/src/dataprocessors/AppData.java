@@ -51,7 +51,7 @@ public class AppData implements DataComponent {
 		((AppUI) applicationTemplate.getUIComponent()).setHiddenData(getStringRepresentation(fullData));	
 		
 		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText();
-		if(!fullData.isEmpty()){
+		if(!textAreaData.isEmpty()){
 			text = text + "\n" +  (getStringRepresentation(textAreaData));
 		}
 		textAreaData.clear();
