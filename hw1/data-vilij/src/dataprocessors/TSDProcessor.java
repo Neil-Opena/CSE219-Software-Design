@@ -56,8 +56,8 @@ public final class TSDProcessor {
 	private Map<String, DataPoint> dataPoints;
 
 	public TSDProcessor() {
-		dataLabels = new HashMap<>();
-		dataPoints = new HashMap<>();
+		dataLabels = new LinkedHashMap<>();
+		dataPoints = new LinkedHashMap<>();
 	}
 
 	/**
