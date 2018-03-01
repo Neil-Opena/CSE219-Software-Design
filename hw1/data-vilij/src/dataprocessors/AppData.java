@@ -43,12 +43,15 @@ public class AppData implements DataComponent {
 	}
 
 	public String loadNumLines(int n){
-		for(int i = 0; i < n; i++){
-			if(!fullData.isEmpty()){
-				textAreaData.add(fullData.remove(0));
+		if(fullData == null){
+			for(int i = 0; i < n; i++){
+				if(!fullData.isEmpty()){
+					textAreaData.add(fullData.remove(0));
+				}
 			}
+			((AppUI) applicationTemplate.getUIComponent()).setHiddenData(getStringRepresentation(fullData));	
 		}
-		((AppUI) applicationTemplate.getUIComponent()).setHiddenData(getStringRepresentation(fullData));	
+		
 		
 		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText();
 		if(!textAreaData.isEmpty()){
@@ -108,7 +111,7 @@ public class AppData implements DataComponent {
 			FileWriter writer = new FileWriter(file);
 			savedData = text;
 			writer.append(text);
-			if(!fullData.isEmpty()){
+			if(fullData != null && !fullData.isEmpty()){
 				writer.append("\n" + getStringRepresentation(fullData));
 			}
 			writer.close();

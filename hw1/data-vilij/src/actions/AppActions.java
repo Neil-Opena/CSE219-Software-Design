@@ -87,10 +87,9 @@ public final class AppActions implements ActionComponent {
 				}catch(IOException e){
 					showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
 				}
-			}else{
-				((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-				((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable Save Button
 			}
+			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+			((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(); //disable Save Button
 		}else{
 			showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData); //Invalid Data --> will not save
 		}
