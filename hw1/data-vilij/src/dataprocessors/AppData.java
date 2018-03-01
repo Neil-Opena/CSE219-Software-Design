@@ -49,7 +49,11 @@ public class AppData implements DataComponent {
 			}
 		}
 		((AppUI) applicationTemplate.getUIComponent()).setHiddenData(getStringRepresentation(fullData));	
-		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText() + "\n" +  (getStringRepresentation(textAreaData));
+		
+		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText();
+		if(!fullData.isEmpty()){
+			text = text + "\n" +  (getStringRepresentation(textAreaData));
+		}
 		textAreaData.clear();
 		return text;
 	}
@@ -150,6 +154,9 @@ public class AppData implements DataComponent {
 	}
 
 	private String getStringRepresentation(ArrayList<String> list){
+		if(list.isEmpty()){
+			return null;
+		}
 		String[] temp = new String[list.size()];
 		for(int i = 0; i < list.size(); i++){
 			temp[i] = list.get(i);

@@ -206,7 +206,7 @@ public final class AppUI extends UITemplate {
 //						//update text
 						newVal = ((AppData) applicationTemplate.getDataComponent()).loadNumLines(toGet);
 						textArea.setText(newVal);
-					} //BUG: when display is pressed, functionality of this stops
+					}
 				}
 			}
 		});
