@@ -42,8 +42,8 @@ public class AppData implements DataComponent {
 		return savedData;
 	}
 	/*
-	FIXME theres an error, where thers no load error yet, and the user tries to delete a line
-	nullpointer exception because textAreaData and fulldata does not exist yet
+	FIXME theres an error, where teh invalid data of a file that can't be load is being shown after loadNumLines
+	FIXME camera should be disabled, if cant display data - because chart will be cleared
 	*/
 	public String loadNumLines(int n){
 		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText();

@@ -188,7 +188,7 @@ public final class AppUI extends UITemplate {
 					newButton.setDisable(false);
 					saveButton.setDisable(false);
 				}
-			} else { //FIXME - bug - savedData may not be null at the beginning
+			} else {
 				//current file has been saved
 				String textData = textArea.getText().trim();
 				newButton.setDisable(false);
@@ -199,7 +199,6 @@ public final class AppUI extends UITemplate {
 				}
 				if(!textData.equals(data)){
 
-					//FIX this method
 					int n = textArea.getParagraphs().size();
 					int toGet = 10 - n;
 					if(toGet > 0){
@@ -228,7 +227,11 @@ public final class AppUI extends UITemplate {
 				}
 
 				appData.loadData(data); //display what was in text area and hidden
-				scrnshotButton.setDisable(false);
+				if(chart.getData().isEmpty()){
+					scrnshotButton.setDisable(true);
+				}else{
+					scrnshotButton.setDisable(false);
+				}
 			}
 
 			addDataPointListeners();
