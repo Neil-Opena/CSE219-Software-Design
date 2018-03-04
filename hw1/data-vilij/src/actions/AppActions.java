@@ -64,6 +64,7 @@ public final class AppActions implements ActionComponent {
 	}
 
 	@Override
+	//FIXME new still has hidden data shit
 	public void handleNewRequest() {
 		try {
 			if (promptToSave()) {

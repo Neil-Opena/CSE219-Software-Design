@@ -172,6 +172,7 @@ public final class AppUI extends UITemplate {
 
 		workspace.getChildren().addAll(inputRegion, chart);
 		appPane.getChildren().add(workspace);
+
 	}
 
 	private void setWorkspaceActions() {
@@ -232,9 +233,10 @@ public final class AppUI extends UITemplate {
 				}else{
 					scrnshotButton.setDisable(false);
 				}
+
+				addDataPointListeners();
 			}
 
-			addDataPointListeners();
 		});
 
 		readOnly.setOnAction(event -> {
@@ -253,9 +255,10 @@ public final class AppUI extends UITemplate {
 	private void addDataPointListeners(){
 		for(Series series : chart.getData()){
 			if(series.getName().equals("Average Y")){
-				String averageValue = ((Data) series.getData().get(0)).getExtraValue().toString();
+				Data data = (Data) series.getData().get(0);
+				String averageValue = String.format("%.2f", Double.parseDouble(data.getExtraValue().toString()));
 				Node average = series.getNode();
-				Tooltip.install(average, new Tooltip("Average Y Value = " + averageValue)); //FIXME should truncate value
+				Tooltip.install(average, new Tooltip("Average Y Value = " + averageValue));
 				//should also change css of average
 				average.setOnMouseEntered(e ->{
 					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
@@ -264,7 +267,7 @@ public final class AppUI extends UITemplate {
 					getPrimaryScene().setCursor(Cursor.DEFAULT);
 				});
 				
-				continue; //should there be a separate button for the average?
+				continue;
 			}
 			for(Data point : (ObservableList<Data>) series.getData()){
 				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
