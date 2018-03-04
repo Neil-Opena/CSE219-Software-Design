@@ -46,11 +46,19 @@ functionality within the main workspace. -->
 	<property name="PNG_EXT" value="*.png"/>
 	<property name="PNG_EXT_DESC" value="PNG"/>
 	<property name="SCREENSHOT_TYPE" value="png"/>
+	<property name="READ_ONLY" value="Read Only"/>
+	<property name="AVERAGE_Y" value="Average Y"/>
+	<property name="AVERAGE_Y_TOOLTIP" value="Average Y Value = "/>
+	<property name="DECIMAL_FORMAT" value="%.2f"/>
 
 	<!-- LAYOUT USER INTERFACE -->
 	<property name="TITLE_STYLE" value="chart-title"/>
 	<property name="DISPLAY_BUTTON" value="Display"/>
 	<property name="CHART_TITLE" value="Data Visualization"/>
+
+	<!-- CSS -->
+	<property name="CSS_FILE" value="data-vilij.css"/>
+	<property name="GRAY_TEXT" value="gray"/>
 
     </property_list>
     <property_options_list/>

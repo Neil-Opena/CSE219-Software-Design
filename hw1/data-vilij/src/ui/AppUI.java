@@ -71,7 +71,7 @@ public final class AppUI extends UITemplate {
 		cssPath = "/" + String.join(separator,
                                     manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                     manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
-                                    "data-vilij.css");
+                                    manager.getPropertyValue(CSS_FILE.name()));
 		this.getPrimaryScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
 	}
 
@@ -161,7 +161,7 @@ public final class AppUI extends UITemplate {
 		controls.setAlignment(Pos.CENTER);
 		controls.setSpacing(20);
 		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
-		readOnly = new CheckBox("Read only");
+		readOnly = new CheckBox(manager.getPropertyValue(READ_ONLY.name()));
 		controls.getChildren().addAll(displayButton, readOnly);
 
 		inputRegion.getChildren().addAll(inputTitle, textArea, controls);
@@ -242,10 +242,10 @@ public final class AppUI extends UITemplate {
 			if (readOnly.isSelected()) {
 				textArea.setEditable(false);
 				//change to css CHANGE OTHERS too, like title bar and shit
-				textArea.getStyleClass().add("gray");
+				textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
 			} else {
 				textArea.setEditable(true);
-				textArea.getStyleClass().remove("gray");
+				textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
 			}
 		});
 
@@ -253,11 +253,11 @@ public final class AppUI extends UITemplate {
 
 	private void addDataPointListeners(){
 		for(Series series : chart.getData()){
-			if(series.getName().equals("Average Y")){
+			if(series.getName().equals(manager.getPropertyValue(AVERAGE_Y.name()))){
 				Data data = (Data) series.getData().get(0);
-				String averageValue = String.format("%.2f", Double.parseDouble(data.getExtraValue().toString()));
+				String averageValue = String.format(manager.getPropertyValue(DECIMAL_FORMAT.name()), Double.parseDouble(data.getExtraValue().toString()));
 				Node average = series.getNode();
-				Tooltip.install(average, new Tooltip("Average Y Value = " + averageValue));
+				Tooltip.install(average, new Tooltip(manager.getPropertyValue(AVERAGE_Y_TOOLTIP.name()) + averageValue));
 				//should also change css of average
 				average.setOnMouseEntered(e ->{
 					getPrimaryScene().setCursor(Cursor.CROSSHAIR);

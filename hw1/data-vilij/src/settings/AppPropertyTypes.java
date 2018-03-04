@@ -45,10 +45,18 @@ public enum AppPropertyTypes {
     PNG_EXT,
     PNG_EXT_DESC,
     SCREENSHOT_TYPE,
+    READ_ONLY,
+    AVERAGE_Y,
+    AVERAGE_Y_TOOLTIP,
+    DECIMAL_FORMAT,
 
     /* layout user interface*/
     TITLE_STYLE,
     DISPLAY_BUTTON,
     CHART_TITLE,
+
+    /* css */
+    CSS_FILE,
+    GRAY_TEXT,
 
 }
