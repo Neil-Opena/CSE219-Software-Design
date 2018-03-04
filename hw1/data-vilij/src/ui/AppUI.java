@@ -202,7 +202,7 @@ public final class AppUI extends UITemplate {
 					int n = textArea.getParagraphs().size();
 					int toGet = 10 - n;
 					if(toGet > 0){
-//						//update text
+						//update text
 						newVal = ((AppData) applicationTemplate.getDataComponent()).loadNumLines(toGet);
 						textArea.setText(newVal);
 					}
