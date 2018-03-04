@@ -30,6 +30,11 @@ functionality within the main workspace. -->
 	<property name="LOAD_ERROR_TITLE" value="Cannot Load File"/>
 	<property name="SAVE_ERROR_MESSAGE" value="Cannot save to a .tsd file. Invalid data &#xD;"/>
 	<property name="LOAD_ERROR_MESSAGE" value="Cannot load. Not a valid Tab-Separated Data File (.tsd) &#xD;"/>
+	<property name="LARGE_DATA_TITLE" value="Data Exceeded Capacity"/>
+	<property name="LARGE_DATA_MESSAGE_1" value="Data exceeded text area capacity. Loaded data consists of "/>
+	<property name="LARGE_DATA_MESSAGE_2" value=" lines.&#xD;Showing only the first 10 in the text area."/>
+	<property name="FILE_NOT_FOUND_TITLE" value="File Not Found"/>
+	<property name="FILE_NOT_FOUND_MESSAGE" value="Specified File was not found."/>
 	
 
         <!-- APPLICATION-SPECIFIC MESSAGE TITLES -->

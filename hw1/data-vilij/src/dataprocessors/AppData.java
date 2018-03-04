@@ -13,8 +13,8 @@ import vilij.templates.ApplicationTemplate;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.stream.Stream;
-import static settings.AppPropertyTypes.INVALID_DATA_MESSAGE;
-import static settings.AppPropertyTypes.INVALID_DATA_TITLE;
+import static settings.AppPropertyTypes.*;
+import vilij.propertymanager.PropertyManager;
 
 /**
  * This is the concrete application-specific implementation of the data
@@ -29,6 +29,7 @@ public class AppData implements DataComponent {
 	private ApplicationTemplate applicationTemplate;
 
 	private AppUI appUI;
+	private PropertyManager manager;
 
 	private String savedData; //String to test whether the data was saved already
 	private ArrayList<String> textAreaData; //helper list 
@@ -39,6 +40,7 @@ public class AppData implements DataComponent {
 		this.applicationTemplate = applicationTemplate;
 
 		appUI = (AppUI) applicationTemplate.getUIComponent();
+		manager = applicationTemplate.manager;
 	}
 
 	public String getSavedData() {
@@ -73,7 +75,7 @@ public class AppData implements DataComponent {
 
 		//when loading, only 10 are displayed on the text area
 		if(fullData.size() > 10){
-			appUI.showErrorDialog("Data Exceeded Capacity", "Loaded data consists of " + fullData.size() + " lines. Showing only the first 10 in the text area.");
+			appUI.showErrorDialog(manager.getPropertyValue(LARGE_DATA_TITLE.name()), manager.getPropertyValue(LARGE_DATA_MESSAGE_1.name()) + fullData.size() + manager.getPropertyValue(LARGE_DATA_MESSAGE_2.name()));
 			for(int i = 0; i < 10; i++){
 				textAreaData.add(fullData.remove(0));
 			}
@@ -116,11 +118,9 @@ public class AppData implements DataComponent {
 			writer.close();
 			
 		} catch (IOException e) {
-			System.out.println("something went wrong");
-			e.printStackTrace();
-			//FIXME
+			appUI.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 		} catch (NullPointerException e){
-			//save canceleld
+			//save cancelled
 		}
 	}
 
@@ -190,13 +190,10 @@ public class AppData implements DataComponent {
 				fullData.add(line);
 			});
 		}catch(FileNotFoundException e){
-			System.out.println("file not found");
-			e.printStackTrace();
+			appUI.showErrorDialog(manager.getPropertyValue(FILE_NOT_FOUND_TITLE.name()), manager.getPropertyValue(FILE_NOT_FOUND_MESSAGE.name()));
 			//FIXME
 		}catch(IOException e){
-			System.out.println("Something went wrong");
-			e.printStackTrace();
-			//FIXME
+			appUI.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_LOAD_ERROR_MESSAGE.name()));
 		}
 	}
 
