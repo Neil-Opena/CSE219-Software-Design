@@ -28,7 +28,6 @@ and open the template in the editor.
 }
 
 .hide-symbol{
-/*	FIXME change name, and change legend symbol*/
 	-fx-background-color: null;
 }
 

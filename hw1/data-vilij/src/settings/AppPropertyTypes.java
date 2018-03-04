@@ -21,24 +21,25 @@ public enum AppPropertyTypes {
 
     /* error messages */
     RESOURCE_SUBDIR_NOT_FOUND,
-    INVALID_DATA_TITLE,
     INVALID_DATA_MESSAGE,
     NO_DATA_MESSAGE,
-    IO_ERROR_TITLE,
     IO_SAVE_ERROR_MESSAGE,
     IO_LOAD_ERROR_MESSAGE,
-    SAVE_ERROR_TITLE,
     SAVE_ERROR_MESSAGE,
-    LOAD_ERROR_TITLE,
     LOAD_ERROR_MESSAGE,
-    LARGE_DATA_TITLE,
     LARGE_DATA_MESSAGE_1,
     LARGE_DATA_MESSAGE_2,
-    FILE_NOT_FOUND_TITLE,
     FILE_NOT_FOUND_MESSAGE,
+    LINE,
 
     /* application-specific message titles */
     SAVE_UNSAVED_WORK_TITLE,
+    INVALID_DATA_TITLE,
+    IO_ERROR_TITLE,
+    SAVE_ERROR_TITLE,
+    LOAD_ERROR_TITLE,
+    LARGE_DATA_TITLE,
+    FILE_NOT_FOUND_TITLE,
 
     /* application-specific messages */
     SAVE_UNSAVED_WORK,
@@ -64,5 +65,7 @@ public enum AppPropertyTypes {
     /* css */
     CSS_FILE,
     GRAY_TEXT,
+    HIDE_SYMBOL,
+    DISPLAY_LINE,
 
 }

@@ -20,25 +20,25 @@ functionality within the main workspace. -->
 
         <!-- ERROR MESSAGES -->
         <property name="RESOURCE_SUBDIR_NOT_FOUND" value="Directory not found under resources."/>
-	<property name="INVALID_DATA_TITLE" value="Invalid Data"/>
 	<property name="INVALID_DATA_MESSAGE" value="The data in the text area does not follow the .tsd format.&#xD;Each line of data must follow the following format: @[name] [label] [x,y]. Each component separated by a tab. " />
 	<property name="NO_DATA_MESSAGE" value="There is nothing to display" />
-	<property name="IO_ERROR_TITLE" value="Something went wrong" />
     	<property name="IO_SAVE_ERROR_MESSAGE" value="An error has occurred while saving the file." />
 	<property name="IO_LOAD_ERROR_MESSAGE" value="An error has occurred while loading the file." />
-	<property name="SAVE_ERROR_TITLE" value="Cannot Save File"/>
-	<property name="LOAD_ERROR_TITLE" value="Cannot Load File"/>
 	<property name="SAVE_ERROR_MESSAGE" value="Cannot save to a .tsd file. Invalid data &#xD;"/>
 	<property name="LOAD_ERROR_MESSAGE" value="Cannot load. Not a valid Tab-Separated Data File (.tsd) &#xD;"/>
-	<property name="LARGE_DATA_TITLE" value="Data Exceeded Capacity"/>
-	<property name="LARGE_DATA_MESSAGE_1" value="Data exceeded text area capacity. Loaded data consists of "/>
+	<property name="LARGE_DATA_MESSAGE_1" value="Data exceeded text area capacity.&#xD;Loaded data consists of "/>
 	<property name="LARGE_DATA_MESSAGE_2" value=" lines.&#xD;Showing only the first 10 in the text area."/>
-	<property name="FILE_NOT_FOUND_TITLE" value="File Not Found"/>
 	<property name="FILE_NOT_FOUND_MESSAGE" value="Specified File was not found."/>
-	
+	<property name="LINE" value="Line "/>
 
         <!-- APPLICATION-SPECIFIC MESSAGE TITLES -->
         <property name="SAVE_UNSAVED_WORK_TITLE" value="Save Current Work"/>
+	<property name="INVALID_DATA_TITLE" value="Invalid Data"/>
+	<property name="IO_ERROR_TITLE" value="Something went wrong" />
+	<property name="SAVE_ERROR_TITLE" value="Cannot Save File"/>
+	<property name="LOAD_ERROR_TITLE" value="Cannot Load File"/>
+	<property name="LARGE_DATA_TITLE" value="Data Exceeded Capacity"/>
+	<property name="FILE_NOT_FOUND_TITLE" value="File Not Found"/>
 
         <!-- APPLICATION-SPECIFIC MESSAGES -->
         <property name="SAVE_UNSAVED_WORK" value="Would you like to save current work?"/>
@@ -64,6 +64,8 @@ functionality within the main workspace. -->
 	<!-- CSS -->
 	<property name="CSS_FILE" value="data-vilij.css"/>
 	<property name="GRAY_TEXT" value="gray"/>
+	<property name="HIDE_SYMBOL" value="hide-symbol"/>
+	<property name="DISPLAY_LINE" value="display-line"/>
 
     </property_list>
     <property_options_list/>

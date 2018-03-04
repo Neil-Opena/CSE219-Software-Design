@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import static settings.AppPropertyTypes.*;
+import vilij.propertymanager.PropertyManager;
 
 /**
  * The data files used by this data visualization applications follow a
@@ -25,6 +27,8 @@ import javafx.scene.chart.XYChart.Series;
  */
 public final class TSDProcessor {
 
+	private PropertyManager manager;
+
 	public static class InvalidDataNameException extends Exception {
 
 		private static final String NAME_ERROR_MSG = "All data instance names must start with the @ character.";
@@ -36,10 +40,10 @@ public final class TSDProcessor {
 
 	public static class DuplicateNameException extends Exception {
 
-		private static final String message = "Duplicate name = "; //FIXMElater
+		private static final String MSG = "Duplicate name = ";
 
 		public DuplicateNameException(String name) {
-			super(message + name);
+			super(MSG + name);
 		}
 	}
 
@@ -58,6 +62,7 @@ public final class TSDProcessor {
 	public TSDProcessor() {
 		dataLabels = new LinkedHashMap<>();
 		dataPoints = new LinkedHashMap<>();
+		manager = PropertyManager.getManager();
 	}
 
 	/**
@@ -86,7 +91,7 @@ public final class TSDProcessor {
 					dataPoints.put(name, point);
 				} catch (Exception e) {
 					errorMessage.setLength(0);
-					errorMessage.append("Line " + (dataPoints.size() + 1) + ": ");
+					errorMessage.append(manager.getPropertyValue(LINE.name())+ (dataPoints.size() + 1) + ": ");
 					if (e instanceof InvalidDataNameException || e instanceof DuplicateNameException) {
 						errorMessage.append(e.getMessage());
 					}
@@ -143,7 +148,7 @@ public final class TSDProcessor {
 
 		double average = sum / points.size();
 		Series averageY = new Series<>();
-		averageY.setName("Average Y");
+		averageY.setName(manager.getPropertyValue(AVERAGE_Y.name()));
 
 		Data minData = new Data(min, average, average);
 		Data maxData = new Data(max, average, average);
@@ -152,9 +157,9 @@ public final class TSDProcessor {
 
 		chart.getData().add(averageY);
 
-		minData.getNode().getStyleClass().add("hide-symbol"); 
-		maxData.getNode().getStyleClass().add("hide-symbol");
-		averageY.getNode().getStyleClass().add("display-line");
+		minData.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name())); 
+		maxData.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name()));
+		averageY.getNode().getStyleClass().add(manager.getPropertyValue(DISPLAY_LINE.name()));
 	}
 
 	void clear() {
