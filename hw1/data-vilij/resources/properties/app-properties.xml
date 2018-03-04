@@ -6,6 +6,7 @@ functionality within the main workspace. -->
     <property_list>
         <!-- RESOURCE FILES AND FOLDERS -->
         <property name="DATA_RESOURCE_PATH" value="data-vilij/resources/data"/> <!--- package name for data resource --> 
+	<property name="SCREENSHOT_RESOURCE_PATH" value="data-vilij/resources/screenshots"/>
 
         <!-- USER INTERFACE ICON FILES -->
         <property name="SCREENSHOT_ICON" value="screenshot.png"/>
@@ -20,10 +21,16 @@ functionality within the main workspace. -->
         <!-- ERROR MESSAGES -->
         <property name="RESOURCE_SUBDIR_NOT_FOUND" value="Directory not found under resources."/>
 	<property name="INVALID_DATA_TITLE" value="Invalid Data"/>
-	<property name="INVALID_DATA_MESSAGE" value="The data in the text area does not follow the .tsd format. Each line of data must follow the following format: @[name] [label] [x,y]. Each component separated by a tab. " />
+	<property name="INVALID_DATA_MESSAGE" value="The data in the text area does not follow the .tsd format.&#xD;Each line of data must follow the following format: @[name] [label] [x,y]. Each component separated by a tab. " />
 	<property name="NO_DATA_MESSAGE" value="There is nothing to display" />
 	<property name="IO_ERROR_TITLE" value="Something went wrong" />
-    	<property name="IO_ERROR_MESSAGE" value="File could not be saved." />
+    	<property name="IO_SAVE_ERROR_MESSAGE" value="An error has occurred while saving the file." />
+	<property name="IO_LOAD_ERROR_MESSAGE" value="An error has occurred while loading the file." />
+	<property name="SAVE_ERROR_TITLE" value="Cannot Save File"/>
+	<property name="LOAD_ERROR_TITLE" value="Cannot Load File"/>
+	<property name="SAVE_ERROR_MESSAGE" value="Cannot save to a .tsd file. Invalid data &#xD;"/>
+	<property name="LOAD_ERROR_MESSAGE" value="Cannot load. Not a valid Tab-Separated Data File (.tsd) &#xD;"/>
+	
 
         <!-- APPLICATION-SPECIFIC MESSAGE TITLES -->
         <property name="SAVE_UNSAVED_WORK_TITLE" value="Save Current Work"/>
@@ -36,6 +43,9 @@ functionality within the main workspace. -->
         <property name="DATA_FILE_EXT_DESC" value="Tab-Separated Data File"/>
         <property name="TEXT_AREA" value="Data File"/>
         <property name="SPECIFIED_FILE" value=" specified file"/>
+	<property name="PNG_EXT" value="*.png"/>
+	<property name="PNG_EXT_DESC" value="PNG"/>
+	<property name="SCREENSHOT_TYPE" value="png"/>
 
 	<!-- LAYOUT USER INTERFACE -->
 	<property name="TITLE_STYLE" value="chart-title"/>

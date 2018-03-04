@@ -60,15 +60,14 @@ public final class AppActions implements ActionComponent {
 
 		//set up file chooser for screenshots
 		this.screenShotChooser = new FileChooser();
-		screenShotChooser.getExtensionFilters().add(new ExtensionFilter("PNG","*.png"));
-		Path screenshotDirectory = current.resolve("data-vilij/resources/screenshots");
+		screenShotChooser.getExtensionFilters().add(new ExtensionFilter(manager.getPropertyValue(PNG_EXT_DESC.name()), manager.getPropertyValue(PNG_EXT.name())));
+		Path screenshotDirectory = current.resolve(manager.getPropertyValue(SCREENSHOT_RESOURCE_PATH.name()));
 		screenShotChooser.setInitialDirectory(new File(screenshotDirectory.toString()));
 
 		appUI = (AppUI) applicationTemplate.getUIComponent();
 	}
 
 	@Override
-	//FIXME new still has hidden data shit
 	public void handleNewRequest() {
 		try {
 			if (promptToSave()) {
@@ -78,8 +77,7 @@ public final class AppActions implements ActionComponent {
 				appUI.disableSaveButton(); //disable Save Button
 			}
 		} catch (IOException e) {
-			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-			errorDialog.show(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
+			appUI.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 		}
 	}
 
@@ -91,13 +89,13 @@ public final class AppActions implements ActionComponent {
 				try{
 					showSaveDialog();
 				}catch(IOException e){
-					appUI.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_ERROR_MESSAGE.name()));
+					appUI.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 				}
 			}
 			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
 			appUI.disableSaveButton(); //disable Save Button
 		}else{
-			appUI.showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData); //Invalid Data --> will not save
+			appUI.showErrorDialog(manager.getPropertyValue(SAVE_ERROR_TITLE.name()), manager.getPropertyValue(SAVE_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not save
 		}
 	}
 
@@ -112,7 +110,7 @@ public final class AppActions implements ActionComponent {
 				((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
 				dataFilePath = file.toPath();
 			} else {
-				appUI.showErrorDialog("CANNOT LOAD", "Not a tsd file: cannot load because of invalid data \n" + testData); //Invalid Data --> will not load
+				appUI.showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not load
 			}
 			appUI.disableSaveButton(); //disable save button
 		} catch (NullPointerException e) {
@@ -136,7 +134,7 @@ public final class AppActions implements ActionComponent {
 		try{
 			WritableImage image = new WritableImage((int) chart.getWidth(), (int) chart.getHeight());
 			WritableImage screenshot = chart.snapshot(new SnapshotParameters(), image);
-			ImageIO.write(SwingFXUtils.fromFXImage(screenshot, null), "png", file);
+			ImageIO.write(SwingFXUtils.fromFXImage(screenshot, null), manager.getPropertyValue(SCREENSHOT_TYPE.name()), file);
 
 		}catch(IllegalArgumentException e){
 			//save cancelled
@@ -174,7 +172,7 @@ public final class AppActions implements ActionComponent {
 				if(testData == null){
 					return showSaveDialog();
 				}else{
-					appUI.showErrorDialog("CANNOT SAVE", "Cannot save to a .tsd file. Invalid data\n" + testData);
+					appUI.showErrorDialog(manager.getPropertyValue(SAVE_ERROR_TITLE.name()), manager.getPropertyValue(SAVE_ERROR_MESSAGE.name()) + testData);
 					return false;
 				}
 			}

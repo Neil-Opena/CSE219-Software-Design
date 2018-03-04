@@ -11,6 +11,7 @@ public enum AppPropertyTypes {
 
     /* resource files and folders */
     DATA_RESOURCE_PATH,
+    SCREENSHOT_RESOURCE_PATH,
 
     /* user interface icon file names */
     SCREENSHOT_ICON,
@@ -24,7 +25,11 @@ public enum AppPropertyTypes {
     INVALID_DATA_MESSAGE,
     NO_DATA_MESSAGE,
     IO_ERROR_TITLE,
-    IO_ERROR_MESSAGE,
+    IO_SAVE_ERROR_MESSAGE,
+    SAVE_ERROR_TITLE,
+    SAVE_ERROR_MESSAGE,
+    LOAD_ERROR_TITLE,
+    LOAD_ERROR_MESSAGE,
 
     /* application-specific message titles */
     SAVE_UNSAVED_WORK_TITLE,
@@ -37,6 +42,9 @@ public enum AppPropertyTypes {
     DATA_FILE_EXT_DESC,
     TEXT_AREA,
     SPECIFIED_FILE,
+    PNG_EXT,
+    PNG_EXT_DESC,
+    SCREENSHOT_TYPE,
 
     /* layout user interface*/
     TITLE_STYLE,

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.stream.Stream;
 import static settings.AppPropertyTypes.INVALID_DATA_MESSAGE;
 import static settings.AppPropertyTypes.INVALID_DATA_TITLE;
-import vilij.components.Dialog;
 
 /**
  * This is the concrete application-specific implementation of the data
@@ -74,8 +73,7 @@ public class AppData implements DataComponent {
 
 		//when loading, only 10 are displayed on the text area
 		if(fullData.size() > 10){
-			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-			errorDialog.show("Data Exceeded Capacity", "Loaded data consists of " + fullData.size() + " lines. Showing only the first 10 in the text area.");
+			appUI.showErrorDialog("Data Exceeded Capacity", "Loaded data consists of " + fullData.size() + " lines. Showing only the first 10 in the text area.");
 			for(int i = 0; i < 10; i++){
 				textAreaData.add(fullData.remove(0));
 			}
@@ -88,7 +86,6 @@ public class AppData implements DataComponent {
 		appUI.setTextAreaText(getStringRepresentation(textAreaData)); //sets text area
 		textAreaData.clear();
 		savedData = appUI.getTextAreaText().trim();
-
 		appUI.setHiddenData(getStringRepresentation(fullData));
 		
 	}
