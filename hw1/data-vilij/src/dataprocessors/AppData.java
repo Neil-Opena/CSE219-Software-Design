@@ -29,6 +29,8 @@ public class AppData implements DataComponent {
 	private TSDProcessor processor;
 	private ApplicationTemplate applicationTemplate;
 
+	private AppUI appUI;
+
 	private String savedData; //String to test whether the data was saved already
 	private ArrayList<String> textAreaData; //helper list 
 	private ArrayList<String> fullData;
@@ -36,6 +38,8 @@ public class AppData implements DataComponent {
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
 		this.applicationTemplate = applicationTemplate;
+
+		appUI = (AppUI) applicationTemplate.getUIComponent();
 	}
 
 	public String getSavedData() {
@@ -65,7 +69,6 @@ public class AppData implements DataComponent {
 
 	@Override
 	public void loadData(Path dataFilePath) {
-		AppUI appUI = ((AppUI) applicationTemplate.getUIComponent());
 		reset(); // reset App Data
 		initializeData(dataFilePath); //initializes Data from file
 
@@ -82,13 +85,11 @@ public class AppData implements DataComponent {
 			}
 		}
 
-		//when loaded, should data be set in AppUI?
-
 		appUI.setTextAreaText(getStringRepresentation(textAreaData)); //sets text area
 		textAreaData.clear();
 		savedData = appUI.getTextAreaText().trim();
 
-		((AppUI) applicationTemplate.getUIComponent()).setHiddenData(getStringRepresentation(fullData));
+		appUI.setHiddenData(getStringRepresentation(fullData));
 		
 	}
 
@@ -98,8 +99,7 @@ public class AppData implements DataComponent {
 		if (testData == null) {
 			displayData();
 		} else {
-			Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-			errorDialog.show(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
+			appUI.showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
 		}
 	}
 
@@ -122,17 +122,19 @@ public class AppData implements DataComponent {
 			System.out.println("something went wrong");
 			e.printStackTrace();
 			//FIXME
+		} catch (NullPointerException e){
+			//save canceleld
 		}
 	}
 
 	@Override
 	public void clear() {
 		processor.clear();
-		((AppUI) applicationTemplate.getUIComponent()).getChart().getData().clear();
+		appUI.getChart().getData().clear();
 	}
 
 	public void displayData() {
-		processor.toChartData(((AppUI) applicationTemplate.getUIComponent()).getChart());
+		processor.toChartData(appUI.getChart());
 	}
 
 	public String checkData(String data) {
@@ -156,6 +158,15 @@ public class AppData implements DataComponent {
 		*/
 		initializeData(path);
 		return getStringRepresentation(fullData);
+	}
+
+	/*
+	reset clears everything, including the hidden data
+	*/
+	public void reset(){
+		savedData = null;
+		fullData = null;
+		clear();
 	}
 
 	private String getStringRepresentation(ArrayList<String> list){
@@ -192,9 +203,4 @@ public class AppData implements DataComponent {
 		}
 	}
 
-	private void reset(){
-		savedData = null; //reset every helper variables
-		fullData = null;
-		clear();
-	}
 }

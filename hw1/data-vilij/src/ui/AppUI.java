@@ -217,8 +217,7 @@ public final class AppUI extends UITemplate {
 			String test = textArea.getText().trim();
 			hasNewText = !test.equals(data);
 			if (test.isEmpty() && hiddenData == null) {
-				Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-				errorDialog.show(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
+				showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
 			} else if (hasNewText || chart.getData().isEmpty()) {
 				data = textArea.getText().trim();
 				appData.clear();
@@ -280,5 +279,10 @@ public final class AppUI extends UITemplate {
 				});
 			}
 		}
+	}
+
+	public void showErrorDialog(String title, String message) {
+		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+		errorDialog.show(title, message);
 	}
 }
