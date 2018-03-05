@@ -34,6 +34,7 @@ public class AppData implements DataComponent {
 	private String savedData; //String to test whether the data was saved already
 	private ArrayList<String> textAreaData; //helper list 
 	private ArrayList<String> fullData;
+	private ArrayList<String> old;
 
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
@@ -166,6 +167,10 @@ public class AppData implements DataComponent {
 		clear();
 	}
 
+	public void revert(){
+		fullData = old;
+	}
+
 	private String getStringRepresentation(ArrayList<String> list){
 		if(list.isEmpty()){
 			return null;
@@ -182,7 +187,7 @@ public class AppData implements DataComponent {
 		try{
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			Stream<String> dataLines = reader.lines();
-
+			old = fullData;
 			fullData = new ArrayList<>();
 			textAreaData = new ArrayList<>();
 

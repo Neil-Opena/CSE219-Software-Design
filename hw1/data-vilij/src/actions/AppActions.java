@@ -102,14 +102,17 @@ public final class AppActions implements ActionComponent {
 	@Override
 	public void handleLoadRequest() {
 		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		try {
-			String fileData = ((AppData) applicationTemplate.getDataComponent()).getFileText(file.toPath());
-			String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(fileData);
+			String fileData = appData.getFileText(file.toPath());
+			String testData = appData.checkData(fileData);
 			if(testData == null){
 				applicationTemplate.getUIComponent().clear();
 				((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
 				dataFilePath = file.toPath();
 			} else {
+				//REVERT to old data
+				appData.revert();
 				appUI.showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not load
 			}
 			appUI.disableSaveButton(); //disable save button
