@@ -56,7 +56,12 @@ public class TaskDemo extends Application {
         String myName = Thread.currentThread().getName();
         Label myLabel = new Label(myName + " active");
         Button cancelButton = new Button("Cancel");
-        cancelButton.setOnAction(e -> task.cancel());
+        cancelButton.setOnAction(e -> {
+		task.cancel();
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setContentText(myName + " has been cancelled");
+		alert.show();
+		});
         FlowPane myPane = new FlowPane();
         ProgressIndicator progress = new ProgressIndicator(0);
         ObservableList<Node> children = myPane.getChildren();
@@ -69,6 +74,7 @@ public class TaskDemo extends Application {
         try {
             long time = (long) (Math.random() * 20000);
             for (long t = 0; t < time; t += 1) {
+		lock.lock();
                 try {
                     // Perform a "banking transaction".
                     if (Math.random() >= 0.5) {
@@ -88,12 +94,17 @@ public class TaskDemo extends Application {
                 }
                 long tt = t;
                 double pct = (double) tt / time;
+		Platform.runLater(() ->{
+			progress.setProgress(pct);
+		});
                 Thread.sleep(1);
             }
         } catch (InterruptedException x) {
             // EMPTY EXCEPTION HANDLERS ARE OFTEN A BAD IDEA!
         }
-        taskView.getItems().remove(myPane);
+        Platform.runLater(()->{
+		taskView.getItems().remove(myPane);
+	});
     }
 
     public static void main(String[] args) {
