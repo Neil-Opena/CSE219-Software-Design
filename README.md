@@ -32,3 +32,7 @@ __DataViliJ: Data Visualization Application__
     - Graphical User Interfaces using JavaFX
 4. __Recitation 4__ <br />
     - Using JavaFX & HTML5 Canvas
+5. __Recitation 5__ <br />
+    - JavaFX Charts 
+6. __Recitation 6__ <br />
+    - Multithreading
