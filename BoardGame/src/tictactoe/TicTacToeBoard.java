@@ -389,12 +389,17 @@ public class TicTacToeBoard extends Board {
             if (other == null) {
                 return false;
             }
-            if (getClass() != other.getClass()) {
+            if (!getClass().equals(other.getClass())) {
                 return false;
             }
             Location otherLocation = (Location) other;
             return number == otherLocation.number;
         }
+
+	@Override
+	public int hashCode(){
+		return number;
+	}
 
     }
 }

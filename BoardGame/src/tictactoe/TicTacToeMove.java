@@ -47,4 +47,23 @@ public class TicTacToeMove extends Move {
         return location.toString();
     }
 
+    @Override
+    public boolean equals(Object o){
+	    if(o == this){
+		return true;
+	    }else if(o == null){ 
+		return false;
+	    }else if(!o.getClass().equals(this.getClass())){
+		return false;
+	    }
+
+	    TicTacToeMove move = (TicTacToeMove) o;
+	    return this.location.equals(move.location);
+    }
+
+    @Override
+    public int hashCode(){
+	return this.location.hashCode();
+    }
+
 }
