@@ -1,8 +1,6 @@
 //Neil Opena 110878452
 package ui;
 
-import actions.AppActions;
-import dataprocessors.AppData;
 import static java.io.File.separator;
 import java.io.IOException;
 import javafx.collections.ObservableList;
@@ -23,15 +21,17 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import vilij.templates.ApplicationTemplate;
-import vilij.templates.UITemplate;
 
-import static settings.AppPropertyTypes.*;
 import vilij.components.Dialog;
 import vilij.propertymanager.PropertyManager;
+import vilij.templates.ApplicationTemplate;
+import vilij.templates.UITemplate;
 import static vilij.settings.PropertyTypes.CSS_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
+import static settings.AppPropertyTypes.*;
+import actions.AppActions;
+import dataprocessors.AppData;
 
 /**
  * This is the application's user interface implementation.
