@@ -1,10 +1,6 @@
 package actions;
 
-import dataprocessors.AppData;
 import java.io.File;
-import vilij.components.ActionComponent;
-import vilij.templates.ApplicationTemplate;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,12 +12,16 @@ import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javax.imageio.ImageIO;
-import static settings.AppPropertyTypes.*;
-import ui.AppUI;
+
+import dataprocessors.AppData;
+import vilij.components.ActionComponent;
 import vilij.components.ConfirmationDialog;
 import vilij.components.ConfirmationDialog.Option;
 import vilij.components.Dialog;
 import vilij.propertymanager.PropertyManager;
+import vilij.templates.ApplicationTemplate;
+import ui.AppUI;
+import static settings.AppPropertyTypes.*;
 
 /**
  * This is the concrete implementation of the action handlers required by the
