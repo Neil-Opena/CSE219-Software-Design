@@ -1,14 +1,18 @@
 package dataprocessors;
 
-import javafx.geometry.Point2D;
-import javafx.scene.chart.XYChart;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.chart.XYChart;
+import javafx.geometry.Point2D;
+
 import static settings.AppPropertyTypes.*;
 import vilij.propertymanager.PropertyManager;
 
