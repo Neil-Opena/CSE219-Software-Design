@@ -6,15 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import ui.AppUI;
-import vilij.components.DataComponent;
-import vilij.templates.ApplicationTemplate;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.stream.Stream;
-import static settings.AppPropertyTypes.*;
+
 import vilij.propertymanager.PropertyManager;
+import vilij.components.DataComponent;
+import vilij.templates.ApplicationTemplate;
+import ui.AppUI;
+import static settings.AppPropertyTypes.*;
 
 /**
  * This is the concrete application-specific implementation of the data
