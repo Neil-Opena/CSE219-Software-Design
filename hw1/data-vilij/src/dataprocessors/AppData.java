@@ -1,5 +1,6 @@
 package dataprocessors;
 
+import actions.AppActions;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,6 +30,7 @@ public class AppData implements DataComponent {
 	private ApplicationTemplate applicationTemplate;
 
 	private AppUI appUI;
+	private AppActions appActions;
 	private PropertyManager manager;
 
 	private String savedData; //String to test whether the data was saved already
@@ -41,6 +43,7 @@ public class AppData implements DataComponent {
 		this.applicationTemplate = applicationTemplate;
 
 		appUI = (AppUI) applicationTemplate.getUIComponent();
+		appActions = (AppActions) applicationTemplate.getActionComponent();
 		manager = applicationTemplate.manager;
 	}
 
@@ -76,7 +79,7 @@ public class AppData implements DataComponent {
 
 		//when loading, only 10 are displayed on the text area
 		if(fullData.size() > 10){
-			appUI.showErrorDialog(manager.getPropertyValue(LARGE_DATA_TITLE.name()), manager.getPropertyValue(LARGE_DATA_MESSAGE_1.name()) + fullData.size() + manager.getPropertyValue(LARGE_DATA_MESSAGE_2.name()));
+			appActions.showErrorDialog(manager.getPropertyValue(LARGE_DATA_TITLE.name()), manager.getPropertyValue(LARGE_DATA_MESSAGE_1.name()) + fullData.size() + manager.getPropertyValue(LARGE_DATA_MESSAGE_2.name()));
 			for(int i = 0; i < 10; i++){
 				textAreaData.add(fullData.remove(0));
 			}
@@ -99,7 +102,7 @@ public class AppData implements DataComponent {
 		if (testData == null) {
 			displayData();
 		} else {
-			appUI.showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
+			appActions.showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
 		}
 	}
 
@@ -119,7 +122,7 @@ public class AppData implements DataComponent {
 			writer.close();
 			
 		} catch (IOException e) {
-			appUI.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+			appActions.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 		} catch (NullPointerException e){
 			//save cancelled
 		}
@@ -195,10 +198,10 @@ public class AppData implements DataComponent {
 				fullData.add(line);
 			});
 		}catch(FileNotFoundException e){
-			appUI.showErrorDialog(manager.getPropertyValue(FILE_NOT_FOUND_TITLE.name()), manager.getPropertyValue(FILE_NOT_FOUND_MESSAGE.name()));
+			appActions.showErrorDialog(manager.getPropertyValue(FILE_NOT_FOUND_TITLE.name()), manager.getPropertyValue(FILE_NOT_FOUND_MESSAGE.name()));
 			//FIXME
 		}catch(IOException e){
-			appUI.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_LOAD_ERROR_MESSAGE.name()));
+			appActions.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_LOAD_ERROR_MESSAGE.name()));
 		}
 	}
 

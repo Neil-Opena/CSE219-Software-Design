@@ -22,7 +22,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import vilij.components.Dialog;
 import vilij.propertymanager.PropertyManager;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
@@ -32,7 +31,6 @@ import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 import static settings.AppPropertyTypes.*;
 import actions.AppActions;
 import dataprocessors.AppData;
-import vilij.components.DataComponent;
 
 /**
  * This is the application's user interface implementation.
@@ -119,7 +117,7 @@ public final class AppUI extends UITemplate {
 
 	@Override
 	public void clear() {
-		((DataComponent) applicationTemplate.getDataComponent()).clear();
+		((AppData) applicationTemplate.getDataComponent()).clear();
 		textArea.clear();
 		newButton.setDisable(true);
 		scrnshotButton.setDisable(true);
@@ -219,7 +217,7 @@ public final class AppUI extends UITemplate {
 			String test = textArea.getText().trim();
 			hasNewText = !test.equals(data);
 			if (test.isEmpty() && hiddenData == null) {
-				showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
+				((AppActions) applicationTemplate.getActionComponent()).showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
 			} else if (hasNewText || chart.getData().isEmpty()) {
 				data = textArea.getText().trim();
 				appData.clear();
@@ -283,8 +281,5 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
-	public void showErrorDialog(String title, String message) {
-		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-		errorDialog.show(title, message);
-	}
+	
 }

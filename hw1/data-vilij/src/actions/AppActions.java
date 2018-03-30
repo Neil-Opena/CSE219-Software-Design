@@ -77,7 +77,7 @@ public final class AppActions implements ActionComponent {
 				appUI.disableSaveButton(); //disable Save Button
 			}
 		} catch (IOException e) {
-			appUI.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+			showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 		}
 	}
 
@@ -89,13 +89,13 @@ public final class AppActions implements ActionComponent {
 				try{
 					showSaveDialog();
 				}catch(IOException e){
-					appUI.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+					showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 				}
 			}
 			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
 			appUI.disableSaveButton(); //disable Save Button
 		}else{
-			appUI.showErrorDialog(manager.getPropertyValue(SAVE_ERROR_TITLE.name()), manager.getPropertyValue(SAVE_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not save
+			showErrorDialog(manager.getPropertyValue(SAVE_ERROR_TITLE.name()), manager.getPropertyValue(SAVE_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not save
 		}
 	}
 
@@ -113,7 +113,7 @@ public final class AppActions implements ActionComponent {
 			} else {
 				//REVERT to old data
 				appData.revert();
-				appUI.showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not load
+				showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not load
 			}
 			appUI.disableSaveButton(); //disable save button
 		} catch (NullPointerException e) {
@@ -175,7 +175,7 @@ public final class AppActions implements ActionComponent {
 				if(testData == null){
 					return showSaveDialog();
 				}else{
-					appUI.showErrorDialog(manager.getPropertyValue(SAVE_ERROR_TITLE.name()), manager.getPropertyValue(SAVE_ERROR_MESSAGE.name()) + testData);
+					showErrorDialog(manager.getPropertyValue(SAVE_ERROR_TITLE.name()), manager.getPropertyValue(SAVE_ERROR_MESSAGE.name()) + testData);
 					return false;
 				}
 			}
@@ -195,5 +195,10 @@ public final class AppActions implements ActionComponent {
 			return false; //save cancelled
 		}
 		return true;
+	}
+
+	public void showErrorDialog(String title, String message) {
+		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+		errorDialog.show(title, message);
 	}
 }
