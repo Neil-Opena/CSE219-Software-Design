@@ -32,6 +32,7 @@ import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 import static settings.AppPropertyTypes.*;
 import actions.AppActions;
 import dataprocessors.AppData;
+import vilij.components.DataComponent;
 
 /**
  * This is the application's user interface implementation.
@@ -118,7 +119,7 @@ public final class AppUI extends UITemplate {
 
 	@Override
 	public void clear() {
-		((AppData) applicationTemplate.getDataComponent()).clear();
+		((DataComponent) applicationTemplate.getDataComponent()).clear();
 		textArea.clear();
 		newButton.setDisable(true);
 		scrnshotButton.setDisable(true);
@@ -176,7 +177,8 @@ public final class AppUI extends UITemplate {
 	}
 
 	private void setWorkspaceActions() {
-		applicationTemplate.setDataComponent(new AppData(applicationTemplate));
+		//applicationTemplate.setDataComponent(new AppData(applicationTemplate));
+		//i don't think this was necessarry
 
 		//if textArea has content, enable newbutton
 		textArea.textProperty().addListener((e, oldVal, newVal) -> {
