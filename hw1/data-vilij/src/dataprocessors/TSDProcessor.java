@@ -52,7 +52,7 @@ public final class TSDProcessor {
 	}
 
 	private class DataPoint extends Point2D{
-		String name;
+		private String name;
 
 		public DataPoint(double x, double y, String name){
 			super(x, y);
