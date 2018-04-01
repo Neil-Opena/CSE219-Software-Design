@@ -3,6 +3,7 @@ package dataprocessors;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -169,6 +170,10 @@ public final class TSDProcessor {
 	void clear() {
 		dataPoints.clear();
 		dataLabels.clear();
+	}
+
+	public List getLabelList(){
+		return Arrays.asList(dataLabels.values().toArray());
 	}
 
 	private String checkedname(String name) throws InvalidDataNameException {

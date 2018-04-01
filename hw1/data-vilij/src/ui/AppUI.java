@@ -60,6 +60,10 @@ public final class AppUI extends UITemplate {
 
 	private String hiddenData;
 
+	private enum Btn{
+		EDIT, DONE
+	}
+
 	public LineChart<Number, Number> getChart() {
 		return chart;
 	}
@@ -131,7 +135,10 @@ public final class AppUI extends UITemplate {
 
 	public void setTextAreaText(String text){
 		textArea.setText(text);
-	}
+	} 
+	/*
+	should set text to read me, this method is only called when file is loaded
+	*/
 
 	public void disableSaveButton(){
 		saveButton.setDisable(true);

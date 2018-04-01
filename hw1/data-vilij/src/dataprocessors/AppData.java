@@ -89,6 +89,11 @@ public class AppData implements DataComponent {
 			}
 		}
 
+		/*
+		-could be better
+		-this should get num instances, get num labels, label names, 
+		*/
+
 		appUI.setTextAreaText(getStringRepresentation(textAreaData)); //sets text area
 		textAreaData.clear();
 		savedData = appUI.getTextAreaText().trim();
@@ -185,6 +190,10 @@ public class AppData implements DataComponent {
 		return String.join("\n", temp);
 	}
 
+	/*
+
+	should parse data to determine number of instances, labels, etc. 
+	*/
 	private void initializeData(Path path){ //Initializes full data from the path
 		File file = path.toFile();
 		try{

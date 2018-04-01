@@ -110,12 +110,12 @@ public final class AppActions implements ActionComponent {
 				applicationTemplate.getUIComponent().clear();
 				((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
 				dataFilePath = file.toPath();
+				appUI.disableSaveButton(); //disable save button
 			} else {
 				//REVERT to old data
 				appData.revert();
 				showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not load
 			}
-			appUI.disableSaveButton(); //disable save button
 		} catch (NullPointerException e) {
 			//load cancelled
 		}
