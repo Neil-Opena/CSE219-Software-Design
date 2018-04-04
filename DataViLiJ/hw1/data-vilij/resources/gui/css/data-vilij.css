@@ -1,0 +1,86 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Feb 23, 2018, 5:09:40 PM
+    Author     : neil1
+*/
+
+.gray{
+	-fx-text-fill: gray;
+}
+
+.chart{
+	-fx-horizontal-grid-lines-visible: false;
+	-fx-vertical-grid-lines-visible: false;
+	-fx-vertical-zero-line-visible: false;
+	-fx-horizontal-zero-line-visible: false;
+}
+
+.chart-series-line{
+	-fx-stroke: null;
+}
+
+.display-line{
+	-fx-stroke: dodgerblue;
+}
+
+.hide-symbol{
+	-fx-background-color: null;
+}
+
+.axis{
+	-fx-tick-length: 15px;
+	-fx-tick-label-fill: darkorange;
+	-fx-minor-tick-length: 8px;
+}
+
+.axis-tick-mark{
+	-fx-fill: black;
+	-fx-stroke: green;
+	-fx-stroke-width: 3px;
+}
+
+.axis-minor-tick-mark{
+	-fx-stroke: black;
+	-fx-stroke-width: 1px;
+}
+
+.chart-plot-background{
+	-fx-border-color: black;
+	-fx-border-width: 4px;
+}
+
+/* chart symbol for scatter plot 
+
+.chart-symbol {
+	-fx-background-color: #f3622d, white;
+    	-fx-background-insets: 0, 2;
+    	-fx-background-radius: 5px;
+    	-fx-padding: 5px;
+	-fx-shape: null;
+}
+
+.default-color1.chart-symbol{
+	-fx-background-color: #fba71b, white;
+}
+.default-color2.chart-symbol{
+	-fx-background-color: #57b757, white;
+}
+.default-color3.chart-symbol{
+	-fx-background-color: #41a9c9, white;
+}
+.default-color4.chart-symbol{
+	-fx-background-color: #4258c9, white;
+}
+.default-color5.chart-symbol{
+	-fx-background-color: #9a42c8, white;
+}
+.default-color6.chart-symbol{
+	-fx-background-color: #c84164, white;
+}
+.default-color7.chart-symbol{
+	-fx-background-color: #888888, white;
+}*/
