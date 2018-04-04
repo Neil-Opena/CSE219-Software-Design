@@ -31,6 +31,9 @@ import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 import static settings.AppPropertyTypes.*;
 import actions.AppActions;
 import dataprocessors.AppData;
+import dataprocessors.Config;
+import java.util.List;
+import javafx.scene.control.TextField;
 
 /**
  * This is the application's user interface implementation.
@@ -43,30 +46,31 @@ public final class AppUI extends UITemplate {
 	 * The application to which this class of actions belongs.
 	 */
 	ApplicationTemplate applicationTemplate;
+	private PropertyManager manager; // Property manager for accessing properties
+
+	private ConfigWindow configWindow;
 
 	@SuppressWarnings("FieldCanBeLocal")
-	private Button scrnshotButton; // toolbar button to take a screenshot of the data
-	private LineChart<Number, Number> chart;          // the chart where data will be displayed
-	private Button displayButton;  // workspace button to display data on the chart
+	private VBox inputRegion; // container for input region
+	private Label inputTitle; // title for input region
+	private HBox controls; // container that houses controls
+
 	private TextArea textArea;       // text area for new data input
+	private LineChart<Number, Number> chart;          // the chart where data will be displayed
+	private Button scrnshotButton; // toolbar button to take a screenshot of the data
+	private Button displayButton;  // workspace button to display data on the chart
+	private Button editToggleButton; // button that toggles between edit and done
+	private Button runButton; // button for running alogrithm
+	private Button configButton; // button for configuring algorithm
+	private CheckBox readOnly; // readOnly box
+
 	private boolean hasNewText;     // whether or not the text area has any new data since last display
 
-	private VBox inputRegion;
-	private Label inputTitle;
-	private String data;
-	private PropertyManager manager;
-	private HBox controls;
-	private CheckBox readOnly;
-
+	private String currentText; 
 	private String hiddenData;
-
-	private enum Btn{
-		EDIT, DONE
-	}
-
-	public LineChart<Number, Number> getChart() {
-		return chart;
-	}
+	/*
+	Instead of displaying using text area data how aout display using app data
+	*/
 
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
 		super(primaryStage, applicationTemplate);
@@ -128,26 +132,119 @@ public final class AppUI extends UITemplate {
 		hiddenData = null;
 	}
 
+	/**
+	 * Returns the text within the text area
+	 * @return the text area text
+	 */
 	public String getTextAreaText(){
 		return textArea.getText();
 	}
 
-
+	/**
+	 * Sets the text area with the given parameter
+	 * Only called when data is loaded
+	 * @param text text to set the text area
+	 */
 	public void setTextAreaText(String text){
 		textArea.setText(text);
 	} 
 	/*
-	should set text to read me, this method is only called when file is loaded
+	should set text to read me
 	*/
+	
+	/**
+	 * Returns the chart inside the UI
+	 * @return chart
+	 */
+	public LineChart<Number, Number> getChart() {
+		return chart;
+	}
 
+	/**
+	 * Disables the save button in the UI
+	 */
 	public void disableSaveButton(){
 		saveButton.setDisable(true);
 	}
 
+	/**
+	 * Sets the display information when a data file is loaded
+	 * @param numInstances the number of instances or data points to be plotted
+	 * @param numLabels the number of labels of the given data set
+	 * @param labelNames the names of the labels
+	 * @param source the source of the file (fileName)
+	 */
+	public void setDisplayInfo(int numInstances, int numLabels, List<String> labelNames, String source){
+		
+	}
+
+	/**
+	 * Displays the text area to the user
+	 */
+	public void showTextArea(){
+
+	}
+
+	/**
+	 * Sets the text area to be read only depending on the parameter
+	 * @param readOnly true to set the text area to be read only, false otherwise
+	 */
+	public void setReadOnly(boolean readOnly){
+
+	}
+
+	public void showEditToggle(){
+
+	}
+
+	public void hideEditToggle(){
+
+	}
+
+	public void showAlgorithmTypes(){
+
+	}
+
+	public void hideAlgorithmTypes(){
+
+	}
+
+	public void showCluseringAlgorithms(){
+	
+	}
+
+	public void showClassificationAlgorithms(){
+
+	}
+
+	public void enableRun(){
+
+	}
+
+	public void disableRun(){
+
+	}
+
+	public void enableScreenshot(){
+
+	}
+
+	public Config getConfiguration(){
+		return null;
+	}
+
+
+	/*
+	MIGHT NOT NEED
+	*/
 	public void setHiddenData(String hiddenData){
 		this.hiddenData = hiddenData;
 	}
 
+	/**
+	 * Lays out the arrangement of the user interface
+	 * Instantiates the graphical user interface objects for use  
+	 */
 	private void layout() {
 		workspace = new FlowPane();
 
@@ -178,12 +275,14 @@ public final class AppUI extends UITemplate {
 
 		workspace.getChildren().addAll(inputRegion, chart);
 		appPane.getChildren().add(workspace);
-
+		
+		configWindow = new ConfigWindow();
 	}
 
+	/**
+	 * Sets up the listeners of the controls that the user interacts with
+	 */
 	private void setWorkspaceActions() {
-		//applicationTemplate.setDataComponent(new AppData(applicationTemplate));
-		//i don't think this was necessarry
 
 		//if textArea has content, enable newbutton
 		textArea.textProperty().addListener((e, oldVal, newVal) -> {
@@ -205,7 +304,7 @@ public final class AppUI extends UITemplate {
 				} else {
 					saveButton.setDisable(false);
 				}
-				if(!textData.equals(data)){
+				if(!textData.equals(currentText)){
 
 					int n = textArea.getParagraphs().size();
 					int toGet = 10 - n;
@@ -222,18 +321,18 @@ public final class AppUI extends UITemplate {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 
 			String test = textArea.getText().trim();
-			hasNewText = !test.equals(data);
+			hasNewText = !test.equals(currentText);
 			if (test.isEmpty() && hiddenData == null) {
 				((AppActions) applicationTemplate.getActionComponent()).showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
 			} else if (hasNewText || chart.getData().isEmpty()) {
-				data = textArea.getText().trim();
+				currentText = textArea.getText().trim();
 				appData.clear();
 				
 				if(hiddenData != null){ //if hidden data has been instantiated
-					data = data + "\n" + hiddenData;
+					currentText = currentText + "\n" + hiddenData;
 				}
 
-				appData.loadData(data); //display what was in text area and hidden
+				appData.loadData(currentText); //display what was in text area and hidden
 				if(chart.getData().isEmpty()){
 					scrnshotButton.setDisable(true);
 				}else{
@@ -258,6 +357,9 @@ public final class AppUI extends UITemplate {
 
 	}
 
+	/**
+	 * Adds listeners to the data points inside the chart
+	 */
 	private void addDataPointListeners(){
 		for(Series series : chart.getData()){
 			if(series.getName().equals(manager.getPropertyValue(AVERAGE_Y.name()))){
@@ -265,7 +367,6 @@ public final class AppUI extends UITemplate {
 				String averageValue = String.format(manager.getPropertyValue(DECIMAL_FORMAT.name()), Double.parseDouble(data.getExtraValue().toString()));
 				Node average = series.getNode();
 				Tooltip.install(average, new Tooltip(manager.getPropertyValue(AVERAGE_Y_TOOLTIP.name()) + averageValue));
-				//should also change css of average
 				average.setOnMouseEntered(e ->{
 					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
 				});
@@ -287,6 +388,43 @@ public final class AppUI extends UITemplate {
 			}
 		}
 	}
+	
+	private class ConfigWindow extends Stage{
+		private TextField iterationField;
+		private TextField intervalField;
+		private TextField numLabelsField;
+		private CheckBox continuousCheck;
 
+		private Config config;
+
+		public ConfigWindow(){
+			layout();
+		}
+
+		public void layout(){
+			iterationField = new TextField();
+			intervalField = new TextField();
+			numLabelsField = new TextField();
+			continuousCheck = new CheckBox();
+
+			config = null;
+		}
+
+		public Config getConig(){
+			return config;
+		}
+
+		public boolean checkInput(){
+			return false;
+		}
+
+		public void showLabelsField(){
+
+		}
+
+		private void createConfig(){
+			
+		}
+	}
 	
 }
