@@ -52,19 +52,8 @@ public final class TSDProcessor {
 		}
 	}
 
-	private class DataPoint extends Point2D{
-		private String name;
-		private String label;
-
-		public DataPoint(double x, double y, String name, String label){
-			super(x, y);
-			this.name = name;
-			this.label = label;
-		}
-	}
-
 	private Map<String, String> dataLabels;
-	private Map<String, DataPoint> dataPoints;
+	private Map<String, Point2D> dataPoints;
 
 	public TSDProcessor() {
 		dataLabels = new LinkedHashMap<>();
@@ -90,7 +79,7 @@ public final class TSDProcessor {
 					String name = checkedname(list.get(0));
 					String label = list.get(1);
 					String[] pair = list.get(2).split(",");
-					DataPoint point = new DataPoint(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]), name, label);
+					Point2D point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
 					if (dataPoints.containsKey(name)) {
 						throw new DuplicateNameException(name);
 					}
@@ -110,7 +99,6 @@ public final class TSDProcessor {
 		}
 	}
 
-	//maybe modify the exception to add line number?
 	/**
 	 * Exports the data to the specified 2-D chart.
 	 *
@@ -122,19 +110,24 @@ public final class TSDProcessor {
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName(label);
 			dataLabels.entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
-				DataPoint point = dataPoints.get(entry.getKey());
-				series.getData().add(new XYChart.Data<>(point.getX(), point.getY(), point.name));
+				Point2D point = dataPoints.get(entry.getKey());
+				String name = entry.getKey();
+				series.getData().add(new XYChart.Data<>(point.getX(), point.getY(), name));
 			});
 			chart.getData().add(series);
 		}
 		displayAverageYValue(chart);
 	}
 
+	public List getDataPoints(){
+		return Arrays.asList(dataPoints.values().toArray());
+	}
+
 	void displayAverageYValue(XYChart<Number, Number> chart){
 
 		double sum = 0;
 
-		Set<DataPoint> points = new HashSet<>(dataPoints.values());
+		Set<Point2D> points = new HashSet<>(dataPoints.values());
 		double min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
 		double max = min;
 
