@@ -1,6 +1,10 @@
 package dataprocessors;
 
 import actions.AppActions;
+import algorithms.Algorithm;
+import algorithms.Classifier;
+import algorithms.Clusterer;
+import classification.RandomClassifier;
 import data.OperatedData;
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,6 +42,13 @@ public class AppData implements DataComponent {
 	private ArrayList<String> fullData;
 	private ArrayList<String> old;
 
+	private Algorithm algorithmToRun;
+	private ArrayList<Classifier> classificationAlgorithms;
+	private ArrayList<Clusterer> clusteringAlgorithms;
+
+	private boolean isRunning;
+	private boolean isSaved;
+
 	private class AppOperatedData extends OperatedData{
 		private String name;
 
@@ -54,15 +65,14 @@ public class AppData implements DataComponent {
 		appUI = (AppUI) applicationTemplate.getUIComponent();
 		appActions = (AppActions) applicationTemplate.getActionComponent();
 		manager = applicationTemplate.manager;
+
+		initAlgorithms();
 	}
 
 	public String getSavedData() {
 		return savedData;
 	}
-	/*
-	FIXME theres an error, where teh invalid data of a file that can't be load is being shown after loadNumLines
-	FIXME camera should be disabled, if cant display data - because chart will be cleared
-	*/
+
 	public String loadNumLines(int n){
 		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText();
 
@@ -175,6 +185,22 @@ public class AppData implements DataComponent {
 		return getStringRepresentation(fullData);
 	}
 
+	public Algorithm getAlgorithmType(){
+		return null;
+	}
+
+	public void setAlgoConfig(Config config){
+
+	}
+
+	public void startAlgorithm(){
+
+	}
+
+	public void continueAlgorithm(){
+
+	}
+
 	/*
 	reset clears everything, including the hidden data
 	*/
@@ -221,6 +247,18 @@ public class AppData implements DataComponent {
 		}catch(IOException e){
 			appActions.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_LOAD_ERROR_MESSAGE.name()));
 		}
+	}
+
+	private void initAlgorithms(){
+		classificationAlgorithms = new ArrayList<>();
+		clusteringAlgorithms = new ArrayList<>();
+		
+		RandomClassifier test = new RandomClassifier();
+		//FIXME
+	}
+
+	private void checkLabels(){
+
 	}
 
 }
