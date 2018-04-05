@@ -3,12 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package communication;
+package data;
 
 /**
  *
  * @author neil1
  */
-public interface Algorithm {
-	
+public abstract class OperatedData {
+	private int x;
+	private int y;
+	private String label;
+
+	public OperatedData(int x, int y, String label){
+		this.x = x;
+		this.y = y;
+		this.label = label;
+	}
 }

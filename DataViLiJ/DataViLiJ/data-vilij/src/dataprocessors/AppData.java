@@ -1,6 +1,7 @@
 package dataprocessors;
 
 import actions.AppActions;
+import data.OperatedData;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,7 +29,6 @@ public class AppData implements DataComponent {
 
 	private TSDProcessor processor;
 	private ApplicationTemplate applicationTemplate;
-
 	private AppUI appUI;
 	private AppActions appActions;
 	private PropertyManager manager;
@@ -37,6 +37,15 @@ public class AppData implements DataComponent {
 	private ArrayList<String> textAreaData; //helper list 
 	private ArrayList<String> fullData;
 	private ArrayList<String> old;
+
+	private class AppOperatedData extends OperatedData{
+		private String name;
+
+		public AppOperatedData(int x, int y, String label, String name){
+			super(x, y, label);
+			this.name = name;
+		}
+	}
 
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
