@@ -54,10 +54,12 @@ public final class TSDProcessor {
 
 	private class DataPoint extends Point2D{
 		private String name;
+		private String label;
 
-		public DataPoint(double x, double y, String name){
+		public DataPoint(double x, double y, String name, String label){
 			super(x, y);
 			this.name = name;
+			this.label = label;
 		}
 	}
 
@@ -88,7 +90,7 @@ public final class TSDProcessor {
 					String name = checkedname(list.get(0));
 					String label = list.get(1);
 					String[] pair = list.get(2).split(",");
-					DataPoint point = new DataPoint(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]), name);
+					DataPoint point = new DataPoint(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]), name, label);
 					if (dataPoints.containsKey(name)) {
 						throw new DuplicateNameException(name);
 					}
