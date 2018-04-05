@@ -69,7 +69,7 @@ public final class AppUI extends UITemplate {
 	private String currentText; 
 	private String hiddenData;
 	/*
-	Instead of displaying using text area data how aout display using app data
+	Instead of displaying using text area data how about display using app data
 	*/
 
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
@@ -193,42 +193,87 @@ public final class AppUI extends UITemplate {
 
 	}
 
+	/**
+	 * Displays the edit toggle button to the user
+	 */
 	public void showEditToggle(){
 
 	}
 
+	/**
+	 * Hides the edit toggle button 
+	 */
 	public void hideEditToggle(){
 
 	}
 
+	/**
+	 * Shows the algorithm types that the user can select from
+	 */
 	public void showAlgorithmTypes(){
 
 	}
 
+	/**
+	 * Hides the algorithm types
+	 */
 	public void hideAlgorithmTypes(){
 
 	}
 
+	/**
+	 * Shows the possible clustering algorithms
+	 */
 	public void showCluseringAlgorithms(){
 	
 	}
 
+	/**
+	 * Shows the possible classification algorithms
+	 */
 	public void showClassificationAlgorithms(){
 
 	}
 
+	/**
+	 * Hides the algorithms
+	 */
+	public void hideAlgorithms(){
+
+	}
+
+	/**
+	 * Enables the run button
+	 */
 	public void enableRun(){
 
 	}
 
+	/**
+	 * Disables the run button
+	 */
 	public void disableRun(){
 
 	}
 
+	/**
+	 * Enables the screen shot button
+	 */
 	public void enableScreenshot(){
 
 	}
 
+	/**
+	 * Disables the screen shot button
+	 */
+	public void disableScreenshot(){
+
+	}
+
+	/**
+	 * Returns the configuration obtained from the Config Window
+	 * @return 
+	 */
 	public Config getConfiguration(){
 		return null;
 	}
@@ -389,18 +434,26 @@ public final class AppUI extends UITemplate {
 		}
 	}
 	
+	/**
+	 * This class is responsible for showing a window to the user
+	 * The values inputted inside the window is extracted to create a Config object
+	 */
 	private class ConfigWindow extends Stage{
-		private TextField iterationField;
-		private TextField intervalField;
-		private TextField numLabelsField;
-		private CheckBox continuousCheck;
 
-		private Config config;
+		private TextField iterationField; // TextField for entering the number of iterations
+		private TextField intervalField; // TextField for entering the number of intervals
+		private TextField numLabelsField; // TextField for the number of labels
+		private CheckBox continuousCheck; // CheckBox whether the algorithm runs continuous or not
+
+		private Config config; // Config object created from controls
 
 		public ConfigWindow(){
 			layout();
 		}
 
+		/**
+		 *  Lays out the UI display of the Configuration Window
+		 */
 		public void layout(){
 			iterationField = new TextField();
 			intervalField = new TextField();
@@ -410,18 +463,34 @@ public final class AppUI extends UITemplate {
 			config = null;
 		}
 
+		/**
+		 * Returns the Config object associated with what the user
+		 * entered in the Config Window
+		 * @return 
+		 */
 		public Config getConig(){
 			return config;
 		}
 
+		/**
+		 * Returns true if the input the user entered is valid
+		 * Returns false otherwise
+		 * @return if input is valid
+		 */
 		public boolean checkInput(){
 			return false;
 		}
 
+		/**
+		 * Shows the label TextField inside the Config Window
+		 */
 		public void showLabelsField(){
 
 		}
 
+		/**
+		 * Create a Configuration based on the input
+		 */
 		private void createConfig(){
 			
 		}
