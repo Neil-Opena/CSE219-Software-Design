@@ -33,13 +33,13 @@ and open the template in the editor.
 
 .axis{
 	-fx-tick-length: 15px;
-	-fx-tick-label-fill: darkorange;
+	-fx-tick-label-fill: #22313F;
 	-fx-minor-tick-length: 8px;
 }
 
 .axis-tick-mark{
 	-fx-fill: black;
-	-fx-stroke: green;
+	-fx-stroke: #67809F;
 	-fx-stroke-width: 3px;
 }
 
@@ -49,38 +49,18 @@ and open the template in the editor.
 }
 
 .chart-plot-background{
-	-fx-border-color: black;
-	-fx-border-width: 4px;
+	-fx-border-color: #2574A9;
+	-fx-border-width: 5px;
 }
 
-/* chart symbol for scatter plot 
-
-.chart-symbol {
-	-fx-background-color: #f3622d, white;
-    	-fx-background-insets: 0, 2;
-    	-fx-background-radius: 5px;
-    	-fx-padding: 5px;
-	-fx-shape: null;
+.toolbar {
+	-fx-background-color: #22313F;
 }
 
-.default-color1.chart-symbol{
-	-fx-background-color: #fba71b, white;
+.toolbar-button{
+	-fx-background-color: #67809F;
 }
-.default-color2.chart-symbol{
-	-fx-background-color: #57b757, white;
+
+.toolbar-button:hover{
+	-fx-background-color: #E4F1FE;
 }
-.default-color3.chart-symbol{
-	-fx-background-color: #41a9c9, white;
-}
-.default-color4.chart-symbol{
-	-fx-background-color: #4258c9, white;
-}
-.default-color5.chart-symbol{
-	-fx-background-color: #9a42c8, white;
-}
-.default-color6.chart-symbol{
-	-fx-background-color: #c84164, white;
-}
-.default-color7.chart-symbol{
-	-fx-background-color: #888888, white;
-}*/
