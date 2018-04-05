@@ -3,8 +3,6 @@ package classification;
 import algorithms.Classifier;
 import data.DataSet;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -80,10 +78,10 @@ public class RandomClassifier extends Classifier {
         System.out.printf("%d\t%d\t%d%n", output.get(0), output.get(1), output.get(2));
     }
 
-    /** A placeholder main method to just make sure this code runs smoothly */
-    public static void main(String... args) throws IOException {
-        DataSet          dataset    = DataSet.fromTSDFile(Paths.get("/path/to/some-data.tsd"));
-        RandomClassifier classifier = new RandomClassifier(dataset, 100, 5, true);
-        classifier.run(); // no multithreading yet
-    }
+//    /** A placeholder main method to just make sure this code runs smoothly */
+//    public static void main(String... args) throws IOException {
+//        DataSet          dataset    = DataSet.fromTSDFile(Paths.get("/path/to/some-data.tsd"));
+//        RandomClassifier classifier = new RandomClassifier(dataset, 100, 5, true);
+//        classifier.run(); // no multithreading yet
+//    }
 }
