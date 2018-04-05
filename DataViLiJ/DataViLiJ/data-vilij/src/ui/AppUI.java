@@ -3,20 +3,14 @@ package ui;
 
 import static java.io.File.separator;
 import java.io.IOException;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -80,6 +74,8 @@ public final class AppUI extends UITemplate {
                                     manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
                                     manager.getPropertyValue(CSS_FILE.name()));
 		this.getPrimaryScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
+
+		primaryStage.setTitle("Data ViLiJ"); // FIXME
 	}
 
 	@Override
@@ -97,6 +93,7 @@ public final class AppUI extends UITemplate {
 
 		scrnshotButton = setToolbarButton(scrnshotIconPath, manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()), true);
 		toolBar.getItems().add(scrnshotButton);
+		toolBar.getStyleClass().add("toolbar"); // FIXME
 	}
 
 	@Override
@@ -112,7 +109,6 @@ public final class AppUI extends UITemplate {
 				((AppActions) applicationTemplate.getActionComponent()).handleScreenshotRequest();
 			} catch (IOException ex) {
 				//ERROR occurred 
-				//FIXME
 			}
 		});
 	}
@@ -291,6 +287,7 @@ public final class AppUI extends UITemplate {
 	 * Instantiates the graphical user interface objects for use  
 	 */
 	private void layout() {
+
 		workspace = new FlowPane();
 
 		inputRegion = new VBox();
@@ -305,18 +302,18 @@ public final class AppUI extends UITemplate {
 		textArea.setWrapText(true);
 		VBox.setMargin(textArea, new Insets(10));
 
-		controls = new HBox();
-		controls.setAlignment(Pos.CENTER);
-		controls.setSpacing(20);
-		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
-		readOnly = new CheckBox(manager.getPropertyValue(READ_ONLY.name()));
-		controls.getChildren().addAll(displayButton, readOnly);
-
-		inputRegion.getChildren().addAll(inputTitle, textArea, controls);
+//		controls = new HBox();
+//		controls.setAlignment(Pos.CENTER);
+//		controls.setSpacing(20);
+//		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
+//		readOnly = new CheckBox(manager.getPropertyValue(READ_ONLY.name()));
+//		controls.getChildren().addAll(displayButton, readOnly);
+//
+//		inputRegion.getChildren().addAll(inputTitle, textArea, controls);
 
 		chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));
-		chart.setPrefSize(700, 500);
+		chart.setPrefSize(700, (getPrimaryScene().getWidth()) - 400);
 
 		workspace.getChildren().addAll(inputRegion, chart);
 		appPane.getChildren().add(workspace);
@@ -361,79 +358,81 @@ public final class AppUI extends UITemplate {
 				}
 			}
 		});
-
-		displayButton.setOnAction(event -> {
-			AppData appData = ((AppData) applicationTemplate.getDataComponent());
-
-			String test = textArea.getText().trim();
-			hasNewText = !test.equals(currentText);
-			if (test.isEmpty() && hiddenData == null) {
-				((AppActions) applicationTemplate.getActionComponent()).showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
-			} else if (hasNewText || chart.getData().isEmpty()) {
-				currentText = textArea.getText().trim();
-				appData.clear();
-				
-				if(hiddenData != null){ //if hidden data has been instantiated
-					currentText = currentText + "\n" + hiddenData;
-				}
-
-				appData.loadData(currentText); //display what was in text area and hidden
-				if(chart.getData().isEmpty()){
-					scrnshotButton.setDisable(true);
-				}else{
-					scrnshotButton.setDisable(false);
-				}
-
-				addDataPointListeners();
-			}
-
-		});
-
-		readOnly.setOnAction(event -> {
-			if (readOnly.isSelected()) {
-				textArea.setEditable(false);
-				//change to css CHANGE OTHERS too, like title bar and shit
-				textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
-			} else {
-				textArea.setEditable(true);
-				textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
-			}
-		});
-
-	}
-
-	/**
-	 * Adds listeners to the data points inside the chart
-	 */
-	private void addDataPointListeners(){
-		for(Series series : chart.getData()){
-			if(series.getName().equals(manager.getPropertyValue(AVERAGE_Y.name()))){
-				Data data = (Data) series.getData().get(0);
-				String averageValue = String.format(manager.getPropertyValue(DECIMAL_FORMAT.name()), Double.parseDouble(data.getExtraValue().toString()));
-				Node average = series.getNode();
-				Tooltip.install(average, new Tooltip(manager.getPropertyValue(AVERAGE_Y_TOOLTIP.name()) + averageValue));
-				average.setOnMouseEntered(e ->{
-					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
-				});
-				average.setOnMouseExited(e ->{
-					getPrimaryScene().setCursor(Cursor.DEFAULT);
-				});
-				
-				continue;
-			}
-			for(Data point : (ObservableList<Data>) series.getData()){
-				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
-
-				point.getNode().setOnMouseEntered(e -> {
-					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
-				});
-				point.getNode().setOnMouseExited(e -> {
-					getPrimaryScene().setCursor(Cursor.DEFAULT);
-				});
-			}
-		}
-	}
 	
+	}
+
+//		//displayButton.setOnAction(event -> {
+//			AppData appData = ((AppData) applicationTemplate.getDataComponent());
+//
+//			String test = textArea.getText().trim();
+//			hasNewText = !test.equals(currentText);
+//			if (test.isEmpty() && hiddenData == null) {
+//				((AppActions) applicationTemplate.getActionComponent()).showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
+//			} else if (hasNewText || chart.getData().isEmpty()) {
+//				currentText = textArea.getText().trim();
+//				appData.clear();
+//				
+//				if(hiddenData != null){ //if hidden data has been instantiated
+//					currentText = currentText + "\n" + hiddenData;
+//				}
+//
+//				appData.loadData(currentText); //display what was in text area and hidden
+//				if(chart.getData().isEmpty()){
+//					scrnshotButton.setDisable(true);
+//				}else{
+//					scrnshotButton.setDisable(false);
+//				}
+//
+//				addDataPointListeners();
+//			}
+//
+//		});
+//
+//		//readOnly.setOnAction(event -> {
+//			if (readOnly.isSelected()) {
+//				textArea.setEditable(false);
+//				//change to css CHANGE OTHERS too, like title bar and shit
+//				textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
+//			} else {
+//				textArea.setEditable(true);
+//				textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
+//			}
+//		});
+//
+//	}
+//
+//	/**
+//	 * Adds listeners to the data points inside the chart
+//	 */
+//	private void addDataPointListeners(){
+//		for(Series series : chart.getData()){
+//			if(series.getName().equals(manager.getPropertyValue(AVERAGE_Y.name()))){
+//				Data data = (Data) series.getData().get(0);
+//				String averageValue = String.format(manager.getPropertyValue(DECIMAL_FORMAT.name()), Double.parseDouble(data.getExtraValue().toString()));
+//				Node average = series.getNode();
+//				Tooltip.install(average, new Tooltip(manager.getPropertyValue(AVERAGE_Y_TOOLTIP.name()) + averageValue));
+//				average.setOnMouseEntered(e ->{
+//					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
+//				});
+//				average.setOnMouseExited(e ->{
+//					getPrimaryScene().setCursor(Cursor.DEFAULT);
+//				});
+//				
+//				continue;
+//			}
+//			for(Data point : (ObservableList<Data>) series.getData()){
+//				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
+//
+//				point.getNode().setOnMouseEntered(e -> {
+//					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
+//				});
+//				point.getNode().setOnMouseExited(e -> {
+//					getPrimaryScene().setCursor(Cursor.DEFAULT);
+//				});
+//			}
+//		}
+//	}
+
 	/**
 	 * This class is responsible for showing a window to the user
 	 * The values inputted inside the window is extracted to create a Config object

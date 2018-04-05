@@ -53,6 +53,14 @@ and open the template in the editor.
 	-fx-border-width: 5px;
 }
 
+.chart-title{
+	-fx-text-fill: #2574A9;
+  	-fx-font-size: 2em;
+	-fx-font-family: 'Georgia';
+	-fx-font-weight: normal;
+	-fx-alignment: center;
+}
+
 .toolbar {
 	-fx-background-color: #22313F;
 }
