@@ -35,13 +35,11 @@ public final class AppActions implements ActionComponent {
 	 * The application to which this class of actions belongs.
 	 */
 	private ApplicationTemplate applicationTemplate;
+	private AppUI appUI;
+	private PropertyManager manager;
 
 	private FileChooser tsdFileChooser;
 	private FileChooser screenShotChooser;
-	private PropertyManager manager;
-
-	private AppUI appUI;
-
 	/**
 	 * Path to the data file currently active.
 	 */
@@ -144,6 +142,11 @@ public final class AppActions implements ActionComponent {
 		}
 	}
 
+	public void showErrorDialog(String title, String message) {
+		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+		errorDialog.show(title, message);
+	}
+
 	/**
 	 * This helper method verifies that the user really wants to save their
 	 * unsaved work, which they might not want to do. The user will be
@@ -197,8 +200,7 @@ public final class AppActions implements ActionComponent {
 		return true;
 	}
 
-	public void showErrorDialog(String title, String message) {
-		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-		errorDialog.show(title, message);
+	private boolean showTerminateDialog(){
+		return false;
 	}
 }
