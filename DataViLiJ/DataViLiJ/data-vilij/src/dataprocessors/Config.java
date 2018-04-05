@@ -10,5 +10,19 @@ package dataprocessors;
  * @author Neil Opena
  */
 public class Config {
-	
+	private int iterations;
+	private int interval;
+	private boolean isContinuous;
+	private int numLabels;
+
+	public Config(int iterations, int interval, boolean isContinuous){
+		this(iterations, interval, isContinuous, -1);
+	}
+
+	public Config(int iterations, int interval, boolean isContinuous, int numLabels){
+		this.iterations = iterations;
+		this.interval = interval;
+		this.isContinuous = isContinuous;
+		this.numLabels = numLabels;
+	}
 }
