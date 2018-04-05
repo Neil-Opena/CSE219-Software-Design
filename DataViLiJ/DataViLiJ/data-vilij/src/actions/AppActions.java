@@ -38,8 +38,8 @@ public final class AppActions implements ActionComponent {
 	private AppUI appUI;
 	private PropertyManager manager;
 
-	private FileChooser tsdFileChooser;
-	private FileChooser screenShotChooser;
+	private FileChooser tsdFileChooser; // FileChooser to select the tsd file
+	private FileChooser screenShotChooser; // FileChooser to select the file to save the image
 	/**
 	 * Path to the data file currently active.
 	 */
@@ -129,6 +129,10 @@ public final class AppActions implements ActionComponent {
 		// TODO: NOT A PART OF HW 1
 	}
 
+	/**
+	 * Actions taken to save a screen shot of the chart
+	 * @throws IOException when IO error occurs while saving
+	 */
 	public void handleScreenshotRequest() throws IOException {
 		Chart chart = ((AppUI) applicationTemplate.getUIComponent()).getChart();
 		File file = screenShotChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
@@ -142,6 +146,11 @@ public final class AppActions implements ActionComponent {
 		}
 	}
 
+	/**
+	 * Show an error dialog to the user based on parameters
+	 * @param title Title of the dialog
+	 * @param message Message inside the dialog
+	 */
 	public void showErrorDialog(String title, String message) {
 		Dialog errorDialog = applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 		errorDialog.show(title, message);
@@ -186,7 +195,11 @@ public final class AppActions implements ActionComponent {
 		}
 	}
 	
-
+	/**
+	 * Shows the save dialog to the user
+	 * @return true if save was completed, false if save was canceled
+	 * @throws IOException when IO error occurs while saving
+	 */
 	private boolean showSaveDialog() throws IOException {
 		File saveFile = tsdFileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		try {
@@ -200,6 +213,10 @@ public final class AppActions implements ActionComponent {
 		return true;
 	}
 
+	/**
+	 * Shows a dialog to notify the user that an algorithm is running
+	 * @return true if user does not want to complete algorithm
+	 */
 	private boolean showTerminateDialog(){
 		return false;
 	}

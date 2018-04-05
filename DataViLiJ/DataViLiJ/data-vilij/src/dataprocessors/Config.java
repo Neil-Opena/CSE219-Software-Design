@@ -10,10 +10,10 @@ package dataprocessors;
  * @author Neil Opena
  */
 public class Config {
-	private int iterations;
-	private int interval;
-	private boolean isContinuous;
-	private int numLabels;
+	private int iterations; // number of iterations
+	private int interval; // interval between times algorithm is running
+	private boolean isContinuous; // algorithm is running continuously or not
+	private int numLabels; // number of labels
 
 	public Config(int iterations, int interval, boolean isContinuous){
 		this(iterations, interval, isContinuous, -1);
