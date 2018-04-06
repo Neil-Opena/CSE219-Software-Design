@@ -67,11 +67,11 @@ and open the template in the editor.
 	-fx-background-color: #22313F;
 }
 
-.toolbar-button{
+.button{
 	-fx-background-color: #67809F;
 }
 
-.toolbar-button:hover{
+.button:hover{
 	-fx-background-color: #E4F1FE;
 }
 
@@ -99,4 +99,18 @@ and open the template in the editor.
 	-fx-font-weight: bold;
 	-fx-border-color: #22313F;
 	-fx-padding: 10;
+}
+
+.toggle-button{
+	-fx-background-radius: 8px;
+	-fx-border-radius: 8px;
+	-fx-padding:2px;
+}
+
+.done{
+	-fx-text-fill: #22313F;
+}
+
+.edit{
+
 }

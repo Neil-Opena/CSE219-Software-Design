@@ -54,6 +54,8 @@ public class AppData implements DataComponent {
 	private boolean isRunning; //test if algorithm is running
 	private boolean isSaved; //test if current file is saved
 
+	private String lastSavedText;
+
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
 		this.applicationTemplate = applicationTemplate;
@@ -140,6 +142,22 @@ public class AppData implements DataComponent {
 	 */
 	public void displayData() {
 		processor.toChartData(appUI.getChart());
+	}
+
+	public DataSet getData(){
+		return this.data;
+	}
+
+	public boolean isSaved(){
+		return this.isSaved;
+	}
+
+	public boolean isModified(){
+		String curr = appUI.getTextAreaText().trim();
+		if(!curr.equals(lastSavedText)){
+			return false;
+		}
+		return true;
 	}
 
 	/**

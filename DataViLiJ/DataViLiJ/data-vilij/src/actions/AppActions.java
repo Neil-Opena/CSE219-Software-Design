@@ -67,13 +67,20 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleNewRequest() {
+		AppData appData = ((AppData) applicationTemplate.getDataComponent());
 		try {
-			if (promptToSave()) {
-				((AppData) applicationTemplate.getDataComponent()).clear();
-				applicationTemplate.getUIComponent().clear();
+			appUI.showTextArea();
+
+			if(appData.isSaved() || appData.getData() == null){
+				//file is already saved, no need to prompt
+				//no data, no need to save
+			}else if(promptToSave()) {
+				appData.clear();
 				dataFilePath = null;
 				appUI.disableSaveButton(); //disable Save Button
 			}
+			applicationTemplate.getUIComponent().clear();
+			appUI.showEditToggle();
 		} catch (IOException e) {
 			showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 		}
@@ -171,6 +178,11 @@ public final class AppActions implements ActionComponent {
 	 * <code>true</code> otherwise.
 	 */
 	private boolean promptToSave() throws IOException {
+		//first check if there is some data in the text area that was not saved first
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
+		if(!appData.isModified()){
+			return false;
+		}
 		ConfirmationDialog confirmDialog = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
 		confirmDialog.show(manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
 
@@ -180,7 +192,7 @@ public final class AppActions implements ActionComponent {
 			return false;
 		} else {
 			if (option == Option.YES) {
-				String testData = ((AppData) applicationTemplate.getDataComponent()).validateText(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
+				String testData = appData.validateText((appUI).getTextAreaText().trim());
 				if(testData == null){
 					return showSaveDialog();
 				}else{

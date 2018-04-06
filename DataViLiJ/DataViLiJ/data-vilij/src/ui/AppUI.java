@@ -94,6 +94,7 @@ public final class AppUI extends UITemplate {
 		String scrnshotIconPath = iconsPath + separator + manager.getPropertyValue(SCREENSHOT_ICON.name());
 
 		scrnshotButton = setToolbarButton(scrnshotIconPath, manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()), true);
+		newButton.setDisable(false);
 		toolBar.getItems().add(scrnshotButton);
 		toolBar.getStyleClass().add("toolbar"); // FIXME
 	}
@@ -125,7 +126,6 @@ public final class AppUI extends UITemplate {
 	public void clear() {
 		((AppData) applicationTemplate.getDataComponent()).clear();
 		textArea.clear();
-		newButton.setDisable(true);
 		scrnshotButton.setDisable(true);
 	}
 
@@ -143,7 +143,6 @@ public final class AppUI extends UITemplate {
 	 * @param text text to set the text area
 	 */
 	public void setTextAreaText(String text){
-		resetInputRegion();
 		showTextArea();
 		setReadOnly(true);
 		textArea.setText(text);
@@ -190,27 +189,19 @@ public final class AppUI extends UITemplate {
 	 * Displays the input region to the user
 	 */
 	public void showTextArea(){
+		resetInputRegion();
 		inputRegion.getChildren().addAll(inputTitle, textArea);
 	}
 
-	/**
-	 * Sets the text area to be read only depending on the parameter
-	 * @param readOnly true to set the text area to be read only, false otherwise
-	 */
-	public void setReadOnly(boolean readOnly){
-		textArea.setEditable(!readOnly);
-		if(readOnly){
-			textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
-		}else{
-			textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
-		}
-	}
+	
 
 	/**
 	 * Displays the edit toggle button to the user
 	 */
 	public void showEditToggle(){
-
+		inputRegion.getChildren().add(editToggleButton);
+		editToggleButton.setText("Done");
+		setReadOnly(false);
 	}
 
 	/**
@@ -298,6 +289,18 @@ public final class AppUI extends UITemplate {
 	private void resetInputRegion(){
 		inputRegion.getChildren().clear();
 	}
+/**
+	 * Sets the text area to be read only depending on the parameter
+	 * @param readOnly true to set the text area to be read only, false otherwise
+	 */
+	private void setReadOnly(boolean readOnly){
+		textArea.setEditable(!readOnly);
+		if(readOnly){
+			textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
+		}else{
+			textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
+		}
+	}
 
 	/**
 	 * Lays out the arrangement of the user interface
@@ -335,12 +338,11 @@ public final class AppUI extends UITemplate {
 		typesTitle.getStyleClass().add("types-title");
 		typesTitle.setPrefWidth(200);
 		classificationButton = new Button("Classification");
-		classificationButton.getStyleClass().add("types-button");
-		classificationButton.getStyleClass().add("toolbar-button");
+		classificationButton.getStyleClass().addAll("types-button");
 		classificationButton.setPrefWidth(200);
 		classificationButton.setTooltip(new Tooltip("Display Classification Algorithms"));
 		clusteringButton = new Button("Clustering");
-		clusteringButton.getStyleClass().add("types-button");
+		clusteringButton.getStyleClass().addAll("types-button");
 		clusteringButton.getStyleClass().add("toolbar-button");
 		clusteringButton.setTooltip(new Tooltip("Display Clustering Algorithms"));
 		clusteringButton.setPrefWidth(200);
@@ -348,6 +350,10 @@ public final class AppUI extends UITemplate {
 		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton);
 
 		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
+
+		editToggleButton = new Button("Done");
+		editToggleButton.getStyleClass().addAll("toggle-button", "types-button", "done");
+		editToggleButton.setPrefWidth(100);
 
 		chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));
@@ -364,40 +370,6 @@ public final class AppUI extends UITemplate {
 	 */
 	private void setWorkspaceActions() {
 
-		//if textArea has content, enable newbutton
-//		textArea.textProperty().addListener((e, oldVal, newVal) -> {
-//			String savedData = ((AppData) applicationTemplate.getDataComponent()).getSavedData();
-//			if (savedData == null) {
-//				if (textArea.getText().isEmpty()) {
-//					newButton.setDisable(true);
-//					saveButton.setDisable(true);
-//				} else {
-//					newButton.setDisable(false);
-//					saveButton.setDisable(false);
-//				}
-//			} else {
-//				//current file has been saved
-//				String textData = textArea.getText().trim();
-//				newButton.setDisable(false);
-//				if (textData.equals(savedData)) {
-//					saveButton.setDisable(true);
-//				} else {
-//					saveButton.setDisable(false);
-//				}
-//				if(!textData.equals(currentText)){
-//
-//					int n = textArea.getParagraphs().size();
-//					int toGet = 10 - n;
-//					if(toGet > 0){
-//						//update text
-//						newVal = ((AppData) applicationTemplate.getDataComponent()).loadNumLines(toGet);
-//						textArea.setText(newVal);
-//					}
-//				}
-//			}
-//		});
-	
-
 		displayButton.setOnAction(event -> {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 
@@ -409,28 +381,6 @@ public final class AppUI extends UITemplate {
 			}
 			addDataPointListeners();
 
-//			String test = textArea.getText().trim();
-//			hasNewText = !test.equals(currentText);
-//			if (test.isEmpty() && hiddenData == null) {
-//				((AppActions) applicationTemplate.getActionComponent()).showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
-//			} else if (hasNewText || chart.getData().isEmpty()) {
-//				currentText = textArea.getText().trim();
-//				appData.clear();
-//				
-//				if(hiddenData != null){ //if hidden data has been instantiated
-//					currentText = currentText + "\n" + hiddenData;
-//				}
-//
-//				appData.loadData(currentText); //display what was in text area and hidden
-//				if(chart.getData().isEmpty()){
-//					scrnshotButton.setDisable(true);
-//				}else{
-//					scrnshotButton.setDisable(false);
-//				}
-//
-//				addDataPointListeners();
-//			}
-
 		});
 
 		clusteringButton.setOnAction(event ->{
@@ -441,6 +391,16 @@ public final class AppUI extends UITemplate {
 			System.out.println("classification button clicked");
 		});
 
+		editToggleButton.setOnAction(event -> {
+			String curr = editToggleButton.getText();
+			if(curr.equals("Done")){
+				editToggleButton.setText("Edit");
+				setReadOnly(true);
+			}else{
+				editToggleButton.setText("Done");
+				setReadOnly(false);
+			}
+		});
 	}
 
 	/**
