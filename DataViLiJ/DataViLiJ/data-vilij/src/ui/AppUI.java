@@ -151,6 +151,7 @@ public final class AppUI extends UITemplate {
 		if(!inputRegion.getChildren().contains(textArea)){
 			showTextArea();
 		}
+		setReadOnly(true);
 		textArea.setText(text);
 	} 
 	/*
@@ -187,10 +188,12 @@ public final class AppUI extends UITemplate {
 	 * Displays the text area to the user
 	 */
 	public void showTextArea(){
+		inputRegion.getChildren().add(inputTitle);
 		inputRegion.getChildren().add(textArea);
 	}
 
 	public void hideTextArea(){
+		inputRegion.getChildren().remove(inputTitle);
 		inputRegion.getChildren().remove(textArea);
 	}
 
@@ -199,7 +202,12 @@ public final class AppUI extends UITemplate {
 	 * @param readOnly true to set the text area to be read only, false otherwise
 	 */
 	public void setReadOnly(boolean readOnly){
-
+		textArea.setEditable(!readOnly);
+		if(readOnly){
+			textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
+		}else{
+			textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
+		}
 	}
 
 	/**
@@ -321,8 +329,6 @@ public final class AppUI extends UITemplate {
 		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
 		readOnly = new CheckBox(manager.getPropertyValue(READ_ONLY.name()));
 		controls.getChildren().addAll(displayButton, readOnly);
-
-		inputRegion.getChildren().addAll(inputTitle);
 
 		chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));

@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -77,8 +78,8 @@ public class AppData implements DataComponent {
 			try{
 				processor.processString(fileData);
 				data = processor.getDataPoints();
-
-				appUI.setTextAreaText(fileData);
+				
+				appUI.setTextAreaText(getTopTen(fileData));
 			}catch(Exception e){
 				//FILE NOT VALID
 			}
@@ -200,6 +201,16 @@ public class AppData implements DataComponent {
 			builder.append(line + "\n");
 		});
 
+		return builder.toString();
+	}
+
+	private String getTopTen(String data){
+		List temp = Arrays.asList(data.split("\n"));
+
+		StringBuilder builder = new StringBuilder();
+		for(int i = 0; i < 10; i++){
+			builder.append(temp.get(i) + "\n");
+		}
 		return builder.toString();
 	}
 
