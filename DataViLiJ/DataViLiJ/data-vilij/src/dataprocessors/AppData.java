@@ -4,7 +4,6 @@ import actions.AppActions;
 import algorithms.Algorithm;
 import algorithms.Classifier;
 import algorithms.Clusterer;
-import classification.RandomClassifier;
 import data.DataSet;
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +14,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -72,17 +71,18 @@ public class AppData implements DataComponent {
 				processor.processString(fileData);
 				data = DataSet.fromTSDFile(dataFilePath);
 				
-				labels = new HashSet(data.getLabels().values());
+				labels = new LinkedHashSet(data.getLabels().values());
 				int numInstances = data.getLocations().size();
-				List test = Arrays.asList(labels.toArray());
 
 				if(numInstances > 10){
 					appUI.setTextAreaText(getTopTen(fileData));
 				}else{
 					appUI.setTextAreaText(fileData);
 				}
-
-				appUI.setDisplayInfo(numInstances, labels.size(), test, dataFilePath.toFile().getName());
+				
+				checkLabels();
+				List test = Arrays.asList(labels.toArray());
+				appUI.displayInfo(numInstances, labels.size(), test, dataFilePath.toFile().getName());
 			}catch(Exception e){
 				//FILE NOT VALID
 			}
@@ -186,8 +186,6 @@ public class AppData implements DataComponent {
 		classificationAlgorithms = new ArrayList<>();
 		clusteringAlgorithms = new ArrayList<>();
 		
-		RandomClassifier test = new RandomClassifier();
-		//FIXME
 	}
 
 	private String getFileText(File file) throws FileNotFoundException{
@@ -211,6 +209,10 @@ public class AppData implements DataComponent {
 			builder.append(temp.get(i) + "\n");
 		}
 		return builder.toString();
+	}
+
+	private void checkLabels() {
+		labels.remove("null");
 	}
 
 }

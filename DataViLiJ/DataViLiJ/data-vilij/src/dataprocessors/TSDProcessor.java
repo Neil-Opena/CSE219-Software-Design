@@ -3,6 +3,7 @@ package dataprocessors;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -105,7 +106,7 @@ public final class TSDProcessor {
 	 * @param chart the specified chart
 	 */
 	void toChartData(XYChart<Number, Number> chart) {
-		Set<String> labels = new HashSet<>(dataLabels.values());
+		Set<String> labels = new LinkedHashSet<>(dataLabels.values());
 		for (String label : labels) {
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName(label);

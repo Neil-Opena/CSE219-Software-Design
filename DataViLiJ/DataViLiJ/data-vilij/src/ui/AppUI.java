@@ -180,11 +180,12 @@ public final class AppUI extends UITemplate {
 	 * @param labelNames the names of the labels
 	 * @param source the source of the file (fileName)
 	 */
-	public void setDisplayInfo(int numInstances, int numLabels, List<String> labelNames, String source){
-		displayInfo.setText(numInstances + " instances with " + numLabels + " loaded from " + source + ". The labels are:\n");
+	public void displayInfo(int numInstances, int numLabels, List<String> labelNames, String source){
+		displayInfo.setText(numInstances + " instances with " + numLabels + " labels loaded from " + source + ". The labels are:\n");
 		for(int i = 0; i < labelNames.size(); i++){
-			displayInfo.setText(displayInfo.getText() + "- " + labelNames.get(i) + "\n");
+			displayInfo.setText(displayInfo.getText() + "\t- " + labelNames.get(i) + "\n");
 		}
+		showAlgorithmTypes();
 	}
 
 	/**
@@ -232,7 +233,7 @@ public final class AppUI extends UITemplate {
 	 * Shows the algorithm types that the user can select from
 	 */
 	public void showAlgorithmTypes(){
-
+		inputRegion.getChildren().add(new Label("HI"));
 	}
 
 	/**
