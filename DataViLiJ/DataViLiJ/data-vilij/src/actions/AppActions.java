@@ -69,7 +69,7 @@ public final class AppActions implements ActionComponent {
 	public void handleNewRequest() {
 		try {
 			if (promptToSave()) {
-				((AppData) applicationTemplate.getDataComponent()).reset();
+				((AppData) applicationTemplate.getDataComponent()).clear();
 				applicationTemplate.getUIComponent().clear();
 				dataFilePath = null;
 				appUI.disableSaveButton(); //disable Save Button
@@ -81,7 +81,7 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleSaveRequest() {
-		String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
+		String testData = ((AppData) applicationTemplate.getDataComponent()).validateText(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
 		if(testData == null){
 			if(dataFilePath == null){ //no save file yet
 				try{
@@ -102,17 +102,14 @@ public final class AppActions implements ActionComponent {
 		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		try {
-			String fileData = appData.getFileText(file.toPath());
-			String testData = appData.checkData(fileData);
+			String testData = appData.validateText(file);
 			if(testData == null){
 				applicationTemplate.getUIComponent().clear();
 				((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
 				dataFilePath = file.toPath();
-				appUI.disableSaveButton(); //disable save button
+				appUI.disableSaveButton(); 
 			} else {
-				//REVERT to old data
-				appData.revert();
-				showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not load
+				showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + testData);
 			}
 		} catch (NullPointerException e) {
 			//load cancelled
@@ -183,7 +180,7 @@ public final class AppActions implements ActionComponent {
 			return false;
 		} else {
 			if (option == Option.YES) {
-				String testData = ((AppData) applicationTemplate.getDataComponent()).checkData(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
+				String testData = ((AppData) applicationTemplate.getDataComponent()).validateText(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
 				if(testData == null){
 					return showSaveDialog();
 				}else{

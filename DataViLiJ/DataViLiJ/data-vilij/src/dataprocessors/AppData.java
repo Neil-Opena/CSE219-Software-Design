@@ -5,6 +5,7 @@ import algorithms.Algorithm;
 import algorithms.Classifier;
 import algorithms.Clusterer;
 import classification.RandomClassifier;
+import data.DataSet;
 import data.OperatedData;
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import vilij.propertymanager.PropertyManager;
@@ -37,17 +39,14 @@ public class AppData implements DataComponent {
 	private AppActions appActions;
 	private PropertyManager manager;
 
-	private String savedData; //String to test whether the data was saved already
-	private ArrayList<String> textAreaData; //helper list 
-	private ArrayList<String> fullData;
-	private ArrayList<String> old;
+	private List<DataSet> data;
 
-	private Algorithm algorithmToRun;
-	private ArrayList<Classifier> classificationAlgorithms;
-	private ArrayList<Clusterer> clusteringAlgorithms;
+	private Algorithm algorithmToRun; //current algorithm queued up to run
+	private ArrayList<Classifier> classificationAlgorithms; //list of classification algorithms
+	private ArrayList<Clusterer> clusteringAlgorithms; //list of clustering algorithms
 
-	private boolean isRunning;
-	private boolean isSaved;
+	private boolean isRunning; //test if algorithm is running
+	private boolean isSaved; //test if current file is saved
 
 	private class AppOperatedData extends OperatedData{
 		private String name;
@@ -69,59 +68,28 @@ public class AppData implements DataComponent {
 		initAlgorithms();
 	}
 
-	public String getSavedData() {
-		return savedData;
-	}
-
-	public String loadNumLines(int n){
-		String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText();
-
-		if(fullData != null && textAreaData != null){
-			for(int i = 0; i < n; i++){
-				if(!fullData.isEmpty()){
-					textAreaData.add(fullData.remove(0));
-				}
-			}
-			((AppUI) applicationTemplate.getUIComponent()).setHiddenData(getStringRepresentation(fullData));	
-			if(!textAreaData.isEmpty()){
-				text = text + "\n" +  (getStringRepresentation(textAreaData));
-			}
-			textAreaData.clear();
-		}
-		return text;
-	}
-
 	@Override
-	public void loadData(Path dataFilePath) {
-		reset(); // reset App Data
-		initializeData(dataFilePath); //initializes Data from file
+	public void loadData(Path dataFilePath){
+		clear();
 
-		//when loading, only 10 are displayed on the text area
-		if(fullData.size() > 10){
-			appActions.showErrorDialog(manager.getPropertyValue(LARGE_DATA_TITLE.name()), manager.getPropertyValue(LARGE_DATA_MESSAGE_1.name()) + fullData.size() + manager.getPropertyValue(LARGE_DATA_MESSAGE_2.name()));
-			for(int i = 0; i < 10; i++){
-				textAreaData.add(fullData.remove(0));
+		try{
+			String fileData = getFileText(dataFilePath.toFile());
+			try{
+				processor.processString(fileData);
+				data = processor.getDataPoints();
+
+				appUI.setTextAreaText(fileData);
+			}catch(Exception e){
+				//FILE NOT VALID
 			}
-		}else{
-			while(!fullData.isEmpty()){
-				textAreaData.add(fullData.remove(0));
-			}
+			
+		}catch(FileNotFoundException e){
+			appActions.showErrorDialog(manager.getPropertyValue(FILE_NOT_FOUND_TITLE.name()), manager.getPropertyValue(FILE_NOT_FOUND_MESSAGE.name()));
 		}
-
-		/*
-		-could be better
-		-this should get num instances, get num labels, label names, 
-		*/
-
-		appUI.setTextAreaText(getStringRepresentation(textAreaData)); //sets text area
-		textAreaData.clear();
-		savedData = appUI.getTextAreaText().trim();
-		appUI.setHiddenData(getStringRepresentation(fullData));
-		
 	}
 
 	public void loadData(String dataString) {
-		String testData = checkData(dataString);
+		String testData = validateText(dataString);
 
 		if (testData == null) {
 			displayData();
@@ -138,11 +106,11 @@ public class AppData implements DataComponent {
 			File file = dataFilePath.toFile();
 				
 			FileWriter writer = new FileWriter(file);
-			savedData = text;
-			writer.append(text);
-			if(fullData != null && !fullData.isEmpty()){
-				writer.append("\n" + getStringRepresentation(fullData));
-			}
+//			savedData = text;
+//			writer.append(text);
+//			if(fullData != null && !fullData.isEmpty()){
+//				writer.append("\n" + getStringRepresentation(fullData));
+//			}
 			writer.close();
 			
 		} catch (IOException e) {
@@ -156,33 +124,42 @@ public class AppData implements DataComponent {
 	public void clear() {
 		processor.clear();
 		appUI.getChart().getData().clear();
+		data = null;
 	}
 
 	public void displayData() {
 		processor.toChartData(appUI.getChart());
 	}
 
-	public String checkData(String data) {
-		try {
-			processor.clear();
-			processor.processString(data);
+	/**
+	 * 
+	 * @param toCheck the text from the tsd file
+	 * @return null if data is valid, else returns a message of the error
+	 */
+	public String validateText(String toCheck){
+		try{
+			processor.clear(); // clear current data in processor
+			processor.processString(toCheck);
 			return null;
-		} catch (Exception e) {
+		}catch(Exception e){
 			String message = e.getMessage();
-			if (message.length() < 9) {
+			if(message.length() < 9){
 				message = message + applicationTemplate.manager.getPropertyValue(INVALID_DATA_MESSAGE.name());
 			}
 			return message;
 		}
 	}
 
-	public String getFileText(Path path){ //returns full string representation of data
-		/*
-		Initially, hiddenDataList will contain all of the lines, when the file is loaded,
-		10 will be loaded to the textAreaDataList
-		*/
-		initializeData(path);
-		return getStringRepresentation(fullData);
+	public String validateText(File file){
+		try{
+			String fileData = getFileText(file);
+
+			return validateText(fileData);
+		}catch(FileNotFoundException e){
+			appActions.showErrorDialog(manager.getPropertyValue(FILE_NOT_FOUND_TITLE.name()), manager.getPropertyValue(FILE_NOT_FOUND_MESSAGE.name()));
+			return e.getMessage();
+		}
+
 	}
 
 	public Algorithm getAlgorithmType(){
@@ -201,54 +178,6 @@ public class AppData implements DataComponent {
 
 	}
 
-	/*
-	reset clears everything, including the hidden data
-	*/
-	public void reset(){
-		savedData = null;
-		fullData = null;
-		clear();
-	}
-
-	public void revert(){
-		fullData = old;
-	}
-
-	private String getStringRepresentation(ArrayList<String> list){
-		if(list.isEmpty()){
-			return null;
-		}
-		String[] temp = new String[list.size()];
-		for(int i = 0; i < list.size(); i++){
-			temp[i] = list.get(i);
-		}
-		return String.join("\n", temp);
-	}
-
-	/*
-
-	should parse data to determine number of instances, labels, etc. 
-	*/
-	private void initializeData(Path path){ //Initializes full data from the path
-		File file = path.toFile();
-		try{
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			Stream<String> dataLines = reader.lines();
-			old = fullData;
-			fullData = new ArrayList<>();
-			textAreaData = new ArrayList<>();
-
-			dataLines.forEach(line -> {
-				fullData.add(line);
-			});
-		}catch(FileNotFoundException e){
-			appActions.showErrorDialog(manager.getPropertyValue(FILE_NOT_FOUND_TITLE.name()), manager.getPropertyValue(FILE_NOT_FOUND_MESSAGE.name()));
-			//FIXME
-		}catch(IOException e){
-			appActions.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_LOAD_ERROR_MESSAGE.name()));
-		}
-	}
-
 	private void initAlgorithms(){
 		classificationAlgorithms = new ArrayList<>();
 		clusteringAlgorithms = new ArrayList<>();
@@ -259,6 +188,19 @@ public class AppData implements DataComponent {
 
 	private void checkLabels(){
 
+	}
+
+	private String getFileText(File file) throws FileNotFoundException{
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		Stream<String> dataLines = reader.lines();
+
+		StringBuilder builder = new StringBuilder();
+
+		dataLines.forEach(line ->{
+			builder.append(line + "\n");
+		});
+
+		return builder.toString();
 	}
 
 }

@@ -27,7 +27,13 @@ import actions.AppActions;
 import dataprocessors.AppData;
 import dataprocessors.Config;
 import java.util.List;
+import javafx.collections.ObservableList;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 
 /**
  * This is the application's user interface implementation.
@@ -142,6 +148,9 @@ public final class AppUI extends UITemplate {
 	 * @param text text to set the text area
 	 */
 	public void setTextAreaText(String text){
+		if(!inputRegion.getChildren().contains(textArea)){
+			showTextArea();
+		}
 		textArea.setText(text);
 	} 
 	/*
@@ -178,7 +187,11 @@ public final class AppUI extends UITemplate {
 	 * Displays the text area to the user
 	 */
 	public void showTextArea(){
+		inputRegion.getChildren().add(textArea);
+	}
 
+	public void hideTextArea(){
+		inputRegion.getChildren().remove(textArea);
 	}
 
 	/**
@@ -302,14 +315,14 @@ public final class AppUI extends UITemplate {
 		textArea.setWrapText(true);
 		VBox.setMargin(textArea, new Insets(10));
 
-//		controls = new HBox();
-//		controls.setAlignment(Pos.CENTER);
-//		controls.setSpacing(20);
-//		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
-//		readOnly = new CheckBox(manager.getPropertyValue(READ_ONLY.name()));
-//		controls.getChildren().addAll(displayButton, readOnly);
-//
-//		inputRegion.getChildren().addAll(inputTitle, textArea, controls);
+		controls = new HBox();
+		controls.setAlignment(Pos.CENTER);
+		controls.setSpacing(20);
+		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
+		readOnly = new CheckBox(manager.getPropertyValue(READ_ONLY.name()));
+		controls.getChildren().addAll(displayButton, readOnly);
+
+		inputRegion.getChildren().addAll(inputTitle);
 
 		chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));
@@ -327,111 +340,110 @@ public final class AppUI extends UITemplate {
 	private void setWorkspaceActions() {
 
 		//if textArea has content, enable newbutton
-		textArea.textProperty().addListener((e, oldVal, newVal) -> {
-			String savedData = ((AppData) applicationTemplate.getDataComponent()).getSavedData();
-			if (savedData == null) {
-				if (textArea.getText().isEmpty()) {
-					newButton.setDisable(true);
-					saveButton.setDisable(true);
-				} else {
-					newButton.setDisable(false);
-					saveButton.setDisable(false);
-				}
-			} else {
-				//current file has been saved
-				String textData = textArea.getText().trim();
-				newButton.setDisable(false);
-				if (textData.equals(savedData)) {
-					saveButton.setDisable(true);
-				} else {
-					saveButton.setDisable(false);
-				}
-				if(!textData.equals(currentText)){
+//		textArea.textProperty().addListener((e, oldVal, newVal) -> {
+//			String savedData = ((AppData) applicationTemplate.getDataComponent()).getSavedData();
+//			if (savedData == null) {
+//				if (textArea.getText().isEmpty()) {
+//					newButton.setDisable(true);
+//					saveButton.setDisable(true);
+//				} else {
+//					newButton.setDisable(false);
+//					saveButton.setDisable(false);
+//				}
+//			} else {
+//				//current file has been saved
+//				String textData = textArea.getText().trim();
+//				newButton.setDisable(false);
+//				if (textData.equals(savedData)) {
+//					saveButton.setDisable(true);
+//				} else {
+//					saveButton.setDisable(false);
+//				}
+//				if(!textData.equals(currentText)){
+//
+//					int n = textArea.getParagraphs().size();
+//					int toGet = 10 - n;
+//					if(toGet > 0){
+//						//update text
+//						newVal = ((AppData) applicationTemplate.getDataComponent()).loadNumLines(toGet);
+//						textArea.setText(newVal);
+//					}
+//				}
+//			}
+//		});
+	
 
-					int n = textArea.getParagraphs().size();
-					int toGet = 10 - n;
-					if(toGet > 0){
-						//update text
-						newVal = ((AppData) applicationTemplate.getDataComponent()).loadNumLines(toGet);
-						textArea.setText(newVal);
-					}
+		displayButton.setOnAction(event -> {
+			AppData appData = ((AppData) applicationTemplate.getDataComponent());
+
+			String test = textArea.getText().trim();
+			hasNewText = !test.equals(currentText);
+			if (test.isEmpty() && hiddenData == null) {
+				((AppActions) applicationTemplate.getActionComponent()).showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
+			} else if (hasNewText || chart.getData().isEmpty()) {
+				currentText = textArea.getText().trim();
+				appData.clear();
+				
+				if(hiddenData != null){ //if hidden data has been instantiated
+					currentText = currentText + "\n" + hiddenData;
 				}
+
+				appData.loadData(currentText); //display what was in text area and hidden
+				if(chart.getData().isEmpty()){
+					scrnshotButton.setDisable(true);
+				}else{
+					scrnshotButton.setDisable(false);
+				}
+
+				addDataPointListeners();
+			}
+
+		});
+
+		readOnly.setOnAction(event -> {
+			if (readOnly.isSelected()) {
+				textArea.setEditable(false);
+				//change to css CHANGE OTHERS too, like title bar and shit
+				textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
+			} else {
+				textArea.setEditable(true);
+				textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
 			}
 		});
-	
+
 	}
 
-//		//displayButton.setOnAction(event -> {
-//			AppData appData = ((AppData) applicationTemplate.getDataComponent());
-//
-//			String test = textArea.getText().trim();
-//			hasNewText = !test.equals(currentText);
-//			if (test.isEmpty() && hiddenData == null) {
-//				((AppActions) applicationTemplate.getActionComponent()).showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
-//			} else if (hasNewText || chart.getData().isEmpty()) {
-//				currentText = textArea.getText().trim();
-//				appData.clear();
-//				
-//				if(hiddenData != null){ //if hidden data has been instantiated
-//					currentText = currentText + "\n" + hiddenData;
-//				}
-//
-//				appData.loadData(currentText); //display what was in text area and hidden
-//				if(chart.getData().isEmpty()){
-//					scrnshotButton.setDisable(true);
-//				}else{
-//					scrnshotButton.setDisable(false);
-//				}
-//
-//				addDataPointListeners();
-//			}
-//
-//		});
-//
-//		//readOnly.setOnAction(event -> {
-//			if (readOnly.isSelected()) {
-//				textArea.setEditable(false);
-//				//change to css CHANGE OTHERS too, like title bar and shit
-//				textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
-//			} else {
-//				textArea.setEditable(true);
-//				textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
-//			}
-//		});
-//
-//	}
-//
-//	/**
-//	 * Adds listeners to the data points inside the chart
-//	 */
-//	private void addDataPointListeners(){
-//		for(Series series : chart.getData()){
-//			if(series.getName().equals(manager.getPropertyValue(AVERAGE_Y.name()))){
-//				Data data = (Data) series.getData().get(0);
-//				String averageValue = String.format(manager.getPropertyValue(DECIMAL_FORMAT.name()), Double.parseDouble(data.getExtraValue().toString()));
-//				Node average = series.getNode();
-//				Tooltip.install(average, new Tooltip(manager.getPropertyValue(AVERAGE_Y_TOOLTIP.name()) + averageValue));
-//				average.setOnMouseEntered(e ->{
-//					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
-//				});
-//				average.setOnMouseExited(e ->{
-//					getPrimaryScene().setCursor(Cursor.DEFAULT);
-//				});
-//				
-//				continue;
-//			}
-//			for(Data point : (ObservableList<Data>) series.getData()){
-//				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
-//
-//				point.getNode().setOnMouseEntered(e -> {
-//					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
-//				});
-//				point.getNode().setOnMouseExited(e -> {
-//					getPrimaryScene().setCursor(Cursor.DEFAULT);
-//				});
-//			}
-//		}
-//	}
+	/**
+	 * Adds listeners to the data points inside the chart
+	 */
+	private void addDataPointListeners(){
+		for(Series series : chart.getData()){
+			if(series.getName().equals(manager.getPropertyValue(AVERAGE_Y.name()))){
+				Data data = (Data) series.getData().get(0);
+				String averageValue = String.format(manager.getPropertyValue(DECIMAL_FORMAT.name()), Double.parseDouble(data.getExtraValue().toString()));
+				Node average = series.getNode();
+				Tooltip.install(average, new Tooltip(manager.getPropertyValue(AVERAGE_Y_TOOLTIP.name()) + averageValue));
+				average.setOnMouseEntered(e ->{
+					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
+				});
+				average.setOnMouseExited(e ->{
+					getPrimaryScene().setCursor(Cursor.DEFAULT);
+				});
+				
+				continue;
+			}
+			for(Data point : (ObservableList<Data>) series.getData()){
+				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
+
+				point.getNode().setOnMouseEntered(e -> {
+					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
+				});
+				point.getNode().setOnMouseExited(e -> {
+					getPrimaryScene().setCursor(Cursor.DEFAULT);
+				});
+			}
+		}
+	}
 
 	/**
 	 * This class is responsible for showing a window to the user
