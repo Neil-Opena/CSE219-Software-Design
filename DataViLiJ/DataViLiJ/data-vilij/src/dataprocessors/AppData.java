@@ -215,26 +215,7 @@ public class AppData implements DataComponent {
 		classificationAlgorithms = new ArrayList<>();
 		clusteringAlgorithms = new ArrayList<>();
 		
-		//FIXME
-		RandomClassifier randomClassifier = new RandomClassifier();
-		/*
-		For some reason this statement holds true even though I don't 
-		see a no-arg constructor for this object. 
-		The constructor is on line 42 of the RandomClassifier object
-
-		Beware, when running the project, a run-time error occurs, due 
-		to the statement above
-		*/
-
-		//Classifier classifier = (Classifier) randomClassifier;
-		/*
-		This is the statement that was confusing me
-		*/
-
-		Algorithm algorithm = (Algorithm) randomClassifier;
-		/*
-		This statement seems to be correct.
-		*/
+		Classifier classifier = new RandomClassifier(data, 1, 2, false);
 	}
 
 	/**

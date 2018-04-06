@@ -12,7 +12,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -53,7 +52,7 @@ public final class AppUI extends UITemplate {
 	@SuppressWarnings("FieldCanBeLocal")
 	private VBox inputRegion; // container for input region
 	private Label inputTitle; // title for input region
-	private HBox controls; // container that houses controls
+	private VBox controls; // container that houses controls
 
 	private TextArea textArea;       // text area for new data input
 	private LineChart<Number, Number> chart;          // the chart where data will be displayed
@@ -62,6 +61,9 @@ public final class AppUI extends UITemplate {
 	private Button editToggleButton; // button that toggles between edit and done
 	private Button runButton; // button for running alogrithm
 	private Button configButton; // button for configuring algorithm
+	private Button classificationButton;
+	private Button clusteringButton;
+	private Label controlsTitle;
 	private Label displayInfo;
 
 	private boolean hasNewText;     // whether or not the text area has any new data since last display
@@ -142,7 +144,7 @@ public final class AppUI extends UITemplate {
 	 */
 	public void setTextAreaText(String text){
 		if(!inputRegion.getChildren().contains(textArea)){
-			showInputRegion();
+			showTextArea();
 		}
 		setReadOnly(true);
 		textArea.setText(text);
@@ -175,24 +177,23 @@ public final class AppUI extends UITemplate {
 	 */
 	public void displayInfo(int numInstances, int numLabels, List<String> labelNames, String source){
 		displayInfo.setText(numInstances + " instances with " + numLabels + " labels loaded from " + source + ". The labels are:\n");
+		String labels = "";
 		for(int i = 0; i < labelNames.size(); i++){
-			displayInfo.setText(displayInfo.getText() + "\t- " + labelNames.get(i) + "\n");
+			labels += "\t- " + labelNames.get(i) + "\n";
 		}
+		displayInfo.setText(displayInfo.getText() + labels + "\n");
+
+		inputRegion.getChildren().add(displayInfo);
+		inputRegion.getChildren().add(controls);
 		showAlgorithmTypes();
+		inputRegion.getChildren().add(displayButton);
 	}
 
 	/**
 	 * Displays the input region to the user
 	 */
-	public void showInputRegion(){
-		inputRegion.getChildren().addAll(inputTitle, textArea, displayInfo);
-		//FIXME remove later
-		inputRegion.getChildren().add(displayButton);
-	}
-
-	public void hideInputRegion(){
-		inputRegion.getChildren().remove(inputTitle);
-		inputRegion.getChildren().remove(textArea);
+	public void showTextArea(){
+		inputRegion.getChildren().addAll(inputTitle, textArea);
 	}
 
 	/**
@@ -226,7 +227,8 @@ public final class AppUI extends UITemplate {
 	 * Shows the algorithm types that the user can select from
 	 */
 	public void showAlgorithmTypes(){
-		inputRegion.getChildren().add(new Label("HI"));
+		controlsTitle.setText("Algorithm Type");
+		controls.getChildren().addAll(controlsTitle, classificationButton, clusteringButton);
 	}
 
 	/**
@@ -315,17 +317,33 @@ public final class AppUI extends UITemplate {
 
 		displayInfo = new Label();
 		displayInfo.setWrapText(true);
+		displayInfo.getStyleClass().add("display-info");
+		displayInfo.setEllipsisString("");
 		VBox.setMargin(displayInfo, new Insets(10));
 
-		controls = new HBox();
+		controls = new VBox();
 		controls.setAlignment(Pos.CENTER);
-		controls.setSpacing(20);
+		controls.getStyleClass().add("controls");
+		controls.setMaxWidth(200);
+		VBox.setMargin(controls, new Insets(10));
+
+		controlsTitle = new Label();
+		controlsTitle.getStyleClass().add("controls-title");
+		controlsTitle.setPrefWidth(200);
+		classificationButton = new Button("Classification");
+		classificationButton.getStyleClass().add("controls-button");
+		classificationButton.getStyleClass().add("toolbar-button");
+		classificationButton.setPrefWidth(200);
+		clusteringButton = new Button("Clustering");
+		clusteringButton.getStyleClass().add("controls-button");
+		clusteringButton.getStyleClass().add("toolbar-button");
+		clusteringButton.setPrefWidth(200);
+
 		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
-		controls.getChildren().addAll(displayButton);
 
 		chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));
-		chart.setPrefSize(700, (getPrimaryScene().getWidth()) - 400);
+		chart.setPrefSize(700, (getPrimaryScene().getWidth()) - 450);
 
 		workspace.getChildren().addAll(inputRegion, chart);
 		appPane.getChildren().add(workspace);

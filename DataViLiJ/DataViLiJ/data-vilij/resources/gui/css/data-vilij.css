@@ -7,6 +7,9 @@ and open the template in the editor.
     Created on : Feb 23, 2018, 5:09:40 PM
     Author     : neil1
 */
+*{
+	-fx-font-family: 'sans-serif';
+}
 
 .gray{
 	-fx-text-fill: gray;
@@ -55,8 +58,7 @@ and open the template in the editor.
 
 .chart-title{
 	-fx-text-fill: #2574A9;
-  	-fx-font-size: 2em;
-	-fx-font-family: 'Georgia';
+  	-fx-font-size: 1.7em;
 	-fx-font-weight: normal;
 	-fx-alignment: center;
 }
@@ -71,4 +73,30 @@ and open the template in the editor.
 
 .toolbar-button:hover{
 	-fx-background-color: #E4F1FE;
+}
+
+.display-info{
+	-fx-text-fill: #22313F;
+}
+
+.controls{
+	-fx-border-color: #22313F;
+	-fx-border-radius: 10px;
+}
+
+.controls-title{
+	-fx-alignment: center;
+	-fx-font-weight: bold;
+	-fx-font-size: 1.2em;
+	-fx-text-fill: #E4F1FE;
+	-fx-background-color: #22313F;
+	-fx-background-radius: 10 10 0 0;
+	-fx-padding: 12;
+}
+
+.controls-button{
+	-fx-font-size: 1.2em;
+	-fx-font-weight: bold;
+	-fx-border-color: #22313F;
+	-fx-padding: 10;
 }
