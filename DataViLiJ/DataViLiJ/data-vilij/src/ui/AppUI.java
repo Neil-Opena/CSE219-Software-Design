@@ -62,7 +62,7 @@ public final class AppUI extends UITemplate {
 	private Button editToggleButton; // button that toggles between edit and done
 	private Button runButton; // button for running alogrithm
 	private Button configButton; // button for configuring algorithm
-	private CheckBox readOnly; // readOnly box
+	private Label displayInfo;
 
 	private boolean hasNewText;     // whether or not the text area has any new data since last display
 
@@ -149,7 +149,7 @@ public final class AppUI extends UITemplate {
 	 */
 	public void setTextAreaText(String text){
 		if(!inputRegion.getChildren().contains(textArea)){
-			showTextArea();
+			showInputRegion();
 		}
 		setReadOnly(true);
 		textArea.setText(text);
@@ -181,18 +181,22 @@ public final class AppUI extends UITemplate {
 	 * @param source the source of the file (fileName)
 	 */
 	public void setDisplayInfo(int numInstances, int numLabels, List<String> labelNames, String source){
-		
+		displayInfo.setText(numInstances + " instances with " + numLabels + " loaded from " + source + ". The labels are:\n");
+		for(int i = 0; i < labelNames.size(); i++){
+			displayInfo.setText(displayInfo.getText() + "- " + labelNames.get(i) + "\n");
+		}
 	}
 
 	/**
-	 * Displays the text area to the user
+	 * Displays the input region to the user
 	 */
-	public void showTextArea(){
-		inputRegion.getChildren().add(inputTitle);
-		inputRegion.getChildren().add(textArea);
+	public void showInputRegion(){
+		inputRegion.getChildren().addAll(inputTitle, textArea, displayInfo);
+		//FIXME remove later
+		inputRegion.getChildren().add(displayButton);
 	}
 
-	public void hideTextArea(){
+	public void hideInputRegion(){
 		inputRegion.getChildren().remove(inputTitle);
 		inputRegion.getChildren().remove(textArea);
 	}
@@ -323,12 +327,15 @@ public final class AppUI extends UITemplate {
 		textArea.setWrapText(true);
 		VBox.setMargin(textArea, new Insets(10));
 
+		displayInfo = new Label();
+		displayInfo.setWrapText(true);
+		VBox.setMargin(displayInfo, new Insets(10));
+
 		controls = new HBox();
 		controls.setAlignment(Pos.CENTER);
 		controls.setSpacing(20);
 		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
-		readOnly = new CheckBox(manager.getPropertyValue(READ_ONLY.name()));
-		controls.getChildren().addAll(displayButton, readOnly);
+		controls.getChildren().addAll(displayButton);
 
 		chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));
@@ -382,39 +389,36 @@ public final class AppUI extends UITemplate {
 		displayButton.setOnAction(event -> {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 
-			String test = textArea.getText().trim();
-			hasNewText = !test.equals(currentText);
-			if (test.isEmpty() && hiddenData == null) {
-				((AppActions) applicationTemplate.getActionComponent()).showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
-			} else if (hasNewText || chart.getData().isEmpty()) {
-				currentText = textArea.getText().trim();
-				appData.clear();
-				
-				if(hiddenData != null){ //if hidden data has been instantiated
-					currentText = currentText + "\n" + hiddenData;
-				}
-
-				appData.loadData(currentText); //display what was in text area and hidden
-				if(chart.getData().isEmpty()){
-					scrnshotButton.setDisable(true);
-				}else{
-					scrnshotButton.setDisable(false);
-				}
-
-				addDataPointListeners();
+			appData.displayData();
+			if(chart.getData().isEmpty()){
+				scrnshotButton.setDisable(true);
+			}else{
+				scrnshotButton.setDisable(false);
 			}
+			addDataPointListeners();
 
-		});
+//			String test = textArea.getText().trim();
+//			hasNewText = !test.equals(currentText);
+//			if (test.isEmpty() && hiddenData == null) {
+//				((AppActions) applicationTemplate.getActionComponent()).showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), manager.getPropertyValue(NO_DATA_MESSAGE.name()));
+//			} else if (hasNewText || chart.getData().isEmpty()) {
+//				currentText = textArea.getText().trim();
+//				appData.clear();
+//				
+//				if(hiddenData != null){ //if hidden data has been instantiated
+//					currentText = currentText + "\n" + hiddenData;
+//				}
+//
+//				appData.loadData(currentText); //display what was in text area and hidden
+//				if(chart.getData().isEmpty()){
+//					scrnshotButton.setDisable(true);
+//				}else{
+//					scrnshotButton.setDisable(false);
+//				}
+//
+//				addDataPointListeners();
+//			}
 
-		readOnly.setOnAction(event -> {
-			if (readOnly.isSelected()) {
-				textArea.setEditable(false);
-				//change to css CHANGE OTHERS too, like title bar and shit
-				textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
-			} else {
-				textArea.setEditable(true);
-				textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
-			}
 		});
 
 	}

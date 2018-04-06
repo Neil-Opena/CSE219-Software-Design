@@ -6,7 +6,6 @@ import algorithms.Classifier;
 import algorithms.Clusterer;
 import classification.RandomClassifier;
 import data.DataSet;
-import data.OperatedData;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,7 +15,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import vilij.propertymanager.PropertyManager;
@@ -40,7 +41,8 @@ public class AppData implements DataComponent {
 	private AppActions appActions;
 	private PropertyManager manager;
 
-	private List<DataSet> data;
+	private DataSet data;
+	private Set labels;
 
 	private Algorithm algorithmToRun; //current algorithm queued up to run
 	private ArrayList<Classifier> classificationAlgorithms; //list of classification algorithms
@@ -48,15 +50,6 @@ public class AppData implements DataComponent {
 
 	private boolean isRunning; //test if algorithm is running
 	private boolean isSaved; //test if current file is saved
-
-	private class AppOperatedData extends OperatedData{
-		private String name;
-
-		public AppOperatedData(int x, int y, String label, String name){
-			super(x, y, label);
-			this.name = name;
-		}
-	}
 
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
@@ -77,9 +70,19 @@ public class AppData implements DataComponent {
 			String fileData = getFileText(dataFilePath.toFile());
 			try{
 				processor.processString(fileData);
-				data = processor.getDataPoints();
+				data = DataSet.fromTSDFile(dataFilePath);
 				
-				appUI.setTextAreaText(getTopTen(fileData));
+				labels = new HashSet(data.getLabels().values());
+				int numInstances = data.getLocations().size();
+				List test = Arrays.asList(labels.toArray());
+
+				if(numInstances > 10){
+					appUI.setTextAreaText(getTopTen(fileData));
+				}else{
+					appUI.setTextAreaText(fileData);
+				}
+
+				appUI.setDisplayInfo(numInstances, labels.size(), test, dataFilePath.toFile().getName());
 			}catch(Exception e){
 				//FILE NOT VALID
 			}
@@ -185,10 +188,6 @@ public class AppData implements DataComponent {
 		
 		RandomClassifier test = new RandomClassifier();
 		//FIXME
-	}
-
-	private void checkLabels(){
-
 	}
 
 	private String getFileText(File file) throws FileNotFoundException{
