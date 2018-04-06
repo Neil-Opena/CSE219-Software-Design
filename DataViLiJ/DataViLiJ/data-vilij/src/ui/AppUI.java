@@ -46,7 +46,7 @@ public final class AppUI extends UITemplate {
 	 * The application to which this class of actions belongs.
 	 */
 	ApplicationTemplate applicationTemplate;
-	private PropertyManager manager; // Property manager for accessing properties
+	private PropertyManager manager;
 
 	private ConfigWindow configWindow;
 
@@ -65,12 +65,6 @@ public final class AppUI extends UITemplate {
 	private Label displayInfo;
 
 	private boolean hasNewText;     // whether or not the text area has any new data since last display
-
-	private String currentText; 
-	private String hiddenData;
-	/*
-	Instead of displaying using text area data how about display using app data
-	*/
 
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
 		super(primaryStage, applicationTemplate);
@@ -131,7 +125,6 @@ public final class AppUI extends UITemplate {
 		textArea.clear();
 		newButton.setDisable(true);
 		scrnshotButton.setDisable(true);
-		hiddenData = null;
 	}
 
 	/**
@@ -298,14 +291,6 @@ public final class AppUI extends UITemplate {
 	 */
 	public Config getConfiguration(){
 		return null;
-	}
-
-
-	/*
-	MIGHT NOT NEED
-	*/
-	public void setHiddenData(String hiddenData){
-		this.hiddenData = hiddenData;
 	}
 
 	/**

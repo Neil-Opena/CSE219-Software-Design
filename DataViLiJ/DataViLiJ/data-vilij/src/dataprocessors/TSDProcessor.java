@@ -120,10 +120,18 @@ public final class TSDProcessor {
 		displayAverageYValue(chart);
 	}
 
+	/**
+	 * 
+	 * @return 
+	 */
 	public List getDataPoints(){
 		return Arrays.asList(dataPoints.values().toArray());
 	}
 
+	/**
+	 * 
+	 * @param chart 
+	 */
 	void displayAverageYValue(XYChart<Number, Number> chart){
 
 		double sum = 0;
@@ -163,15 +171,28 @@ public final class TSDProcessor {
 		averageY.getNode().getStyleClass().add(manager.getPropertyValue(DISPLAY_LINE.name()));
 	}
 
+	/**
+	 * 
+	 */
 	void clear() {
 		dataPoints.clear();
 		dataLabels.clear();
 	}
 
+	/**
+	 * 
+	 * @return 
+	 */
 	public List getLabelList(){
 		return Arrays.asList(dataLabels.values().toArray());
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 * @throws dataprocessors.TSDProcessor.InvalidDataNameException 
+	 */
 	private String checkedname(String name) throws InvalidDataNameException {
 		if (!name.startsWith("@")) {
 			throw new InvalidDataNameException(name);

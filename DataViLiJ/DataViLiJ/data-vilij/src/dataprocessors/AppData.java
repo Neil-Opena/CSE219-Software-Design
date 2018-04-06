@@ -40,6 +40,9 @@ public class AppData implements DataComponent {
 	private AppActions appActions;
 	private PropertyManager manager;
 
+	/**
+	 * current data that the application has access to
+	 */
 	private DataSet data;
 	private Set labels;
 
@@ -92,15 +95,15 @@ public class AppData implements DataComponent {
 		}
 	}
 
-	public void loadData(String dataString) {
-		String testData = validateText(dataString);
-
-		if (testData == null) {
-			displayData();
-		} else {
-			appActions.showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
-		}
-	}
+//	public void loadData(String dataString) {
+//		String testData = validateText(dataString);
+//
+//		if (testData == null) {
+//			displayData();
+//		} else {
+//			appActions.showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
+//		}
+//	}
 
 	@Override
 	public void saveData(Path dataFilePath) {
@@ -131,12 +134,15 @@ public class AppData implements DataComponent {
 		data = null;
 	}
 
+	/**
+	 * Display the current data stored in the chart
+	 */
 	public void displayData() {
 		processor.toChartData(appUI.getChart());
 	}
 
 	/**
-	 * 
+	 * Checks whether the input String is valid based on the tsd requirements
 	 * @param toCheck the text from the tsd file
 	 * @return null if data is valid, else returns a message of the error
 	 */
@@ -154,6 +160,11 @@ public class AppData implements DataComponent {
 		}
 	}
 
+	/**
+	 * Check whether the text within a file is valid based on the tsd requirements
+	 * @param file the File to be checked
+	 * @return null if data is valid, else return a message of the error
+	 */
 	public String validateText(File file){
 		try{
 			String fileData = getFileText(file);
@@ -166,28 +177,52 @@ public class AppData implements DataComponent {
 
 	}
 
+	/**
+	 * Return the current algorithm to run type
+	 * @return 
+	 */
 	public Algorithm getAlgorithmType(){
 		return null;
 	}
 
+	/**
+	 * Set the current algorithm based on the Config object passed in
+	 * @param config Config object that hold configurations of the algorithm
+	 */
 	public void setAlgoConfig(Config config){
 
 	}
 
+	/**
+	 * Start the algorithm
+	 */
 	public void startAlgorithm(){
 
 	}
-
+	
+	/**
+	 * Continue the algorithm
+	 */
 	public void continueAlgorithm(){
 
 	}
 
+	/**
+	 * Add algorithms to the list of algorithms
+	 */
 	private void initAlgorithms(){
 		classificationAlgorithms = new ArrayList<>();
 		clusteringAlgorithms = new ArrayList<>();
 		
+		//FIXME
 	}
 
+	/**
+	 * Returns the text within a given file
+	 * @param file file to extract the text
+	 * @return string representation of the text inside the file
+	 * @throws FileNotFoundException file is not found
+	 */
 	private String getFileText(File file) throws FileNotFoundException{
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		Stream<String> dataLines = reader.lines();
@@ -201,6 +236,11 @@ public class AppData implements DataComponent {
 		return builder.toString();
 	}
 
+	/**
+	 * Returns the string represetation of the first ten lines
+	 * @param data full text of a tsd file
+	 * @return te top ten lines of the text
+	 */
 	private String getTopTen(String data){
 		List temp = Arrays.asList(data.split("\n"));
 
@@ -211,6 +251,9 @@ public class AppData implements DataComponent {
 		return builder.toString();
 	}
 
+	/**
+	 * Removes the null label from the labels set
+	 */
 	private void checkLabels() {
 		labels.remove("null");
 	}
