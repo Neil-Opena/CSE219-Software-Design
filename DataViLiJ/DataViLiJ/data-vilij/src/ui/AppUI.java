@@ -52,7 +52,7 @@ public final class AppUI extends UITemplate {
 	@SuppressWarnings("FieldCanBeLocal")
 	private VBox inputRegion; // container for input region
 	private Label inputTitle; // title for input region
-	private VBox controls; // container that houses controls
+	private VBox typeContainer; // container that houses algorithm types options
 
 	private TextArea textArea;       // text area for new data input
 	private LineChart<Number, Number> chart;          // the chart where data will be displayed
@@ -63,7 +63,7 @@ public final class AppUI extends UITemplate {
 	private Button configButton; // button for configuring algorithm
 	private Button classificationButton;
 	private Button clusteringButton;
-	private Label controlsTitle;
+	private Label typesTitle;
 	private Label displayInfo;
 
 	private boolean hasNewText;     // whether or not the text area has any new data since last display
@@ -143,9 +143,8 @@ public final class AppUI extends UITemplate {
 	 * @param text text to set the text area
 	 */
 	public void setTextAreaText(String text){
-		if(!inputRegion.getChildren().contains(textArea)){
-			showTextArea();
-		}
+		resetInputRegion();
+		showTextArea();
 		setReadOnly(true);
 		textArea.setText(text);
 	} 
@@ -184,9 +183,7 @@ public final class AppUI extends UITemplate {
 		displayInfo.setText(displayInfo.getText() + labels + "\n");
 
 		inputRegion.getChildren().add(displayInfo);
-		inputRegion.getChildren().add(controls);
-		showAlgorithmTypes();
-		inputRegion.getChildren().add(displayButton);
+		setUpAlgorithmTypes(labelNames.size());
 	}
 
 	/**
@@ -221,14 +218,6 @@ public final class AppUI extends UITemplate {
 	 */
 	public void hideEditToggle(){
 
-	}
-
-	/**
-	 * Shows the algorithm types that the user can select from
-	 */
-	public void showAlgorithmTypes(){
-		controlsTitle.setText("Algorithm Type");
-		controls.getChildren().addAll(controlsTitle, classificationButton, clusteringButton);
 	}
 
 	/**
@@ -295,6 +284,21 @@ public final class AppUI extends UITemplate {
 		return null;
 	}
 
+	private void setUpAlgorithmTypes(int numLabels){
+		if(numLabels < 2){
+			classificationButton.setDisable(true);
+		}else{
+			classificationButton.setDisable(false);
+		}
+		inputRegion.getChildren().add(typeContainer);
+
+		inputRegion.getChildren().add(displayButton);
+	}
+
+	private void resetInputRegion(){
+		inputRegion.getChildren().clear();
+	}
+
 	/**
 	 * Lays out the arrangement of the user interface
 	 * Instantiates the graphical user interface objects for use  
@@ -321,23 +325,27 @@ public final class AppUI extends UITemplate {
 		displayInfo.setEllipsisString("");
 		VBox.setMargin(displayInfo, new Insets(10));
 
-		controls = new VBox();
-		controls.setAlignment(Pos.CENTER);
-		controls.getStyleClass().add("controls");
-		controls.setMaxWidth(200);
-		VBox.setMargin(controls, new Insets(10));
+		typeContainer = new VBox();
+		typeContainer.setAlignment(Pos.CENTER);
+		typeContainer.getStyleClass().add("type-container");
+		typeContainer.setMaxWidth(200);
+		VBox.setMargin(typeContainer, new Insets(10));
 
-		controlsTitle = new Label();
-		controlsTitle.getStyleClass().add("controls-title");
-		controlsTitle.setPrefWidth(200);
+		typesTitle = new Label();
+		typesTitle.getStyleClass().add("types-title");
+		typesTitle.setPrefWidth(200);
 		classificationButton = new Button("Classification");
-		classificationButton.getStyleClass().add("controls-button");
+		classificationButton.getStyleClass().add("types-button");
 		classificationButton.getStyleClass().add("toolbar-button");
 		classificationButton.setPrefWidth(200);
+		classificationButton.setTooltip(new Tooltip("Display Classification Algorithms"));
 		clusteringButton = new Button("Clustering");
-		clusteringButton.getStyleClass().add("controls-button");
+		clusteringButton.getStyleClass().add("types-button");
 		clusteringButton.getStyleClass().add("toolbar-button");
+		clusteringButton.setTooltip(new Tooltip("Display Clustering Algorithms"));
 		clusteringButton.setPrefWidth(200);
+		typesTitle.setText("Algorithm Type");
+		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton);
 
 		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
 
@@ -423,6 +431,14 @@ public final class AppUI extends UITemplate {
 //				addDataPointListeners();
 //			}
 
+		});
+
+		clusteringButton.setOnAction(event ->{
+			System.out.println("clustering button clicked");
+		});
+
+		classificationButton.setOnAction(event ->{
+			System.out.println("classification button clicked");
 		});
 
 	}
