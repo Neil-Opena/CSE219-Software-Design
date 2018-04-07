@@ -105,12 +105,16 @@ and open the template in the editor.
 	-fx-background-radius: 8px;
 	-fx-border-radius: 8px;
 	-fx-padding:2px;
-}
-
-.done{
 	-fx-text-fill: #22313F;
 }
 
-.edit{
+.run-button{
+	-fx-background-color: lightgreen;
+	-fx-border-radius: 50%;
+	-fx-background-radius: 50;
+	-fx-border-color: darkgreen;
+}
 
+.run-button:hover{
+	-fx-background-color:darkgreen;
 }

@@ -48,8 +48,8 @@ public class AppData implements DataComponent {
 	private Set labels;
 
 	private Algorithm algorithmToRun; //current algorithm queued up to run
-	private ArrayList<Classifier> classificationAlgorithms; //list of classification algorithms
-	private ArrayList<Clusterer> clusteringAlgorithms; //list of clustering algorithms
+	private List<Classifier> classificationAlgorithms; //list of classification algorithms
+	private List<Clusterer> clusteringAlgorithms; //list of clustering algorithms
 
 	private boolean isRunning; //test if algorithm is running
 	private boolean isSaved; //test if current file is saved
@@ -156,6 +156,14 @@ public class AppData implements DataComponent {
 		return true;
 	}
 
+	public int clusteringAlgorithmsSize(){
+		return this.clusteringAlgorithms.size();
+	}
+
+	public int classificationAlgorithmsSize(){
+		return this.classificationAlgorithms.size();
+	}
+
 	/**
 	 * Checks whether the input String is valid based on the tsd requirements
 	 * @param toCheck the text from the tsd file
@@ -229,7 +237,8 @@ public class AppData implements DataComponent {
 		classificationAlgorithms = new ArrayList<>();
 		clusteringAlgorithms = new ArrayList<>();
 		
-		Classifier classifier = new RandomClassifier(data, 1, 2, false);
+		// create algorithm objects with default values
+		classificationAlgorithms.add(new RandomClassifier(null, -1, -1, false));
 	}
 
 	/**

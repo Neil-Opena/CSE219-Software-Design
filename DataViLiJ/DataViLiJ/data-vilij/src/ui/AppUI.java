@@ -25,13 +25,17 @@ import static settings.AppPropertyTypes.*;
 import actions.AppActions;
 import dataprocessors.AppData;
 import dataprocessors.Config;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
 
 /**
  * This is the application's user interface implementation.
@@ -60,13 +64,18 @@ public final class AppUI extends UITemplate {
 	private Button displayButton;  // workspace button to display data on the chart
 	private Button editToggleButton; // button that toggles between edit and done
 	private Button runButton; // button for running alogrithm
-	private Button configButton; // button for configuring algorithm
 	private Button classificationButton;
 	private Button clusteringButton;
 	private Label typesTitle;
+	private Label algorithmType;
 	private Label displayInfo;
+	private List<AlgorithmUI> clusteringAlgorithms;
+	private List<AlgorithmUI> classificationAlgorithms;
+	private ToggleGroup clusteringRadios;
+	private ToggleGroup classificationRadios;
 
 	private boolean hasNewText;     // whether or not the text area has any new data since last display
+	public String iconsPath;
 
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
 		super(primaryStage, applicationTemplate);
@@ -89,8 +98,7 @@ public final class AppUI extends UITemplate {
 	protected void setToolBar(ApplicationTemplate applicationTemplate) {
 		super.setToolBar(applicationTemplate);
 		manager = applicationTemplate.manager;
-
-		String iconsPath = "/" + String.join(separator, manager.getPropertyValue(GUI_RESOURCE_PATH.name()), manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
+		iconsPath = "/" + String.join(separator, manager.getPropertyValue(GUI_RESOURCE_PATH.name()), manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
 		String scrnshotIconPath = iconsPath + separator + manager.getPropertyValue(SCREENSHOT_ICON.name());
 
 		scrnshotButton = setToolbarButton(scrnshotIconPath, manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()), true);
@@ -120,6 +128,7 @@ public final class AppUI extends UITemplate {
 	public void initialize() {
 		layout();
 		setWorkspaceActions();
+		initAlgorithms();
 	}
 
 	@Override
@@ -222,7 +231,13 @@ public final class AppUI extends UITemplate {
 	 * Shows the possible clustering algorithms
 	 */
 	public void showClusteringAlgorithms(){
-		algorithms.getChildren().addAll(new Label("YES"));
+		algorithmType.setText("Clustering");
+		algorithms.getChildren().add(algorithmType);
+		for(int i = 0; i < clusteringAlgorithms.size(); i++){
+			algorithms.getChildren().add(clusteringAlgorithms.get(i));
+		}
+		algorithms.getChildren().add(runButton);
+		algorithms.getChildren().add(displayButton); //FIXME remove later
 		inputRegion.getChildren().add(algorithms);
 	}
 
@@ -230,7 +245,13 @@ public final class AppUI extends UITemplate {
 	 * Shows the possible classification algorithms
 	 */
 	public void showClassificationAlgorithms(){
-		algorithms.getChildren().addAll(new Label("NO"));
+		algorithmType.setText("Classification");
+		algorithms.getChildren().add(algorithmType);
+		for(int i = 0; i < classificationAlgorithms.size(); i++){
+			algorithms.getChildren().add(classificationAlgorithms.get(i));
+		}
+		algorithms.getChildren().add(runButton);
+		algorithms.getChildren().add(displayButton); //FIXME remove later
 		inputRegion.getChildren().add(algorithms);
 	}
 
@@ -245,14 +266,13 @@ public final class AppUI extends UITemplate {
 	 * Enables the run button
 	 */
 	public void enableRun(){
-		inputRegion.getChildren().add(displayButton); //FIXME remove later
+
 	}
 
 	/**
 	 * Disables the run button
 	 */
 	public void disableRun(){
-		inputRegion.getChildren().remove(displayButton); //FIXME remove later
 	}
 
 	/**
@@ -351,10 +371,16 @@ public final class AppUI extends UITemplate {
 		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton);
 
 		algorithms = new VBox();
-		algorithms.setAlignment(Pos.CENTER_LEFT);
+		algorithms.setAlignment(Pos.CENTER);
 		algorithms.getStyleClass().add("algorithms");
-		algorithms.setMaxWidth(200);
+		algorithms.setSpacing(20);
 		VBox.setMargin(algorithms, new Insets(10));
+
+		algorithmType = new Label();
+		algorithmType.getStyleClass().add("algorithm-type");
+		runButton = setToolbarButton(iconsPath + separator + manager.getPropertyValue(SCREENSHOT_ICON.name()), manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()), false);
+		runButton.setPrefSize(30, 30);
+		runButton.getStyleClass().add("run-button");
 
 		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
 
@@ -411,7 +437,7 @@ public final class AppUI extends UITemplate {
 					appData.loadData(textArea.getText());
 					editToggleButton.setText("Edit");
 					setReadOnly(true);
-					//check labels bruh
+					//check labels bruh FIXME
 					setUpAlgorithmTypes(5);
 				}else{
 					appActions.showErrorDialog("some title", result);
@@ -445,6 +471,45 @@ public final class AppUI extends UITemplate {
 					getPrimaryScene().setCursor(Cursor.DEFAULT);
 				});
 			}
+		}
+	}
+
+	private void initAlgorithms(){
+		AppData appData = ((AppData) applicationTemplate.getDataComponent());
+		
+		/*
+		we want each algorithm type to have a list of components
+		each component comprising of a radio button, label, and regular button
+		*/
+		int clusteringSize = appData.clusteringAlgorithmsSize();
+		clusteringAlgorithms = new ArrayList<>();
+		for(int i = 0; i < clusteringSize; i++){
+			AlgorithmUI temp = new AlgorithmUI(i);
+			clusteringAlgorithms.add(temp);
+			temp.chooseAlgorithm.setToggleGroup(clusteringRadios);
+		}
+		
+		int classificationSize = appData.classificationAlgorithmsSize();
+		classificationAlgorithms = new ArrayList<>();
+		for(int i = 0; i < classificationSize; i++){
+			AlgorithmUI temp = new AlgorithmUI(i);
+			classificationAlgorithms.add(temp);
+			temp.chooseAlgorithm.setToggleGroup(classificationRadios);
+		}
+	}
+
+	private class AlgorithmUI extends HBox{
+		private Label algorithmName;
+		private Button configButton;
+		private RadioButton chooseAlgorithm;
+
+		public AlgorithmUI(int num){
+			algorithmName = new Label("Algorithm " + (num + 1));
+			configButton = new Button("Config");
+			chooseAlgorithm = new RadioButton();
+
+			this.getChildren().addAll(chooseAlgorithm, algorithmName, configButton);
+			this.setSpacing(15);
 		}
 	}
 
