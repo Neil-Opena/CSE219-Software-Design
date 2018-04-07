@@ -70,12 +70,13 @@ public final class AppActions implements ActionComponent {
 		AppData appData = ((AppData) applicationTemplate.getDataComponent());
 		try {
 			appUI.showTextArea();
-
+			/*
+			If there is nothing on the text area OR when there is a file loaded, immediately set up new file
+			If there is text on the text area that was not saved, show the dialog
+			*/
 			if(appData.isSaved()){
 				//file is already saved, no need to prompt
-				//no data, no need to save
 			}else if(promptToSave()) {
-				System.out.println(appData.isModified());
 				appData.clear();
 				dataFilePath = null;
 				appUI.disableSaveButton(); //disable Save Button
@@ -107,6 +108,16 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleLoadRequest() {
+		try {
+			if(!promptToSave()){
+
+			}
+		} catch (IOException ex) {
+
+		}
+		/*
+		When there is a file that is modified/not saved, a prompt to save should pop up
+		*/
 		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		try {
@@ -181,9 +192,8 @@ public final class AppActions implements ActionComponent {
 	private boolean promptToSave() throws IOException {
 		//first check if there is some data in the text area that was not saved first
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
-		if(!appData.isModified()){
+		if(true)
 			return false;
-		}
 		ConfirmationDialog confirmDialog = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
 		confirmDialog.show(manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
 

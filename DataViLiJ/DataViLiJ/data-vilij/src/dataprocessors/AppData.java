@@ -150,7 +150,7 @@ public class AppData implements DataComponent {
 
 	public boolean isModified(){
 		String curr = appUI.getTextAreaText().trim();
-		if(curr.equals(lastSavedText) || curr.isEmpty()){
+		if(curr.equals(lastSavedText) || curr.isEmpty() || data != null){
 			return false;
 		}
 		return true;

@@ -52,6 +52,7 @@ public final class AppUI extends UITemplate {
 	private VBox inputRegion; // container for input region
 	private Label inputTitle; // title for input region
 	private VBox typeContainer; // container that houses algorithm types options
+	private VBox algorithms; // container for the algorithms
 
 	private TextArea textArea;       // text area for new data input
 	private LineChart<Number, Number> chart;          // the chart where data will be displayed
@@ -215,42 +216,43 @@ public final class AppUI extends UITemplate {
 	 */
 	private void hideAlgorithmTypes(){
 		inputRegion.getChildren().remove(typeContainer);
-		inputRegion.getChildren().remove(displayButton); //FIXME remove later
 	}
 
 	/**
 	 * Shows the possible clustering algorithms
 	 */
-	public void showCluseringAlgorithms(){
-	
+	public void showClusteringAlgorithms(){
+		algorithms.getChildren().addAll(new Label("YES"));
+		inputRegion.getChildren().add(algorithms);
 	}
 
 	/**
 	 * Shows the possible classification algorithms
 	 */
 	public void showClassificationAlgorithms(){
-
+		algorithms.getChildren().addAll(new Label("NO"));
+		inputRegion.getChildren().add(algorithms);
 	}
 
 	/**
 	 * Hides the algorithms
 	 */
 	public void hideAlgorithms(){
-
+		inputRegion.getChildren().remove(algorithms);
 	}
 
 	/**
 	 * Enables the run button
 	 */
 	public void enableRun(){
-
+		inputRegion.getChildren().add(displayButton); //FIXME remove later
 	}
 
 	/**
 	 * Disables the run button
 	 */
 	public void disableRun(){
-
+		inputRegion.getChildren().remove(displayButton); //FIXME remove later
 	}
 
 	/**
@@ -282,11 +284,10 @@ public final class AppUI extends UITemplate {
 			classificationButton.setDisable(false);
 		}
 		inputRegion.getChildren().add(typeContainer);
-
-		inputRegion.getChildren().add(displayButton); //FIXME remove later
 	}
 
 	private void resetInputRegion(){
+		algorithms.getChildren().clear();
 		inputRegion.getChildren().clear();
 	}
 /**
@@ -295,10 +296,10 @@ public final class AppUI extends UITemplate {
 	 */
 	private void setReadOnly(boolean readOnly){
 		textArea.setEditable(!readOnly);
+		//when two files are loaded after one another, text is gray bruh
+		textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
 		if(readOnly){
 			textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
-		}else{
-			textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
 		}
 	}
 
@@ -349,6 +350,12 @@ public final class AppUI extends UITemplate {
 		typesTitle.setText("Algorithm Type");
 		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton);
 
+		algorithms = new VBox();
+		algorithms.setAlignment(Pos.CENTER_LEFT);
+		algorithms.getStyleClass().add("algorithms");
+		algorithms.setMaxWidth(200);
+		VBox.setMargin(algorithms, new Insets(10));
+
 		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
 
 		editToggleButton = new Button("Done");
@@ -380,15 +387,18 @@ public final class AppUI extends UITemplate {
 				scrnshotButton.setDisable(false);
 			}
 			addDataPointListeners();
-
 		});
 
 		clusteringButton.setOnAction(event ->{
-			System.out.println("clustering button clicked");
+			hideAlgorithmTypes();
+			showClusteringAlgorithms();
+			enableRun();
 		});
 
 		classificationButton.setOnAction(event ->{
-			System.out.println("classification button clicked");
+			hideAlgorithmTypes();
+			showClassificationAlgorithms();
+			enableRun();
 		});
 
 		editToggleButton.setOnAction(event -> {
