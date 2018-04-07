@@ -71,10 +71,11 @@ public final class AppActions implements ActionComponent {
 		try {
 			appUI.showTextArea();
 
-			if(appData.isSaved() || appData.getData() == null){
+			if(appData.isSaved()){
 				//file is already saved, no need to prompt
 				//no data, no need to save
 			}else if(promptToSave()) {
+				System.out.println(appData.isModified());
 				appData.clear();
 				dataFilePath = null;
 				appUI.disableSaveButton(); //disable Save Button

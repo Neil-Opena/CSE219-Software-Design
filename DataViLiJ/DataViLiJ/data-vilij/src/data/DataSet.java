@@ -5,7 +5,9 @@ import javafx.geometry.Point2D;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -78,5 +80,18 @@ public class DataSet {
             }
         });
         return dataset;
+    }
+
+    public static DataSet fromText(String text){
+	List lines = Arrays.asList(text.split("\n"));
+	DataSet dataset = new DataSet();
+	lines.forEach(line -> {
+		try{
+			dataset.addInstance(line.toString());
+		}catch(InvalidDataNameException e){
+			e.printStackTrace();
+		}
+	});
+	return dataset;
     }
 }

@@ -1,7 +1,6 @@
 package dataprocessors;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -9,9 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
-import javafx.collections.ObservableList;
-import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
 import javafx.scene.chart.XYChart;
 import javafx.geometry.Point2D;
 
@@ -117,7 +113,6 @@ public final class TSDProcessor {
 			});
 			chart.getData().add(series);
 		}
-		displayAverageYValue(chart);
 	}
 
 	/**
@@ -126,49 +121,6 @@ public final class TSDProcessor {
 	 */
 	public List getDataPoints(){
 		return Arrays.asList(dataPoints.values().toArray());
-	}
-
-	/**
-	 * 
-	 * @param chart 
-	 */
-	void displayAverageYValue(XYChart<Number, Number> chart){
-
-		double sum = 0;
-
-		Set<Point2D> points = new HashSet<>(dataPoints.values());
-		double min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
-		double max = min;
-
-		for(Series serie : chart.getData()){
-			for(XYChart.Data point : (ObservableList<XYChart.Data>) serie.getData()){
-
-				sum += Double.parseDouble(point.getYValue().toString());
-				
-				double testXVal = Double.parseDouble(point.getXValue().toString());
-				if(testXVal < min){
-					min = testXVal;
-				}else if(testXVal > max){
-					max = testXVal;
-				}
-				
-			}
-		}
-
-		double average = sum / points.size();
-		Series averageY = new Series<>();
-		averageY.setName(manager.getPropertyValue(AVERAGE_Y.name()));
-
-		Data minData = new Data(min, average, average);
-		Data maxData = new Data(max, average, average);
-		averageY.getData().add(minData);
-		averageY.getData().add(maxData);
-
-		chart.getData().add(averageY);
-
-		minData.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name())); 
-		maxData.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name()));
-		averageY.getNode().getStyleClass().add(manager.getPropertyValue(DISPLAY_LINE.name()));
 	}
 
 	/**

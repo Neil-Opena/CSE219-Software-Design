@@ -28,7 +28,6 @@ import dataprocessors.Config;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.TextField;
@@ -214,8 +213,9 @@ public final class AppUI extends UITemplate {
 	/**
 	 * Hides the algorithm types
 	 */
-	public void hideAlgorithmTypes(){
-
+	private void hideAlgorithmTypes(){
+		inputRegion.getChildren().remove(typeContainer);
+		inputRegion.getChildren().remove(displayButton); //FIXME remove later
 	}
 
 	/**
@@ -283,7 +283,7 @@ public final class AppUI extends UITemplate {
 		}
 		inputRegion.getChildren().add(typeContainer);
 
-		inputRegion.getChildren().add(displayButton);
+		inputRegion.getChildren().add(displayButton); //FIXME remove later
 	}
 
 	private void resetInputRegion(){
@@ -393,14 +393,31 @@ public final class AppUI extends UITemplate {
 
 		editToggleButton.setOnAction(event -> {
 			String curr = editToggleButton.getText();
+			AppData appData = ((AppData) applicationTemplate.getDataComponent());
+			AppActions appActions = ((AppActions) applicationTemplate.getActionComponent());
 			if(curr.equals("Done")){
-				editToggleButton.setText("Edit");
-				setReadOnly(true);
+				String result = checkTextAreaText();
+				if(result == null){
+					appData.loadData(textArea.getText());
+					editToggleButton.setText("Edit");
+					setReadOnly(true);
+					//check labels bruh
+					setUpAlgorithmTypes(5);
+				}else{
+					appActions.showErrorDialog("some title", result);
+				}
 			}else{
+				hideAlgorithmTypes();
 				editToggleButton.setText("Done");
 				setReadOnly(false);
 			}
 		});
+	}
+
+	private String checkTextAreaText(){
+		AppData appData = ((AppData) applicationTemplate.getDataComponent());
+		String toTest = textArea.getText().trim();
+		return appData.validateText(toTest);
 	}
 
 	/**
@@ -408,20 +425,6 @@ public final class AppUI extends UITemplate {
 	 */
 	private void addDataPointListeners(){
 		for(Series series : chart.getData()){
-			if(series.getName().equals(manager.getPropertyValue(AVERAGE_Y.name()))){
-				Data data = (Data) series.getData().get(0);
-				String averageValue = String.format(manager.getPropertyValue(DECIMAL_FORMAT.name()), Double.parseDouble(data.getExtraValue().toString()));
-				Node average = series.getNode();
-				Tooltip.install(average, new Tooltip(manager.getPropertyValue(AVERAGE_Y_TOOLTIP.name()) + averageValue));
-				average.setOnMouseEntered(e ->{
-					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
-				});
-				average.setOnMouseExited(e ->{
-					getPrimaryScene().setCursor(Cursor.DEFAULT);
-				});
-				
-				continue;
-			}
 			for(Data point : (ObservableList<Data>) series.getData()){
 				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
 

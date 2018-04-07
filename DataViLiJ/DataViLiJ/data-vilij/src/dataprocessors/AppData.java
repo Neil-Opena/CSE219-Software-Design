@@ -98,15 +98,10 @@ public class AppData implements DataComponent {
 		}
 	}
 
-//	public void loadData(String dataString) {
-//		String testData = validateText(dataString);
-//
-//		if (testData == null) {
-//			displayData();
-//		} else {
-//			appActions.showErrorDialog(applicationTemplate.manager.getPropertyValue(INVALID_DATA_TITLE.name()), testData);
-//		}
-//	}
+	public void loadData(String dataString) {
+		data = DataSet.fromText(dataString);
+		lastSavedText = dataString;
+	}
 
 	@Override
 	public void saveData(Path dataFilePath) {
@@ -135,6 +130,7 @@ public class AppData implements DataComponent {
 		processor.clear();
 		appUI.getChart().getData().clear();
 		data = null;
+		lastSavedText = null;
 	}
 
 	/**
@@ -154,7 +150,7 @@ public class AppData implements DataComponent {
 
 	public boolean isModified(){
 		String curr = appUI.getTextAreaText().trim();
-		if(!curr.equals(lastSavedText)){
+		if(curr.equals(lastSavedText) || curr.isEmpty()){
 			return false;
 		}
 		return true;
