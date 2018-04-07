@@ -239,6 +239,12 @@ public class AppData implements DataComponent {
 		
 		// create algorithm objects with default values
 		classificationAlgorithms.add(new RandomClassifier(null, -1, -1, false));
+		classificationAlgorithms.add(new RandomClassifier(null, -1, -1, false));
+		classificationAlgorithms.add(new RandomClassifier(null, -1, -1, false));
+
+		clusteringAlgorithms.add(null);
+		clusteringAlgorithms.add(null);
+		clusteringAlgorithms.add(null);
 	}
 
 	/**

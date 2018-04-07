@@ -27,6 +27,8 @@ import dataprocessors.AppData;
 import dataprocessors.Config;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.animation.Animation;
+import javafx.animation.RotateTransition;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.chart.XYChart.Data;
@@ -36,6 +38,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 
 /**
  * This is the application's user interface implementation.
@@ -61,7 +64,6 @@ public final class AppUI extends UITemplate {
 	private TextArea textArea;       // text area for new data input
 	private LineChart<Number, Number> chart;          // the chart where data will be displayed
 	private Button scrnshotButton; // toolbar button to take a screenshot of the data
-	private Button displayButton;  // workspace button to display data on the chart
 	private Button editToggleButton; // button that toggles between edit and done
 	private Button runButton; // button for running alogrithm
 	private Button classificationButton;
@@ -237,7 +239,6 @@ public final class AppUI extends UITemplate {
 			algorithms.getChildren().add(clusteringAlgorithms.get(i));
 		}
 		algorithms.getChildren().add(runButton);
-		algorithms.getChildren().add(displayButton); //FIXME remove later
 		inputRegion.getChildren().add(algorithms);
 	}
 
@@ -251,7 +252,6 @@ public final class AppUI extends UITemplate {
 			algorithms.getChildren().add(classificationAlgorithms.get(i));
 		}
 		algorithms.getChildren().add(runButton);
-		algorithms.getChildren().add(displayButton); //FIXME remove later
 		inputRegion.getChildren().add(algorithms);
 	}
 
@@ -378,11 +378,9 @@ public final class AppUI extends UITemplate {
 
 		algorithmType = new Label();
 		algorithmType.getStyleClass().add("algorithm-type");
-		runButton = setToolbarButton(iconsPath + separator + manager.getPropertyValue(SCREENSHOT_ICON.name()), manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()), false);
-		runButton.setPrefSize(30, 30);
+		runButton = setToolbarButton(iconsPath + separator + "play.png", "Run the algorithm", false);
+		runButton.setPrefSize(40, 40);
 		runButton.getStyleClass().add("run-button");
-
-		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
 
 		editToggleButton = new Button("Done");
 		editToggleButton.getStyleClass().addAll("toggle-button", "types-button", "done");
@@ -403,7 +401,7 @@ public final class AppUI extends UITemplate {
 	 */
 	private void setWorkspaceActions() {
 
-		displayButton.setOnAction(event -> {
+		runButton.setOnAction(event -> {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 
 			appData.displayData();
@@ -483,6 +481,7 @@ public final class AppUI extends UITemplate {
 		*/
 		int clusteringSize = appData.clusteringAlgorithmsSize();
 		clusteringAlgorithms = new ArrayList<>();
+		clusteringRadios = new ToggleGroup();
 		for(int i = 0; i < clusteringSize; i++){
 			AlgorithmUI temp = new AlgorithmUI(i);
 			clusteringAlgorithms.add(temp);
@@ -491,6 +490,7 @@ public final class AppUI extends UITemplate {
 		
 		int classificationSize = appData.classificationAlgorithmsSize();
 		classificationAlgorithms = new ArrayList<>();
+		classificationRadios = new ToggleGroup();
 		for(int i = 0; i < classificationSize; i++){
 			AlgorithmUI temp = new AlgorithmUI(i);
 			classificationAlgorithms.add(temp);
@@ -504,12 +504,38 @@ public final class AppUI extends UITemplate {
 		private RadioButton chooseAlgorithm;
 
 		public AlgorithmUI(int num){
+			layoutAlgorithm(num);
+			setUpActions();
+		}
+
+		private void layoutAlgorithm(int num){
 			algorithmName = new Label("Algorithm " + (num + 1));
-			configButton = new Button("Config");
+			algorithmName.getStyleClass().add("algorithm-name");
+			configButton = setToolbarButton(iconsPath + separator + "gears.png", "Configure Algorithm", false);
+			configButton.getStyleClass().add("config-button");
 			chooseAlgorithm = new RadioButton();
 
 			this.getChildren().addAll(chooseAlgorithm, algorithmName, configButton);
+			this.getStyleClass().add("algorithm-ui");
+			this.setAlignment(Pos.CENTER);
 			this.setSpacing(15);
+		}
+
+		private void setUpActions(){
+			configButton.setOnAction(event -> {
+				System.out.println("config clicked");
+			});
+			
+			RotateTransition rot = new RotateTransition(Duration.seconds(2), configButton);
+			rot.setCycleCount(Animation.INDEFINITE);
+			rot.setByAngle(360);
+			configButton.setOnMouseEntered(event -> {
+				rot.play();
+			});
+			configButton.setOnMouseExited(event -> {
+				rot.stop();
+			});
+
 		}
 	}
 

@@ -52,12 +52,12 @@ and open the template in the editor.
 }
 
 .chart-plot-background{
-	-fx-border-color: #2574A9;
+	-fx-border-color: #40739e;
 	-fx-border-width: 5px;
 }
 
 .chart-title{
-	-fx-text-fill: #2574A9;
+	-fx-text-fill: #40739e;
   	-fx-font-size: 1.7em;
 	-fx-font-weight: normal;
 	-fx-alignment: center;
@@ -68,11 +68,11 @@ and open the template in the editor.
 }
 
 .button{
-	-fx-background-color: #67809F;
+	-fx-background-color: #487eb0;
 }
 
 .button:hover{
-	-fx-background-color: #E4F1FE;
+	-fx-background-color: #40739e;
 }
 
 .display-info{
@@ -109,12 +109,44 @@ and open the template in the editor.
 }
 
 .run-button{
-	-fx-background-color: lightgreen;
+	-fx-background-color: #2ecc71;
 	-fx-border-radius: 50%;
 	-fx-background-radius: 50;
 	-fx-border-color: darkgreen;
 }
 
 .run-button:hover{
-	-fx-background-color:darkgreen;
+	-fx-background-color:#27ae60;
+}
+
+.config-button{
+	-fx-background-color: transparent;
+}
+
+.config-button:hover{
+	-fx-background-color: transparent;
+}
+
+.algorithm-ui{
+	-fx-background-color: #dcdde1;
+	-fx-border-color: #40739e;
+}
+
+.algorithms{
+	-fx-border-color: #40739e;
+	-fx-border-width: 5px;
+	-fx-background-color: #f5f6fa;
+	-fx-border-radius: 20px;
+	-fx-background-radius: 20px;
+}
+
+.algorithm-type{
+	-fx-text-alignment: left;
+	-fx-font-weight: bold;
+	-fx-font-size: 1.1em;
+}
+
+.algorithm-name{
+	-fx-font-weight: bold;
+	-fx-font-size: 1.1em;
 }
