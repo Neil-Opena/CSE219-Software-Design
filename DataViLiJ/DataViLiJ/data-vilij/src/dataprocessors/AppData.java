@@ -101,8 +101,8 @@ public class AppData implements DataComponent {
 	}
 
 	public void loadData(String dataString) {
+		fromFile = false;
 		data = DataSet.fromText(dataString);
-		lastSavedText = dataString;
 	}
 
 	@Override
@@ -150,14 +150,12 @@ public class AppData implements DataComponent {
 		return this.isSaved;
 	}
 
-	public boolean isModified(){
-		String curr = appUI.getTextAreaText().trim();
-		if(lastSavedText != null && curr.equals(lastSavedText)){
-			return false; // text in text area is equal to saved text
-		}else if(fromFile){
-			return false; // data is from file -> can't modify
-		}
-		return true;
+	public boolean justLaunched(){
+		return data == null;
+	}
+
+	public boolean isFromFile(){
+		return fromFile;
 	}
 
 	public int clusteringAlgorithmsSize(){

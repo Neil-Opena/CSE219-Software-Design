@@ -68,28 +68,42 @@ public final class AppActions implements ActionComponent {
 	@Override
 	public void handleNewRequest() {
 		AppData appData = ((AppData) applicationTemplate.getDataComponent());
-		try {
-			appUI.showTextArea();
-			/*
-			If there is nothing on the text area OR when there is a file loaded, immediately set up new file
-			If there is text on the text area that was not saved, show the dialog
-			*/
-			//if(appData.hasFileLoaded() || appData.isSaved()){
-				// current data is from loaded file
-				// or data is saved
-			//	applicationTemplate.getUIComponent().clear();
-			//	appUI.showEditToggle();
-			//}
-			if(appData.isModified() && promptToSave()) {
-				appData.clear();
-				dataFilePath = null;
-				appUI.disableSaveButton(); //disable Save Button
-				applicationTemplate.getUIComponent().clear();
-				appUI.showEditToggle();
+		/*
+		When to automatically set up new file without prompt:
+			-the app is just initially loaded
+			-the app has data from a file
+
+		When to show prompt:
+			-app displayed text from text area that is not saved
+
+		Unhandled:
+			-there is text in the text area that is not saved
+		*/
+
+			if(appData.justLaunched() || appData.isFromFile()) { // if there is any text in the text area
+				setUpNewFile();
+			}else{
+				try {
+					if(!appData.isSaved() && promptToSave()){
+						setUpNewFile();
+					}
+				} catch (IOException ex) {
+					showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+				}
 			}
-		} catch (IOException e) {
-			showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
-		}
+	}
+
+	/*
+	When displaying the file, the processor actually checks the data
+	*/
+
+	private void setUpNewFile(){
+		applicationTemplate.getDataComponent().clear();
+		dataFilePath = null;
+		appUI.disableSaveButton();
+		appUI.clear();
+		appUI.showTextArea();
+		appUI.showEditToggle();
 	}
 
 	@Override

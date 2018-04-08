@@ -79,6 +79,8 @@ public final class AppUI extends UITemplate {
 	private boolean hasNewText;     // whether or not the text area has any new data since last display
 	public String iconsPath;
 
+	private String lastSavedText;
+
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
 		super(primaryStage, applicationTemplate);
 		this.applicationTemplate = applicationTemplate;
@@ -432,9 +434,9 @@ public final class AppUI extends UITemplate {
 			if(curr.equals("Done")){
 				String result = checkTextAreaText();
 				if(result == null){
-					appData.loadData(textArea.getText());
 					editToggleButton.setText("Edit");
 					setReadOnly(true);
+					appData.loadData(textArea.getText());
 					//check labels bruh FIXME
 					setUpAlgorithmTypes(5);
 				}else{
@@ -446,6 +448,10 @@ public final class AppUI extends UITemplate {
 				setReadOnly(false);
 			}
 		});
+	}
+
+	public boolean isModified(){
+		return false;
 	}
 
 	private String checkTextAreaText(){
