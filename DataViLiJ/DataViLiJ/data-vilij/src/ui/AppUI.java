@@ -186,16 +186,18 @@ public final class AppUI extends UITemplate {
 	 * @param labelNames the names of the labels
 	 * @param source the source of the file (fileName)
 	 */
-	public void displayInfo(int numInstances, int numLabels, List<String> labelNames, String source){
-		displayInfo.setText(numInstances + " instances with " + numLabels + " labels loaded from " + source + ". The labels are:\n");
-		String labels = "";
-		for(int i = 0; i < labelNames.size(); i++){
-			labels += "\t- " + labelNames.get(i) + "\n";
-		}
-		displayInfo.setText(displayInfo.getText() + labels + "\n");
+	public void displayInfo(int numInstances, String source){
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
+		displayInfo.setText(numInstances + " instances with " + appData.getLabels().size() + " labels loaded from " + source + ". The labels are:\n");
+
+		StringBuilder builder = new StringBuilder();
+		appData.getLabels().forEach(label -> {
+			builder.append("\t- " + label.toString() + "\n");
+		});
+		displayInfo.setText(displayInfo.getText() + builder.toString() + "\n");
 
 		inputRegion.getChildren().add(displayInfo);
-		setUpAlgorithmTypes(labelNames.size());
+		setUpAlgorithmTypes(appData.getLabels().size());
 	}
 
 	/**
@@ -438,7 +440,7 @@ public final class AppUI extends UITemplate {
 					setReadOnly(true);
 					appData.loadData(textArea.getText());
 					//check labels bruh FIXME
-					setUpAlgorithmTypes(5);
+					setUpAlgorithmTypes(appData.getLabels().size());
 				}else{
 					appActions.showErrorDialog("some title", result);
 				}

@@ -89,7 +89,7 @@ public class AppData implements DataComponent {
 				
 				checkLabels();
 				List test = Arrays.asList(labels.toArray());
-				appUI.displayInfo(numInstances, labels.size(), test, dataFilePath.toFile().getName());
+				appUI.displayInfo(numInstances, dataFilePath.toFile().getName());
 				fromFile = true;
 			}catch(Exception e){
 				//FILE NOT VALID
@@ -103,6 +103,7 @@ public class AppData implements DataComponent {
 	public void loadData(String dataString) {
 		fromFile = false;
 		data = DataSet.fromText(dataString);
+		labels = new LinkedHashSet(data.getLabels().values());
 	}
 
 	@Override
@@ -142,8 +143,12 @@ public class AppData implements DataComponent {
 		processor.toChartData(appUI.getChart());
 	}
 
-	public DataSet getData(){
-		return this.data;
+//	public DataSet getData(){
+//		return this.data;
+//	}
+
+	public Set getLabels(){
+		return labels;
 	}
 
 	public boolean isSaved(){
