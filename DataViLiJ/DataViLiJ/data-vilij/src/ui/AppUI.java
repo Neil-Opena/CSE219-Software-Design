@@ -388,7 +388,7 @@ public final class AppUI extends UITemplate {
 
 		chart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		chart.setTitle(manager.getPropertyValue(CHART_TITLE.name()));
-		chart.setPrefSize(700, (getPrimaryScene().getWidth()) - 450);
+		chart.setPrefSize(700, 700);
 
 		workspace.getChildren().addAll(inputRegion, chart);
 		appPane.getChildren().add(workspace);

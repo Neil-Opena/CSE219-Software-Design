@@ -53,6 +53,7 @@ public class AppData implements DataComponent {
 
 	private boolean isRunning; //test if algorithm is running
 	private boolean isSaved; //test if current file is saved
+	private boolean fromFile;
 
 	private String lastSavedText;
 
@@ -89,6 +90,7 @@ public class AppData implements DataComponent {
 				checkLabels();
 				List test = Arrays.asList(labels.toArray());
 				appUI.displayInfo(numInstances, labels.size(), test, dataFilePath.toFile().getName());
+				fromFile = true;
 			}catch(Exception e){
 				//FILE NOT VALID
 			}
@@ -150,8 +152,10 @@ public class AppData implements DataComponent {
 
 	public boolean isModified(){
 		String curr = appUI.getTextAreaText().trim();
-		if(curr.equals(lastSavedText) || curr.isEmpty() || data != null){
-			return false;
+		if(lastSavedText != null && curr.equals(lastSavedText)){
+			return false; // text in text area is equal to saved text
+		}else if(fromFile){
+			return false; // data is from file -> can't modify
 		}
 		return true;
 	}

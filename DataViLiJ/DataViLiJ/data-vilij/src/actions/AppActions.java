@@ -74,15 +74,19 @@ public final class AppActions implements ActionComponent {
 			If there is nothing on the text area OR when there is a file loaded, immediately set up new file
 			If there is text on the text area that was not saved, show the dialog
 			*/
-			if(appData.isSaved()){
-				//file is already saved, no need to prompt
-			}else if(promptToSave()) {
+			//if(appData.hasFileLoaded() || appData.isSaved()){
+				// current data is from loaded file
+				// or data is saved
+			//	applicationTemplate.getUIComponent().clear();
+			//	appUI.showEditToggle();
+			//}
+			if(appData.isModified() && promptToSave()) {
 				appData.clear();
 				dataFilePath = null;
 				appUI.disableSaveButton(); //disable Save Button
+				applicationTemplate.getUIComponent().clear();
+				appUI.showEditToggle();
 			}
-			applicationTemplate.getUIComponent().clear();
-			appUI.showEditToggle();
 		} catch (IOException e) {
 			showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 		}
@@ -91,6 +95,7 @@ public final class AppActions implements ActionComponent {
 	@Override
 	public void handleSaveRequest() {
 		String testData = ((AppData) applicationTemplate.getDataComponent()).validateText(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
+		//FIXME should not delete data if file is invalid
 		if(testData == null){
 			if(dataFilePath == null){ //no save file yet
 				try{
@@ -108,13 +113,6 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleLoadRequest() {
-		try {
-			if(!promptToSave()){
-
-			}
-		} catch (IOException ex) {
-
-		}
 		/*
 		When there is a file that is modified/not saved, a prompt to save should pop up
 		*/
@@ -124,7 +122,7 @@ public final class AppActions implements ActionComponent {
 			String testData = appData.validateText(file);
 			if(testData == null){
 				applicationTemplate.getUIComponent().clear();
-				((AppData) applicationTemplate.getDataComponent()).loadData(file.toPath());
+				appData.loadData(file.toPath());
 				dataFilePath = file.toPath();
 				appUI.disableSaveButton(); 
 			} else {
@@ -192,8 +190,7 @@ public final class AppActions implements ActionComponent {
 	private boolean promptToSave() throws IOException {
 		//first check if there is some data in the text area that was not saved first
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
-		if(true)
-			return false;
+
 		ConfirmationDialog confirmDialog = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
 		confirmDialog.show(manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
 
