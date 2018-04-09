@@ -476,7 +476,7 @@ public final class AppUI extends UITemplate {
 					appData.loadData(textArea.getText());
 					//hide displayed algorithms
 					setUpAlgorithmTypes(appData.getLabels().size());
-					saveButton.setDisable(false);
+					//saveButton.setDisable(false);
 				}else{
 					appActions.showErrorDialog("some title", result);
 				}
@@ -484,8 +484,16 @@ public final class AppUI extends UITemplate {
 				hideAlgorithmTypes();
 				resetAlgorithms();
 				editToggleButton.setText("Done");
-				disableSaveButton();
+				//disableSaveButton();
 				setReadOnly(false);
+			}
+		});
+
+		textArea.textProperty().addListener(event -> {
+			if((savedText == null && textArea.getText().isEmpty()) || (!isDifferentFromSaved())){
+				disableSaveButton();
+			}else if(isDifferentFromSaved()){
+				saveButton.setDisable(false);
 			}
 		});
 	}

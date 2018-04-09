@@ -115,7 +115,7 @@ public class AppData implements DataComponent {
 			File file = dataFilePath.toFile();
 				
 			FileWriter writer = new FileWriter(file);
-			writer.write(toSave);
+			writer.append(toSave);
 			writer.close();
 			
 		} catch (IOException e) {
