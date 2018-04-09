@@ -107,6 +107,13 @@ public final class AppActions implements ActionComponent {
 		// save button only shown when done is pressed --> invalid data error check already handled
 
 		//FIXME, should probably validate text first lol
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
+		String result = appData.validateText(appUI.getTextAreaText());
+		if(result != null){
+			showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + result);
+			return;
+		}
+
 		if(dataFilePath == null){ //no save file yet
 			try{
 				showSaveDialog();
@@ -149,14 +156,14 @@ public final class AppActions implements ActionComponent {
 		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		try {
-			String testData = appData.validateText(file);
-			if(testData == null){
+			String result = appData.validateText(file);
+			if(result == null){
 				applicationTemplate.getUIComponent().clear();
 				appData.loadData(file.toPath());
 				dataFilePath = file.toPath();
 				appUI.disableSaveButton(); 
 			} else {
-				showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + testData);
+				showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + result);
 			}
 		} catch (NullPointerException e) {
 			//load cancelled
