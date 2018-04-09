@@ -260,11 +260,9 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(algorithms);
 	}
 
-	/**
-	 * Hides the algorithms
-	 */
-	public void hideAlgorithms(){
+	private void resetAlgorithms(){
 		inputRegion.getChildren().remove(algorithms);
+		algorithms.getChildren().clear();
 	}
 
 	/**
@@ -301,8 +299,13 @@ public final class AppUI extends UITemplate {
 			classificationButton.setDisable(false);
 		}
 		inputRegion.getChildren().add(typeContainer);
-		inputRegion.getChildren().add(displayButton);
+
+		//FIXME
+		/*
+		if the text area is modified, should hide everything and reset input region
+		*/
 	}
+
 
 	private void resetInputRegion(){
 		algorithms.getChildren().clear();
@@ -370,7 +373,7 @@ public final class AppUI extends UITemplate {
 		clusteringButton.setTooltip(new Tooltip("Display Clustering Algorithms"));
 		clusteringButton.setPrefWidth(200);
 		typesTitle.setText("Algorithm Type");
-		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton);
+		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton, displayButton);
 
 
 		algorithms = new VBox();
@@ -446,13 +449,14 @@ public final class AppUI extends UITemplate {
 					editToggleButton.setText("Edit");
 					setReadOnly(true);
 					appData.loadData(textArea.getText());
-					//check labels bruh FIXME
+					//hide displayed algorithms
 					setUpAlgorithmTypes(appData.getLabels().size());
 				}else{
 					appActions.showErrorDialog("some title", result);
 				}
 			}else{
 				hideAlgorithmTypes();
+				resetAlgorithms();
 				editToggleButton.setText("Done");
 				setReadOnly(false);
 			}
