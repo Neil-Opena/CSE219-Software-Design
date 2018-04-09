@@ -180,6 +180,10 @@ public final class AppUI extends UITemplate {
 	public void setSavedText(){
 		this.savedText = textArea.getText().trim();
 	}
+
+	public String getSavedText(){
+		return this.savedText;
+	}
 	
 	/**
 	 * Returns the chart inside the UI
@@ -466,6 +470,7 @@ public final class AppUI extends UITemplate {
 					appData.loadData(textArea.getText());
 					//hide displayed algorithms
 					setUpAlgorithmTypes(appData.getLabels().size());
+					saveButton.setDisable(false);
 				}else{
 					appActions.showErrorDialog("some title", result);
 				}
@@ -473,6 +478,7 @@ public final class AppUI extends UITemplate {
 				hideAlgorithmTypes();
 				resetAlgorithms();
 				editToggleButton.setText("Done");
+				disableSaveButton();
 				setReadOnly(false);
 			}
 		});

@@ -109,16 +109,12 @@ public class AppData implements DataComponent {
 	@Override
 	public void saveData(Path dataFilePath) {
 		try {
-			String text = ((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim();
+			String toSave = appUI.getSavedText();
 
 			File file = dataFilePath.toFile();
 				
 			FileWriter writer = new FileWriter(file);
-//			savedData = text;
-//			writer.append(text);
-//			if(fullData != null && !fullData.isEmpty()){
-//				writer.append("\n" + getStringRepresentation(fullData));
-//			}
+			writer.write(toSave);
 			writer.close();
 			
 		} catch (IOException e) {
@@ -157,11 +153,6 @@ public class AppData implements DataComponent {
 
 	public void setIsSaved(boolean isSaved){
 		this.isSaved = isSaved;
-	}
-
-	public boolean justLaunched(){
-		// no text area in app ui
-		return data == null;
 	}
 
 	public boolean isFromFile(){

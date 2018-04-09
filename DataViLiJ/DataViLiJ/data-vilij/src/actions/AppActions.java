@@ -74,23 +74,19 @@ public final class AppActions implements ActionComponent {
 			-the app has data from a file
 
 		When to show prompt:
-			-app displayed text from text area that is not saved
-
-		Unhandled:
 			-there is text in the text area that is not saved
 		*/
-
-			if(!appUI.textAreaShown() || appData.isFromFile()) { 
-				setUpNewFile();
-			}else{
-				try {
-					if(appUI.isDifferentFromSaved() && promptToSave()){
-						setUpNewFile();
-					}
-				} catch (IOException ex) {
-					showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+		if(!appUI.textAreaShown() || appData.isFromFile()) { 
+			setUpNewFile();
+		}else{
+			try {
+				if(appUI.isDifferentFromSaved() && promptToSave()){
+					setUpNewFile();
 				}
+			} catch (IOException ex) {
+				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 			}
+		}
 	}
 
 	/*
@@ -108,29 +104,46 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleSaveRequest() {
-		String testData = ((AppData) applicationTemplate.getDataComponent()).validateText(((AppUI) applicationTemplate.getUIComponent()).getTextAreaText().trim());
-		//FIXME should not delete data if file is invalid
-		if(testData == null){
-			if(dataFilePath == null){ //no save file yet
-				try{
-					showSaveDialog();
-				}catch(IOException e){
-					showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
-				}
+		// save button only shown when done is pressed --> invalid data error check already handled
+		if(dataFilePath == null){ //no save file yet
+			try{
+				showSaveDialog();
+			}catch(IOException e){
+				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 			}
-			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-			appUI.setSavedText();
-			appUI.disableSaveButton(); //disable Save Button
-		}else{
-			showErrorDialog(manager.getPropertyValue(SAVE_ERROR_TITLE.name()), manager.getPropertyValue(SAVE_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not save
 		}
+		appUI.setSavedText();
+		((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+		appUI.disableSaveButton();
 	}
 
 	@Override
 	public void handleLoadRequest() {
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		/*
 		When there is a file that is modified/not saved, a prompt to save should pop up
+		/*
+		When to automatically load file without prompt:
+			-the app is just initially loaded - text area is not shown lol
+			-the app has data from a file
+
+		When to show prompt:
+			-there is text in the text area that is not saved
 		*/
+		if(!appUI.textAreaShown() || appData.isFromFile()) { 
+			loadFile();
+		}else{
+			try {
+				if(appUI.isDifferentFromSaved() && promptToSave()){
+					loadFile();
+				}
+			} catch (IOException ex) {
+				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+			}
+		}
+	}
+
+	private void loadFile(){
 		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		try {
@@ -210,18 +223,13 @@ public final class AppActions implements ActionComponent {
 		confirmDialog.show(manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
 
 		Option option = confirmDialog.getSelectedOption();
+		//FIXME should check if there is a saved file already
 
 		if (option == Option.CANCEL) {
 			return false;
 		} else {
 			if (option == Option.YES) {
-				String testData = appData.validateText((appUI).getTextAreaText().trim());
-				if(testData == null){
-					return showSaveDialog();
-				}else{
-					showErrorDialog(manager.getPropertyValue(SAVE_ERROR_TITLE.name()), manager.getPropertyValue(SAVE_ERROR_MESSAGE.name()) + testData);
-					return false;
-				}
+				handleSaveRequest();
 			}
 			return true;
 		}
