@@ -155,6 +155,10 @@ public class AppData implements DataComponent {
 		return this.isSaved;
 	}
 
+	public void setIsSaved(boolean isSaved){
+		this.isSaved = isSaved;
+	}
+
 	public boolean justLaunched(){
 		return data == null;
 	}
@@ -213,14 +217,6 @@ public class AppData implements DataComponent {
 	 */
 	public Algorithm getAlgorithmType(){
 		return null;
-	}
-
-	/**
-	 * Set the current algorithm based on the Config object passed in
-	 * @param config Config object that hold configurations of the algorithm
-	 */
-	public void setAlgoConfig(Config config){
-
 	}
 
 	/**

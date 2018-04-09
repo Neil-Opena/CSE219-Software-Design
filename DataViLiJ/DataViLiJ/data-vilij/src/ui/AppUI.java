@@ -24,13 +24,13 @@ import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 import static settings.AppPropertyTypes.*;
 import actions.AppActions;
 import dataprocessors.AppData;
-import dataprocessors.Config;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.RadioButton;
@@ -68,6 +68,7 @@ public final class AppUI extends UITemplate {
 	private Button runButton; // button for running alogrithm
 	private Button classificationButton;
 	private Button clusteringButton;
+	private Button displayButton;
 	private Label typesTitle;
 	private Label algorithmType;
 	private Label displayInfo;
@@ -79,7 +80,7 @@ public final class AppUI extends UITemplate {
 	private boolean hasNewText;     // whether or not the text area has any new data since last display
 	public String iconsPath;
 
-	private String lastSavedText;
+	private String lastDisplayedText; // text to check if current text matches saved text
 
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
 		super(primaryStage, applicationTemplate);
@@ -293,14 +294,6 @@ public final class AppUI extends UITemplate {
 
 	}
 
-	/**
-	 * Returns the configuration obtained from the Config Window
-	 * @return 
-	 */
-	public Config getConfiguration(){
-		return null;
-	}
-
 	private void setUpAlgorithmTypes(int numLabels){
 		if(numLabels < 2){
 			classificationButton.setDisable(true);
@@ -308,6 +301,7 @@ public final class AppUI extends UITemplate {
 			classificationButton.setDisable(false);
 		}
 		inputRegion.getChildren().add(typeContainer);
+		inputRegion.getChildren().add(displayButton);
 	}
 
 	private void resetInputRegion(){
@@ -359,6 +353,10 @@ public final class AppUI extends UITemplate {
 		typeContainer.setMaxWidth(200);
 		VBox.setMargin(typeContainer, new Insets(10));
 
+		displayButton = new Button("Display");
+		displayButton.setPrefWidth(200);
+		displayButton.getStyleClass().add("types-button");
+
 		typesTitle = new Label();
 		typesTitle.getStyleClass().add("types-title");
 		typesTitle.setPrefWidth(200);
@@ -373,6 +371,7 @@ public final class AppUI extends UITemplate {
 		clusteringButton.setPrefWidth(200);
 		typesTitle.setText("Algorithm Type");
 		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton);
+
 
 		algorithms = new VBox();
 		algorithms.setAlignment(Pos.CENTER);
@@ -405,16 +404,24 @@ public final class AppUI extends UITemplate {
 	 */
 	private void setWorkspaceActions() {
 
-		runButton.setOnAction(event -> {
+		displayButton.setOnAction(event -> {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
+			
+			if(!textArea.getText().trim().equals(lastDisplayedText)){
+				appData.displayData();
+				addDataPointListeners();
+				lastDisplayedText = textArea.getText().trim();
+			}
 
-			appData.displayData();
 			if(chart.getData().isEmpty()){
 				scrnshotButton.setDisable(true);
 			}else{
 				scrnshotButton.setDisable(false);
 			}
-			addDataPointListeners();
+		});
+
+		runButton.setOnAction(event -> {
+
 		});
 
 		clusteringButton.setOnAction(event ->{
@@ -495,6 +502,8 @@ public final class AppUI extends UITemplate {
 			clusteringAlgorithms.add(temp);
 			temp.chooseAlgorithm.setToggleGroup(clusteringRadios);
 		}
+
+		// each configure button corresponds to a window
 		
 		int classificationSize = appData.classificationAlgorithmsSize();
 		classificationAlgorithms = new ArrayList<>();
@@ -510,6 +519,7 @@ public final class AppUI extends UITemplate {
 		private Label algorithmName;
 		private Button configButton;
 		private RadioButton chooseAlgorithm;
+		private ConfigWindow window;
 
 		public AlgorithmUI(int num){
 			layoutAlgorithm(num);
@@ -522,6 +532,7 @@ public final class AppUI extends UITemplate {
 			configButton = setToolbarButton(iconsPath + separator + "gears.png", "Configure Algorithm", false);
 			configButton.getStyleClass().add("config-button");
 			chooseAlgorithm = new RadioButton();
+			window = new ConfigWindow();
 
 			this.getChildren().addAll(chooseAlgorithm, algorithmName, configButton);
 			this.getStyleClass().add("algorithm-ui");
@@ -530,8 +541,9 @@ public final class AppUI extends UITemplate {
 		}
 
 		private void setUpActions(){
+
 			configButton.setOnAction(event -> {
-				System.out.println("config clicked");
+				this.window.show();
 			});
 			
 			RotateTransition rot = new RotateTransition(Duration.seconds(2), configButton);
@@ -553,37 +565,74 @@ public final class AppUI extends UITemplate {
 	 */
 	private class ConfigWindow extends Stage{
 
+		private Label sceneHeader;
 		private TextField iterationField; // TextField for entering the number of iterations
-		private TextField intervalField; // TextField for entering the number of intervals
-		private TextField numLabelsField; // TextField for the number of labels
-		private CheckBox continuousCheck; // CheckBox whether the algorithm runs continuous or not
+		private Label iterationLabel;
+		private HBox iterationContainer;
 
-		private Config config; // Config object created from controls
+		private TextField intervalField; // TextField for entering the number of intervals
+		private Label intervalLabel;
+		private HBox intervalContainer;
+
+		private TextField numLabelsField; // TextField for the number of labels
+		private Label numLabelsLabel;
+		private HBox numLabelsContainer;
+
+		private CheckBox continuousCheck; // CheckBox whether the algorithm runs continuous or not
+		private Label checkBoxLabel;
+		private HBox checkBoxContainer;
+
+		private Scene currentScene;
+		private VBox container;
 
 		public ConfigWindow(){
 			layout();
+			this.setTitle("Configure Algorithm");
+			this.setScene(currentScene);
 		}
 
 		/**
 		 *  Lays out the UI display of the Configuration Window
 		 */
 		public void layout(){
+			container = new VBox();
+			Insets insets = new Insets(20);
+			container.setPadding(insets);
+			container.setAlignment(Pos.CENTER);
+			currentScene = new Scene(container);
+
+			sceneHeader = new Label("Algorithm Run Configuration");
+
 			iterationField = new TextField();
+			iterationLabel = new Label("Max Iterations:");
+			iterationContainer = new HBox();
+			iterationContainer.setPadding(insets);
+			iterationContainer.getChildren().addAll(iterationLabel, iterationField);
+
 			intervalField = new TextField();
+			intervalLabel = new Label("Update Interval:");
+			intervalContainer = new HBox();
+			intervalContainer.setPadding(insets);
+			intervalContainer.getChildren().addAll(intervalLabel, intervalField);
+
 			numLabelsField = new TextField();
+			numLabelsLabel = new Label("Number of Labels:");
+			numLabelsContainer = new HBox();
+			numLabelsContainer.setPadding(insets);
+			numLabelsContainer.getChildren().addAll(numLabelsLabel, numLabelsField);
+
 			continuousCheck = new CheckBox();
+			checkBoxLabel = new Label("Continuous Run?");
+			checkBoxContainer = new HBox();
+			checkBoxContainer.setPadding(insets);
+			checkBoxContainer.getChildren().addAll(checkBoxLabel, continuousCheck);
 
-			config = null;
+
+			container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
+
+			//may not need to add labels field
 		}
 
-		/**
-		 * Returns the Config object associated with what the user
-		 * entered in the Config Window
-		 * @return 
-		 */
-		public Config getConig(){
-			return config;
-		}
 
 		/**
 		 * Returns true if the input the user entered is valid
