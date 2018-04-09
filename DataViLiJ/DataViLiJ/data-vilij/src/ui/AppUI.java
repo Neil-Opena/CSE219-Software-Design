@@ -210,17 +210,19 @@ public final class AppUI extends UITemplate {
 	public void displayInfo(int numInstances, String source){
 		inputRegion.getChildren().remove(displayInfo);
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
-		displayInfo.setText(numInstances + " instances with " + appData.getLabels().size() + " labels loaded from " + source + ". The labels are:\n");
-
-		if(source == null){
-			System.out.println("bruh");
-		}
-
 		StringBuilder builder = new StringBuilder();
+		builder.append(numInstances + " instances with " + appData.getLabels().size());
+		if(source != null){
+			builder.append(" labels loaded from " + source);
+		}else{
+			builder.append(" labels");
+		}
+		builder.append(". The labels are:\n");
+
 		appData.getLabels().forEach(label -> {
 			builder.append("\t- " + label.toString() + "\n");
 		});
-		displayInfo.setText(displayInfo.getText() + builder.toString() + "\n");
+		displayInfo.setText(builder.toString() + "\n");
 
 		inputRegion.getChildren().add(displayInfo);
 	}

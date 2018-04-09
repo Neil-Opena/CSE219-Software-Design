@@ -126,7 +126,7 @@ public final class AppActions implements ActionComponent {
 		When there is a file that is modified/not saved, a prompt to save should pop up
 		/*
 		When to automatically load file without prompt:
-			-the app is just initially loaded - text area is not shown lol
+			-the app is just initially loaded - text area is not shown FIXME ERROR bad check lol
 			-the app has data from a file
 
 		When to show prompt:
