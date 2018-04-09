@@ -77,10 +77,10 @@ public final class AppUI extends UITemplate {
 	private ToggleGroup clusteringRadios;
 	private ToggleGroup classificationRadios;
 
-	private boolean hasNewText;     // whether or not the text area has any new data since last display
 	public String iconsPath;
 
-	private String lastDisplayedText; // text to check if current text matches saved text
+	private String displayedText; // text to check if current text matches saved text
+	private String savedText;
 
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
 		super(primaryStage, applicationTemplate);
@@ -161,9 +161,25 @@ public final class AppUI extends UITemplate {
 		setReadOnly(true);
 		textArea.setText(text);
 	} 
-	/*
-	should set text to read me
-	*/
+
+	public boolean textAreaShown(){
+		return inputRegion.getChildren().contains(textArea);
+	}
+
+	public boolean isDifferentFromSaved(){
+		return !textArea.getText().trim().equals(savedText);
+	}
+
+	private boolean isDifferentFromDisplayed(){
+		return !textArea.getText().trim().equals(displayedText);
+	}
+
+	/**
+	 * Sets the current text as the last saved text
+	 */
+	public void setSavedText(){
+		this.savedText = textArea.getText().trim();
+	}
 	
 	/**
 	 * Returns the chart inside the UI
@@ -209,7 +225,6 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().addAll(inputTitle, textArea);
 	}
 
-	
 
 	/**
 	 * Displays the edit toggle button to the user
@@ -410,10 +425,10 @@ public final class AppUI extends UITemplate {
 		displayButton.setOnAction(event -> {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 			
-			if(!textArea.getText().trim().equals(lastDisplayedText)){
+			if(isDifferentFromDisplayed()){
 				appData.displayData();
 				addDataPointListeners();
-				lastDisplayedText = textArea.getText().trim();
+				displayedText = textArea.getText().trim();
 			}
 
 			if(chart.getData().isEmpty()){

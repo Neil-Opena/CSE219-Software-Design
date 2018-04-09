@@ -160,6 +160,7 @@ public class AppData implements DataComponent {
 	}
 
 	public boolean justLaunched(){
+		// no text area in app ui
 		return data == null;
 	}
 

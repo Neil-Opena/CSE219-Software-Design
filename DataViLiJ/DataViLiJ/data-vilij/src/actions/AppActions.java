@@ -70,7 +70,7 @@ public final class AppActions implements ActionComponent {
 		AppData appData = ((AppData) applicationTemplate.getDataComponent());
 		/*
 		When to automatically set up new file without prompt:
-			-the app is just initially loaded
+			-the app is just initially loaded - text area is not shown lol
 			-the app has data from a file
 
 		When to show prompt:
@@ -80,11 +80,11 @@ public final class AppActions implements ActionComponent {
 			-there is text in the text area that is not saved
 		*/
 
-			if(appData.justLaunched() || appData.isFromFile()) { // if there is any text in the text area
+			if(!appUI.textAreaShown() || appData.isFromFile()) { 
 				setUpNewFile();
 			}else{
 				try {
-					if(!appData.isSaved() && promptToSave()){
+					if(appUI.isDifferentFromSaved() && promptToSave()){
 						setUpNewFile();
 					}
 				} catch (IOException ex) {
@@ -119,6 +119,7 @@ public final class AppActions implements ActionComponent {
 				}
 			}
 			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+			appUI.setSavedText();
 			appUI.disableSaveButton(); //disable Save Button
 		}else{
 			showErrorDialog(manager.getPropertyValue(SAVE_ERROR_TITLE.name()), manager.getPropertyValue(SAVE_ERROR_MESSAGE.name()) + testData); //Invalid Data --> will not save
