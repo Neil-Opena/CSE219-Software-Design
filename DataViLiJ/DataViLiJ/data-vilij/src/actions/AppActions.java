@@ -105,6 +105,8 @@ public final class AppActions implements ActionComponent {
 	@Override
 	public void handleSaveRequest() {
 		// save button only shown when done is pressed --> invalid data error check already handled
+
+		//FIXME, should probably validate text first lol
 		if(dataFilePath == null){ //no save file yet
 			try{
 				showSaveDialog();

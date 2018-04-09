@@ -88,8 +88,8 @@ public class AppData implements DataComponent {
 				}
 				
 				checkLabels();
-				List test = Arrays.asList(labels.toArray());
 				appUI.displayInfo(numInstances, dataFilePath.toFile().getName());
+				appUI.setUpAlgorithmTypes(labels.size());
 				fromFile = true;
 			}catch(Exception e){
 				//FILE NOT VALID
@@ -104,6 +104,7 @@ public class AppData implements DataComponent {
 		fromFile = false;
 		data = DataSet.fromText(dataString);
 		labels = new LinkedHashSet(data.getLabels().values());
+		appUI.displayInfo(data.getLocations().size(), null);
 	}
 
 	@Override

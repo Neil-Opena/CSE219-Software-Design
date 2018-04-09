@@ -208,8 +208,13 @@ public final class AppUI extends UITemplate {
 	 * @param source the source of the file (fileName)
 	 */
 	public void displayInfo(int numInstances, String source){
+		inputRegion.getChildren().remove(displayInfo);
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		displayInfo.setText(numInstances + " instances with " + appData.getLabels().size() + " labels loaded from " + source + ". The labels are:\n");
+
+		if(source == null){
+			System.out.println("bruh");
+		}
 
 		StringBuilder builder = new StringBuilder();
 		appData.getLabels().forEach(label -> {
@@ -218,7 +223,6 @@ public final class AppUI extends UITemplate {
 		displayInfo.setText(displayInfo.getText() + builder.toString() + "\n");
 
 		inputRegion.getChildren().add(displayInfo);
-		setUpAlgorithmTypes(appData.getLabels().size());
 	}
 
 	/**
@@ -311,7 +315,7 @@ public final class AppUI extends UITemplate {
 
 	}
 
-	private void setUpAlgorithmTypes(int numLabels){
+	public void setUpAlgorithmTypes(int numLabels){
 		if(numLabels < 2){
 			classificationButton.setDisable(true);
 		}else{
