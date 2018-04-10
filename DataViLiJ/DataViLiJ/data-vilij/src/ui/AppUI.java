@@ -233,10 +233,6 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(displayInfo);
 	}
 
-	/*
-	FIXME display should be fixed such that the chart should actually be cleared first
-	*/
-
 	/**
 	 * Displays the input region to the user
 	 */
@@ -441,6 +437,7 @@ public final class AppUI extends UITemplate {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 			
 			if(isDifferentFromDisplayed()){
+				chart.getData().clear();
 				appData.displayData();
 				addDataPointListeners();
 				displayedText = textArea.getText().trim();
