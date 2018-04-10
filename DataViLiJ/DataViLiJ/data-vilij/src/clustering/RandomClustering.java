@@ -50,7 +50,8 @@ public class RandomClustering extends Clusterer{
         this.updateInterval = updateInterval;
         this.tocontinue = new AtomicBoolean(tocontinue);
 
-	this.labels = (List<String>) dataset.getLabels().values();
+	//NULL pointer
+	if(dataset != null) this.labels = (List<String>) dataset.getLabels().values();
     }
 
     @Override

@@ -5,6 +5,7 @@ import algorithms.Algorithm;
 import algorithms.Classifier;
 import algorithms.Clusterer;
 import classification.RandomClassifier;
+import clustering.RandomClustering;
 import data.DataSet;
 import java.io.BufferedReader;
 import java.io.File;
@@ -236,12 +237,8 @@ public class AppData implements DataComponent {
 		
 		// create algorithm objects with default values
 		classificationAlgorithms.add(new RandomClassifier(null, -1, -1, false));
-		classificationAlgorithms.add(new RandomClassifier(null, -1, -1, false));
-		classificationAlgorithms.add(new RandomClassifier(null, -1, -1, false));
 
-		clusteringAlgorithms.add(null);
-		clusteringAlgorithms.add(null);
-		clusteringAlgorithms.add(null);
+		clusteringAlgorithms.add(new RandomClustering(null, -1, -1, false));
 	}
 
 	/**
