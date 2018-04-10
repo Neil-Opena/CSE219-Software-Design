@@ -13,14 +13,7 @@ import java.util.List;
  */
 public abstract class Clusterer implements Algorithm {
 
-    /**
-     * See Appendix C of the SRS. Defining the output as a
-     * list instead of a triple allows for future extension
-     * into polynomial curves instead of just straight lines.
-     * See 3.4.4 of the SRS.
-     */
-    protected List<Integer> output;
+	protected List<String> labels;
 
-    public List<Integer> getOutput() { return output; }
-
+	public abstract void modifyLabels();
 }
