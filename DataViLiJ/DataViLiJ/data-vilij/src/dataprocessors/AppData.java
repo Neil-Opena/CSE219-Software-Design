@@ -104,6 +104,7 @@ public class AppData implements DataComponent {
 		fromFile = false;
 		data = DataSet.fromText(dataString);
 		labels = new LinkedHashSet(data.getLabels().values());
+		checkLabels();
 		appUI.displayInfo(data.getLocations().size(), null);
 	}
 

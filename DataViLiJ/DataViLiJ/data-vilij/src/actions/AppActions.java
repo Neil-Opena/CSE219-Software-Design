@@ -104,11 +104,11 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleSaveRequest() {
-		// save button only shown when done is pressed --> invalid data error check already handled
-
-		//FIXME, should probably validate text first lol
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		String result = appData.validateText(appUI.getTextAreaText());
+		/*
+		Check if the data in the text area is valid first
+		*/
 		if(result != null){
 			showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + result);
 			return;
@@ -151,6 +151,15 @@ public final class AppActions implements ActionComponent {
 			}
 		}
 	}
+
+	/*
+	FIXME
+	for some reason, toolbar buttons (save and load buttons) after exiting file choosers
+	-case occurred when there was a new file and it wasn't saved and the buttons were clicked
+
+	//FIXME if user pressed the escape button when saving, the file SHOULD NOT DELETE THE TEXT
+	//FIXME save button disabled when file chooser was exited with escape --> user may not have saved the fucking data
+	*/
 
 	private void loadFile(){
 		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());

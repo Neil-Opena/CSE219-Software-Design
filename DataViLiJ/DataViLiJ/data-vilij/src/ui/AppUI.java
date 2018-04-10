@@ -26,6 +26,7 @@ import actions.AppActions;
 import dataprocessors.AppData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.collections.ObservableList;
@@ -211,21 +212,30 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().remove(displayInfo);
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		StringBuilder builder = new StringBuilder();
-		builder.append(numInstances + " instances with " + appData.getLabels().size());
-		if(source != null){
-			builder.append(" labels loaded from " + source);
-		}else{
-			builder.append(" labels");
-		}
-		builder.append(". The labels are:\n");
+		Set labels = appData.getLabels();
 
-		appData.getLabels().forEach(label -> {
-			builder.append("\t- " + label.toString() + "\n");
-		});
+		builder.append(numInstances + " instances with " + labels.size());
+		if(source != null){
+			builder.append(" labels loaded from " + source +". ");
+		}else{
+			builder.append(" labels. ");
+		}
+		
+		if(labels.size() > 0){
+			builder.append("The labels are:\n");
+			labels.forEach(label -> {
+				builder.append("\t- " + label.toString() + "\n");
+			});
+		}
+
 		displayInfo.setText(builder.toString() + "\n");
 
 		inputRegion.getChildren().add(displayInfo);
 	}
+
+	/*
+	FIXME display should be fixed such that the chart should actually be cleared first
+	*/
 
 	/**
 	 * Displays the input region to the user
@@ -324,11 +334,6 @@ public final class AppUI extends UITemplate {
 			classificationButton.setDisable(false);
 		}
 		inputRegion.getChildren().add(typeContainer);
-
-		//FIXME
-		/*
-		if the text area is modified, should hide everything and reset input region
-		*/
 	}
 
 
@@ -474,9 +479,7 @@ public final class AppUI extends UITemplate {
 					editToggleButton.setText("Edit");
 					setReadOnly(true);
 					appData.loadData(textArea.getText());
-					//hide displayed algorithms
 					setUpAlgorithmTypes(appData.getLabels().size());
-					//saveButton.setDisable(false);
 				}else{
 					appActions.showErrorDialog("some title", result);
 				}
@@ -484,7 +487,6 @@ public final class AppUI extends UITemplate {
 				hideAlgorithmTypes();
 				resetAlgorithms();
 				editToggleButton.setText("Done");
-				//disableSaveButton();
 				setReadOnly(false);
 			}
 		});
