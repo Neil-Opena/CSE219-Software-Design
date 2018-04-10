@@ -152,3 +152,12 @@ and open the template in the editor.
 	-fx-font-weight: bold;
 	-fx-font-size: 1.1em;
 }
+
+.field-name{
+
+}
+
+.config-window-title{
+	-fx-font-weight: bold;
+	-fx-font-size: 1.3em;
+}

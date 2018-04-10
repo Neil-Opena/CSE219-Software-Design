@@ -582,6 +582,7 @@ public final class AppUI extends UITemplate {
 
 			configButton.setOnAction(event -> {
 				this.window.show();
+				//FIXME does not show again? - occurs when escape pressed
 			});
 			
 			RotateTransition rot = new RotateTransition(Duration.seconds(2), configButton);
@@ -620,13 +621,21 @@ public final class AppUI extends UITemplate {
 		private Label checkBoxLabel;
 		private HBox checkBoxContainer;
 
+		private Button saveConfig;
+
 		private Scene currentScene;
 		private VBox container;
+
+		private int maxIteration;
+		private int updateInterval;
+		private int numLabels;
+		private boolean isContinuous;
 
 		public ConfigWindow(){
 			layout();
 			this.setTitle("Configure Algorithm");
 			this.setScene(currentScene);
+			this.getScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
 		}
 
 		/**
@@ -640,33 +649,44 @@ public final class AppUI extends UITemplate {
 			currentScene = new Scene(container);
 
 			sceneHeader = new Label("Algorithm Run Configuration");
+			sceneHeader.getStyleClass().add("config-window-title");
 
 			iterationField = new TextField();
+			iterationField.setPrefWidth(50);
 			iterationLabel = new Label("Max Iterations:");
+			iterationLabel.getStyleClass().add("field-name");
 			iterationContainer = new HBox();
+			iterationContainer.setPrefWidth(300);
+			//fixme - add border to help
 			iterationContainer.setPadding(insets);
 			iterationContainer.getChildren().addAll(iterationLabel, iterationField);
 
 			intervalField = new TextField();
+			intervalField.setPrefWidth(50);
 			intervalLabel = new Label("Update Interval:");
+			intervalLabel.getStyleClass().add("field-name");
 			intervalContainer = new HBox();
 			intervalContainer.setPadding(insets);
 			intervalContainer.getChildren().addAll(intervalLabel, intervalField);
 
 			numLabelsField = new TextField();
+			numLabelsField.setPrefWidth(50);
 			numLabelsLabel = new Label("Number of Labels:");
+			numLabelsLabel.getStyleClass().add("field-name");
 			numLabelsContainer = new HBox();
 			numLabelsContainer.setPadding(insets);
 			numLabelsContainer.getChildren().addAll(numLabelsLabel, numLabelsField);
 
 			continuousCheck = new CheckBox();
 			checkBoxLabel = new Label("Continuous Run?");
+			checkBoxLabel.getStyleClass().add("field-name");
 			checkBoxContainer = new HBox();
 			checkBoxContainer.setPadding(insets);
 			checkBoxContainer.getChildren().addAll(checkBoxLabel, continuousCheck);
 
-
-			container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
+			saveConfig = new Button("Save Configuration");
+			saveConfig.getStyleClass().addAll("types-button");
+			container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer, saveConfig);
 
 			//may not need to add labels field
 		}
