@@ -117,14 +117,20 @@ public final class AppActions implements ActionComponent {
 		if(dataFilePath == null){ //no save file yet
 			try{
 				if(showSaveDialog()){ // save successfully
-					appUI.setSavedText();
-					((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-					appUI.disableSaveButton();
+					saveFile();
 				}
 			}catch(IOException e){
 				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 			}
+		}else{
+			saveFile();
 		}
+	}
+
+	private void saveFile(){
+		appUI.setSavedText();
+		((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+		appUI.disableSaveButton();
 	}
 
 	@Override
@@ -157,9 +163,6 @@ public final class AppActions implements ActionComponent {
 	FIXME
 	for some reason, toolbar buttons (save and load buttons) after exiting file choosers
 	-case occurred when there was a new file and it wasn't saved and the buttons were clicked
-
-	//FIXME if user pressed the escape button when saving, the file SHOULD NOT DELETE THE TEXT
-	//FIXME save button disabled when file chooser was exited with escape --> user may not have saved the fucking data
 	*/
 
 	private void loadFile(){
