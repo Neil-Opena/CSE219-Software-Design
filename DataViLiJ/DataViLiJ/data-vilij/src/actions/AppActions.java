@@ -116,14 +116,15 @@ public final class AppActions implements ActionComponent {
 
 		if(dataFilePath == null){ //no save file yet
 			try{
-				showSaveDialog();
+				if(showSaveDialog()){ // save successfully
+					appUI.setSavedText();
+					((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
+					appUI.disableSaveButton();
+				}
 			}catch(IOException e){
 				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 			}
 		}
-		appUI.setSavedText();
-		((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-		appUI.disableSaveButton();
 	}
 
 	@Override
@@ -263,8 +264,6 @@ public final class AppActions implements ActionComponent {
 		try {
 			saveFile.createNewFile();
 			dataFilePath = saveFile.toPath();
-			((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
-			appUI.disableSaveButton(); //disable save button
 		} catch (NullPointerException e) {
 			return false; //save cancelled
 		}
