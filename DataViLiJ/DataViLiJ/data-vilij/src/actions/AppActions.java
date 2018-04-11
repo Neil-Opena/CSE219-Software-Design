@@ -44,6 +44,7 @@ public final class AppActions implements ActionComponent {
 	 * Path to the data file currently active.
 	 */
 	Path dataFilePath;
+	private boolean canContinue;
 
 	public AppActions(ApplicationTemplate applicationTemplate) {
 		this.applicationTemplate = applicationTemplate;
@@ -73,7 +74,7 @@ public final class AppActions implements ActionComponent {
 			setUpNewFile();
 		}else{
 			try {
-				if(promptToSave()){ // user pressed yes or no 
+				if(promptToSave() && canContinue){ // user pressed yes or no 
 					setUpNewFile();
 					/*
 					what would happen if user said yes and then pressed cancel
@@ -102,6 +103,10 @@ public final class AppActions implements ActionComponent {
 		//find a way to check if from file is false;
 	}
 
+	/*
+	FIXME what implement private handlerequests return true if successful
+	*/
+
 	@Override
 	public void handleSaveRequest() {
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
@@ -118,6 +123,8 @@ public final class AppActions implements ActionComponent {
 			try{
 				if(showSaveDialog()){ // save successfully
 					saveFile();
+				}else{
+					canContinue = false;;
 				}
 			}catch(IOException e){
 				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
@@ -128,6 +135,7 @@ public final class AppActions implements ActionComponent {
 	}
 
 	private void saveFile(){
+		canContinue = true;
 		appUI.setSavedText();
 		((AppData) applicationTemplate.getDataComponent()).saveData(dataFilePath);
 		appUI.disableSaveButton();
@@ -141,7 +149,7 @@ public final class AppActions implements ActionComponent {
 			loadFile();
 		}else{
 			try {
-				if(promptToSave()){ // user pressed yes or no 
+				if(promptToSave() && canContinue){ // user pressed yes or no 
 					loadFile();
 					/*
 					what would happen if user said yes and then pressed cancel
@@ -158,12 +166,6 @@ public final class AppActions implements ActionComponent {
 		if the data is the same as the saved data --> load automatically
 		*/
 	}
-
-	/*
-	FIXME
-	for some reason, toolbar buttons (save and load buttons) after exiting file choosers
-	-case occurred when there was a new file and it wasn't saved and the buttons were clicked
-	*/
 
 	private void loadFile(){
 		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
@@ -250,6 +252,9 @@ public final class AppActions implements ActionComponent {
 		} else {
 			if (option == Option.YES) {
 				handleSaveRequest();
+			}
+			if (option == Option.NO){
+				canContinue = true;
 			}
 			return true;
 		}
