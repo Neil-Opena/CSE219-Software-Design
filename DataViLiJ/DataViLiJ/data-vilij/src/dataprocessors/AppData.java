@@ -119,7 +119,6 @@ public class AppData implements DataComponent {
 			FileWriter writer = new FileWriter(file);
 			writer.append(toSave);
 			writer.close();
-			
 		} catch (IOException e) {
 			appActions.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 		} catch (NullPointerException e){
@@ -133,6 +132,7 @@ public class AppData implements DataComponent {
 		appUI.getChart().getData().clear();
 		data = null;
 		lastSavedText = null;
+		fromFile = false;
 	}
 
 	/**

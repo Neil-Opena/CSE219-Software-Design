@@ -99,6 +99,7 @@ public final class AppActions implements ActionComponent {
 		appUI.clear();
 		appUI.showTextArea();
 		appUI.showEditToggle();
+		//find a way to check if from file is false;
 	}
 
 	@Override
@@ -135,28 +136,27 @@ public final class AppActions implements ActionComponent {
 	@Override
 	public void handleLoadRequest() {
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
-		/*
-		When there is a file that is modified/not saved, a prompt to save should pop up
-		/*
-		When to automatically load file without prompt:
-			-the app is just initially loaded - text area is not shown FIXME ERROR bad check lol
-			-the app has data from a file
 
-		When to show prompt:
-			-there is text in the text area that is not saved
-		*/
-		if(!appUI.textAreaShown() || appData.isFromFile()) { 
+		if(appData.isFromFile() || !appUI.textAreaShown() || !appUI.isDifferentFromSaved()){
 			loadFile();
 		}else{
 			try {
-				if(appUI.isDifferentFromSaved() && promptToSave()){
-					//possibility that user presses cancel
+				if(promptToSave()){ // user pressed yes or no 
 					loadFile();
+					/*
+					what would happen if user said yes and then pressed cancel
+					*/
 				}
 			} catch (IOException ex) {
-				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 			}
 		}
+
+		/*
+		if data is from a file --> load automatically
+		if no text area is shown --> load automatically
+		if the data is the same as the saved data --> load automatically
+		*/
 	}
 
 	/*
