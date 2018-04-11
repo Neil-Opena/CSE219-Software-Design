@@ -2,10 +2,9 @@ package dataprocessors;
 
 import actions.AppActions;
 import algorithms.Algorithm;
-import algorithms.Classifier;
-import algorithms.Clusterer;
 import classification.RandomClassifier;
 import clustering.RandomClustering;
+import data.Config;
 import data.DataSet;
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +13,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,11 +47,14 @@ public class AppData implements DataComponent {
 	private Set labels;
 
 	private Algorithm algorithmToRun; //current algorithm queued up to run
-	private List<Classifier> classificationAlgorithms; //list of classification algorithms
-	private List<Clusterer> clusteringAlgorithms; //list of clustering algorithms
+	private int numClassificationAlgorithms;
+	private int numClusteringAlgorithms;
+
+	/*
+	every algorithm has an index
+	*/
 
 	private boolean isRunning; //test if algorithm is running
-	private boolean isSaved; //test if current file is saved
 	private boolean fromFile;
 
 	private String lastSavedText;
@@ -66,7 +67,8 @@ public class AppData implements DataComponent {
 		appActions = (AppActions) applicationTemplate.getActionComponent();
 		manager = applicationTemplate.manager;
 
-		initAlgorithms();
+		numClassificationAlgorithms = 1;
+		numClusteringAlgorithms = 1;
 	}
 
 	@Override
@@ -150,24 +152,8 @@ public class AppData implements DataComponent {
 		return labels;
 	}
 
-	public boolean isSaved(){
-		return this.isSaved;
-	}
-
-	public void setIsSaved(boolean isSaved){
-		this.isSaved = isSaved;
-	}
-
 	public boolean isFromFile(){
 		return fromFile;
-	}
-
-	public int clusteringAlgorithmsSize(){
-		return this.clusteringAlgorithms.size();
-	}
-
-	public int classificationAlgorithmsSize(){
-		return this.classificationAlgorithms.size();
 	}
 
 	/**
@@ -215,10 +201,15 @@ public class AppData implements DataComponent {
 	}
 
 	/**
-	 * Start the algorithm
+	 * 
+	 * @return return true if algorithm has been configured
 	 */
-	public void startAlgorithm(){
-
+	public boolean startAlgorithm(){
+		if(algorithmToRun != null){
+			
+			return true;
+		}
+		return false; // algorithm has not been configured yet
 	}
 	
 	/**
@@ -228,17 +219,33 @@ public class AppData implements DataComponent {
 
 	}
 
-	/**
-	 * Add algorithms to the list of algorithms
-	 */
-	private void initAlgorithms(){
-		classificationAlgorithms = new ArrayList<>();
-		clusteringAlgorithms = new ArrayList<>();
-		
-		// create algorithm objects with default values
-		classificationAlgorithms.add(new RandomClassifier(null, -1, -1, false));
+	public int getNumClassificationAlgorithms(){
+		return numClassificationAlgorithms;
+	}
 
-		clusteringAlgorithms.add(new RandomClustering(null, -1, -1, false));
+	public int getNumClusteringAlgorithms(){
+		return numClusteringAlgorithms;
+	}
+
+	public void setAlgorithmToRun(String type, int index, Config config){
+		if(config != null){
+			int maxIterations = config.getMaxIterations();
+			int updateInterval = config.getUpdateInterval();
+			boolean toContinue = config.getToContinue();
+
+			if(type.equals("Classification")){
+				switch(index){
+					case 0: algorithmToRun = new RandomClassifier(data, maxIterations, updateInterval, toContinue);
+				}
+			}else{
+				switch(index){
+					case 0: algorithmToRun = new RandomClustering(data, maxIterations, updateInterval, toContinue);
+					//some algorithm need label numbers i think
+				}
+			}
+		}else{
+			algorithmToRun = null;
+		}
 	}
 
 	/**

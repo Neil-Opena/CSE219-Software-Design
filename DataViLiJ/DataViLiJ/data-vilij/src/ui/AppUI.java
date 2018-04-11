@@ -23,6 +23,7 @@ import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 import static settings.AppPropertyTypes.*;
 import actions.AppActions;
+import data.Config;
 import dataprocessors.AppData;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -145,9 +147,6 @@ public final class AppUI extends UITemplate {
 		displayedText = null;
 		savedText = null;
 		disableSaveButton();
-		/*
-		for some reason savedText not the same
-		*/
 	}
 
 	/**
@@ -308,20 +307,6 @@ public final class AppUI extends UITemplate {
 	public void disableRun(){
 	}
 
-	/**
-	 * Enables the screen shot button
-	 */
-	public void enableScreenshot(){
-
-	}
-
-	/**
-	 * Disables the screen shot button
-	 */
-	public void disableScreenshot(){
-
-	}
-
 	public void setUpAlgorithmTypes(int numLabels){
 		if(numLabels < 2){
 			classificationButton.setDisable(true);
@@ -450,6 +435,27 @@ public final class AppUI extends UITemplate {
 		});
 
 		runButton.setOnAction(event -> {
+			//if there's no configuration yet --> launch window
+			//if no algorithm is selected yet, don't do anything
+			AppData appData = (AppData) applicationTemplate.getDataComponent();
+			// first check if something is selected
+			// will have to reset somewhere i think (when new or loaded)
+			Toggle selected;
+			if(algorithmType.getText().equals("Classification")){
+				selected = classificationRadios.getSelectedToggle();
+			}else{
+				selected = clusteringRadios.getSelectedToggle();
+			}
+			
+			if(selected != null){
+				if(appData.startAlgorithm()){
+					System.out.println("has been configured");
+				}else{
+					configWindow.show();
+				}
+			}else{
+				System.out.println("no algorithm selected");
+			}
 
 		});
 
@@ -531,24 +537,22 @@ public final class AppUI extends UITemplate {
 		we want each algorithm type to have a list of components
 		each component comprising of a radio button, label, and regular button
 		*/
-		int clusteringSize = appData.clusteringAlgorithmsSize();
+		int clusteringSize = appData.getNumClusteringAlgorithms();
 		clusteringAlgorithms = new ArrayList<>();
 		clusteringRadios = new ToggleGroup();
 		for(int i = 0; i < clusteringSize; i++){
-			AlgorithmUI temp = new AlgorithmUI(i);
+			AlgorithmUI temp = new AlgorithmUI("Clustering", i);
 			clusteringAlgorithms.add(temp);
-			temp.chooseAlgorithm.setToggleGroup(clusteringRadios);
 		}
 
 		// each configure button corresponds to a window
 		
-		int classificationSize = appData.classificationAlgorithmsSize();
+		int classificationSize = appData.getNumClassificationAlgorithms();
 		classificationAlgorithms = new ArrayList<>();
 		classificationRadios = new ToggleGroup();
 		for(int i = 0; i < classificationSize; i++){
-			AlgorithmUI temp = new AlgorithmUI(i);
+			AlgorithmUI temp = new AlgorithmUI("Classification", i);
 			classificationAlgorithms.add(temp);
-			temp.chooseAlgorithm.setToggleGroup(classificationRadios);
 		}
 	}
 
@@ -557,19 +561,30 @@ public final class AppUI extends UITemplate {
 		private Button configButton;
 		private RadioButton chooseAlgorithm;
 		private ConfigWindow window;
+		private String algorithmType;
+		private int index;
 
-		public AlgorithmUI(int num){
-			layoutAlgorithm(num);
+		public AlgorithmUI(String algorithmType, int index){
+			this.algorithmType = algorithmType;
+			this.index = index;
+			layoutAlgorithm();
 			setUpActions();
 		}
 
-		private void layoutAlgorithm(int num){
-			algorithmName = new Label("Algorithm " + (num + 1));
+		private void layoutAlgorithm(){
+			algorithmName = new Label("Algorithm " + (index + 1));
 			algorithmName.getStyleClass().add("algorithm-name");
 			configButton = setToolbarButton(iconsPath + separator + "gears.png", "Configure Algorithm", false);
 			configButton.getStyleClass().add("config-button");
 			chooseAlgorithm = new RadioButton();
+			chooseAlgorithm.setUserData(index);
 			window = new ConfigWindow();
+
+			if(algorithmType.equals("Classification")){
+				chooseAlgorithm.setToggleGroup(classificationRadios);
+			}else if(algorithmType.equals("Clustering")){
+				chooseAlgorithm.setToggleGroup(clusteringRadios);
+			}
 
 			this.getChildren().addAll(chooseAlgorithm, algorithmName, configButton);
 			this.getStyleClass().add("algorithm-ui");
@@ -580,10 +595,13 @@ public final class AppUI extends UITemplate {
 		private void setUpActions(){
 
 			configButton.setOnAction(event -> {
-				this.window.show();
-				//FIXME does not show again? - occurs when escape pressed
+				window.show();
 			});
-			
+
+			chooseAlgorithm.setOnAction(event -> {
+				((AppData) applicationTemplate.getDataComponent()).setAlgorithmToRun(algorithmType, index, null);
+			});
+
 			RotateTransition rot = new RotateTransition(Duration.seconds(2), configButton);
 			rot.setCycleCount(Animation.INDEFINITE);
 			rot.setByAngle(360);
@@ -593,7 +611,6 @@ public final class AppUI extends UITemplate {
 			configButton.setOnMouseExited(event -> {
 				rot.stop();
 			});
-
 		}
 	}
 
@@ -620,18 +637,14 @@ public final class AppUI extends UITemplate {
 		private Label checkBoxLabel;
 		private HBox checkBoxContainer;
 
-		private Button saveConfig;
-
 		private Scene currentScene;
 		private VBox container;
 
-		private int maxIteration;
-		private int updateInterval;
-		private int numLabels;
-		private boolean isContinuous;
+		private Config config;
 
 		public ConfigWindow(){
 			layout();
+			setUpActions();
 			this.setTitle("Configure Algorithm");
 			this.setScene(currentScene);
 			this.getScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
@@ -683,11 +696,16 @@ public final class AppUI extends UITemplate {
 			checkBoxContainer.setPadding(insets);
 			checkBoxContainer.getChildren().addAll(checkBoxLabel, continuousCheck);
 
-			saveConfig = new Button("Save Configuration");
-			saveConfig.getStyleClass().addAll("types-button");
-			container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer, saveConfig);
-
+			container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
 			//may not need to add labels field
+		}
+
+		private void setUpActions(){
+			this.setOnCloseRequest(event -> {
+				createConfig();
+
+				//  can also set alogrithmtoRun configuration here
+			});
 		}
 
 
@@ -696,22 +714,39 @@ public final class AppUI extends UITemplate {
 		 * Returns false otherwise
 		 * @return if input is valid
 		 */
-		public boolean checkInput(){
+		private boolean checkInput(){
 			return false;
+		}
+
+		public Config getConfig(){
+			return this.config;
 		}
 
 		/**
 		 * Shows the label TextField inside the Config Window
 		 */
 		public void showLabelsField(){
-
+			//if current type showing is clustering or something, show labels field
 		}
 
 		/**
 		 * Create a Configuration based on the input
 		 */
 		private void createConfig(){
-			
+			try{
+				int maxIterations = Integer.parseInt(iterationField.getText());
+				int updateInterval = Integer.parseInt(intervalField.getText());
+				boolean toContinue = continuousCheck.isSelected();
+
+				if(checkInput()){
+					config = new Config(maxIterations, updateInterval, toContinue);
+				}else{
+					System.out.println("your values are ass");
+				}
+			}catch(NumberFormatException e){
+				//will use default values
+				System.out.println("your values are ass");
+			}
 		}
 	}
 	
