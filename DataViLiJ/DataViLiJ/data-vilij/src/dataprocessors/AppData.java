@@ -47,6 +47,8 @@ public class AppData implements DataComponent {
 	private Set labels;
 
 	private Algorithm algorithmToRun; //current algorithm queued up to run
+	private int algorithmIndex;
+	private String algorithmType;
 	private int numClassificationAlgorithms;
 	private int numClusteringAlgorithms;
 
@@ -200,13 +202,12 @@ public class AppData implements DataComponent {
 		return null;
 	}
 
-	/**
-	 * 
-	 * @return return true if algorithm has been configured
-	 */
-	public boolean startAlgorithm(){
+	public void startAlgorithm(){
+		System.out.println("is running");
+	}
+
+	public boolean isConfigured(){
 		if(algorithmToRun != null){
-			
 			return true;
 		}
 		return false; // algorithm has not been configured yet
@@ -227,24 +228,26 @@ public class AppData implements DataComponent {
 		return numClusteringAlgorithms;
 	}
 
-	public void setAlgorithmToRun(String type, int index, Config config){
-		if(config != null){
-			int maxIterations = config.getMaxIterations();
-			int updateInterval = config.getUpdateInterval();
-			boolean toContinue = config.getToContinue();
+	public void setAlgorithmToRun(String type, int index){
+		algorithmToRun = null;
+		algorithmType = type;
+		algorithmIndex = index;
+	}
 
-			if(type.equals("Classification")){
-				switch(index){
-					case 0: algorithmToRun = new RandomClassifier(data, maxIterations, updateInterval, toContinue);
-				}
-			}else{
-				switch(index){
-					case 0: algorithmToRun = new RandomClustering(data, maxIterations, updateInterval, toContinue);
-					//some algorithm need label numbers i think
-				}
+	public void setConfiguration(Config config){
+		if(algorithmType.equals("Classification")){
+			switch(algorithmIndex){
+				case 0: 
+					algorithmToRun = new RandomClassifier(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
+					break;
 			}
 		}else{
-			algorithmToRun = null;
+			switch(algorithmIndex){
+				case 0:
+					algorithmToRun = new RandomClustering(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
+					//might how to use num labels shit
+					break;
+			}
 		}
 	}
 

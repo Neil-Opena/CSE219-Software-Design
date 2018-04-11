@@ -435,10 +435,7 @@ public final class AppUI extends UITemplate {
 		});
 
 		runButton.setOnAction(event -> {
-			//if there's no configuration yet --> launch window
-			//if no algorithm is selected yet, don't do anything
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
-			// first check if something is selected
 			// will have to reset somewhere i think (when new or loaded)
 			Toggle selected;
 			if(algorithmType.getText().equals("Classification")){
@@ -448,13 +445,15 @@ public final class AppUI extends UITemplate {
 			}
 			
 			if(selected != null){
-				if(appData.startAlgorithm()){
+				if(appData.isConfigured()){
 					System.out.println("has been configured");
+					appData.startAlgorithm();
 				}else{
+					//if there's no configuration yet --> launch window
 					configWindow.show();
 				}
 			}else{
-				System.out.println("no algorithm selected");
+				//if no algorithm is selected yet, don't do anything
 			}
 
 		});
@@ -599,7 +598,7 @@ public final class AppUI extends UITemplate {
 			});
 
 			chooseAlgorithm.setOnAction(event -> {
-				((AppData) applicationTemplate.getDataComponent()).setAlgorithmToRun(algorithmType, index, null);
+				((AppData) applicationTemplate.getDataComponent()).setAlgorithmToRun(algorithmType, index);
 			});
 
 			RotateTransition rot = new RotateTransition(Duration.seconds(2), configButton);
@@ -703,8 +702,7 @@ public final class AppUI extends UITemplate {
 		private void setUpActions(){
 			this.setOnCloseRequest(event -> {
 				createConfig();
-
-				//  can also set alogrithmtoRun configuration here
+				((AppData) applicationTemplate.getDataComponent()).setConfiguration(config);
 			});
 		}
 
@@ -715,17 +713,14 @@ public final class AppUI extends UITemplate {
 		 * @return if input is valid
 		 */
 		private boolean checkInput(){
-			return false;
-		}
-
-		public Config getConfig(){
-			return this.config;
+			// no negative values or some shit
+			return true;
 		}
 
 		/**
 		 * Shows the label TextField inside the Config Window
 		 */
-		public void showLabelsField(){
+		private void showLabelsField(){
 			//if current type showing is clustering or something, show labels field
 		}
 
@@ -742,10 +737,15 @@ public final class AppUI extends UITemplate {
 					config = new Config(maxIterations, updateInterval, toContinue);
 				}else{
 					System.out.println("your values are ass");
+					//show error dialog here
+					config = new Config(1,1,false);
 				}
 			}catch(NumberFormatException e){
 				//will use default values
 				System.out.println("your values are ass");
+				//show error dialog here
+				// should also change values in window
+				config = new Config(1,1, false);
 			}
 		}
 	}
