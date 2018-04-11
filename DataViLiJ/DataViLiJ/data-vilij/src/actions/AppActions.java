@@ -68,35 +68,34 @@ public final class AppActions implements ActionComponent {
 	@Override
 	public void handleNewRequest() {
 		AppData appData = ((AppData) applicationTemplate.getDataComponent());
-		/*
-		When to automatically set up new file without prompt:
-			-the app is just initially loaded - text area is not shown lol
-			-the app has data from a file
 
-		When to show prompt:
-			-there is text in the text area that is not saved
-		*/
-		if(!appUI.textAreaShown() || appData.isFromFile()) { 
+		if(appData.isFromFile() || !appUI.textAreaShown() || !appUI.isDifferentFromSaved()){
 			setUpNewFile();
 		}else{
 			try {
-				if(appUI.isDifferentFromSaved() && promptToSave()){
+				if(promptToSave()){ // user pressed yes or no 
 					setUpNewFile();
+					/*
+					what would happen if user said yes and then pressed cancel
+					*/
 				}
 			} catch (IOException ex) {
-				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 			}
 		}
+
+		/*
+		if data is from a file --> set up automatically
+		if no text area is shown --> set up automatically
+		if the data is the same as the saved data --> set up automatically
+		*/
 	}
 
 	/*
 	When displaying the file, the processor actually checks the data
 	*/
-
 	private void setUpNewFile(){
-		applicationTemplate.getDataComponent().clear();
 		dataFilePath = null;
-		appUI.disableSaveButton();
 		appUI.clear();
 		appUI.showTextArea();
 		appUI.showEditToggle();
@@ -151,6 +150,7 @@ public final class AppActions implements ActionComponent {
 		}else{
 			try {
 				if(appUI.isDifferentFromSaved() && promptToSave()){
+					//possibility that user presses cancel
 					loadFile();
 				}
 			} catch (IOException ex) {
@@ -238,14 +238,12 @@ public final class AppActions implements ActionComponent {
 	 * <code>true</code> otherwise.
 	 */
 	private boolean promptToSave() throws IOException {
-		//first check if there is some data in the text area that was not saved first
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 
 		ConfirmationDialog confirmDialog = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
 		confirmDialog.show(manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
 
 		Option option = confirmDialog.getSelectedOption();
-		//FIXME should check if there is a saved file already
 
 		if (option == Option.CANCEL) {
 			return false;

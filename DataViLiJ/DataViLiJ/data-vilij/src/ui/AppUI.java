@@ -142,6 +142,12 @@ public final class AppUI extends UITemplate {
 		((AppData) applicationTemplate.getDataComponent()).clear();
 		textArea.clear();
 		scrnshotButton.setDisable(true);
+		displayedText = null;
+		savedText = null;
+		disableSaveButton();
+		/*
+		for some reason savedText not the same
+		*/
 	}
 
 	/**
@@ -249,13 +255,6 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(editToggleButton);
 		editToggleButton.setText("Done");
 		setReadOnly(false);
-	}
-
-	/**
-	 * Hides the edit toggle button 
-	 */
-	public void hideEditToggle(){
-
 	}
 
 	/**
