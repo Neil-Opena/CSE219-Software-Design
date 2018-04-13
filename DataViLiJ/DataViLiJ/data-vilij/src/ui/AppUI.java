@@ -271,9 +271,9 @@ public final class AppUI extends UITemplate {
 	 */
 	public void showClusteringAlgorithms(){
 		algorithmType.setText("Clustering");
+		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLUSTERING);
 		if(algorithms.getChildren().isEmpty()){
 			algorithms.getChildren().add(algorithmType);
-			((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLUSTERING);
 			for(int i = 0; i < clusteringAlgorithms.size(); i++){
 				algorithms.getChildren().add(clusteringAlgorithms.get(i));
 			}
@@ -286,9 +286,9 @@ public final class AppUI extends UITemplate {
 	 */
 	public void showClassificationAlgorithms(){
 		algorithmType.setText("Classification");
+		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLASSIFICATION);
 		if(algorithms.getChildren().isEmpty()){
 			algorithms.getChildren().add(algorithmType);
-			((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLASSIFICATION);
 			for(int i = 0; i < classificationAlgorithms.size(); i++){
 				algorithms.getChildren().add(classificationAlgorithms.get(i));
 			}
@@ -456,6 +456,7 @@ public final class AppUI extends UITemplate {
 
 		backButton.setOnAction(event -> {
 			hideBackButton();
+			//reset app data algorithm type
 			inputRegion.getChildren().remove(algorithms);
 			inputRegion.getChildren().add(typeContainer);
 		});
@@ -610,6 +611,12 @@ public final class AppUI extends UITemplate {
 		private void setUpActions(){
 
 			configButton.setOnAction(event -> {
+				System.out.println(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType());
+				if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
+					window.hideLabelField();
+				}else{
+					window.showLabelField();
+				}
 				window.show();
 			});
 
@@ -674,7 +681,7 @@ public final class AppUI extends UITemplate {
 		/**
 		 *  Lays out the UI display of the Configuration Window
 		 */
-		public void layout(){
+		private void layout(){
 			container = new VBox();
 			Insets insets = new Insets(20);
 			container.setPadding(insets);
@@ -729,6 +736,17 @@ public final class AppUI extends UITemplate {
 				((AppData) applicationTemplate.getDataComponent()).setConfiguration(config);
 				runButton.setDisable(false);
 			});
+		}
+
+		private void hideLabelField(){
+			container.getChildren().remove(numLabelsContainer);
+		}
+
+		private void showLabelField(){
+			if(!container.getChildren().contains(numLabelsContainer)){
+				container.getChildren().clear();
+				container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
+			}
 		}
 
 
