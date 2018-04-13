@@ -229,30 +229,38 @@ public class AppData implements DataComponent {
 		return numClusteringAlgorithms;
 	}
 
-	public void setAlgorithmToRun(String type, int index){
+	public void setAlgorithmToRun(int index){
 		algorithmToRun = null;
-		algorithmType = type;
 		algorithmIndex = index;
+	}
+
+	public void setAlgorithmType(String type){
+		algorithmType = type;
 	}
 
 	/*
 	What would happen if user configed without selecting algorithm?
 	*/
 	public void setConfiguration(Config config){
-		if(algorithmType.equals("Classification")){
-			switch(algorithmIndex){
-				case 0: 
-					algorithmToRun = new RandomClassifier(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
-					break;
-			}
-		}else{
-			switch(algorithmIndex){
-				case 0:
-					algorithmToRun = new RandomClustering(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
-					//might how to use num labels shit
-					break;
+		if(algorithmType != null){
+			//algorithm not set yet
+			//do nothing --> except save values in config window
+			if(algorithmType.equals("Classification")){
+				switch(algorithmIndex){
+					case 0: 
+						algorithmToRun = new RandomClassifier(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
+						break;
+				}
+			}else{
+				switch(algorithmIndex){
+					case 0:
+						algorithmToRun = new RandomClustering(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
+						//might how to use num labels shit
+						break;
+				}
 			}
 		}
+
 	}
 
 	/**

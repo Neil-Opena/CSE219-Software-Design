@@ -40,6 +40,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
@@ -269,10 +270,10 @@ public final class AppUI extends UITemplate {
 	public void showClusteringAlgorithms(){
 		algorithmType.setText("Clustering");
 		algorithms.getChildren().add(algorithmType);
+		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType("Clustering");
 		for(int i = 0; i < clusteringAlgorithms.size(); i++){
 			algorithms.getChildren().add(clusteringAlgorithms.get(i));
 		}
-		//algorithms.getChildren().add(runButton);
 		inputRegion.getChildren().add(algorithms);
 	}
 
@@ -282,10 +283,10 @@ public final class AppUI extends UITemplate {
 	public void showClassificationAlgorithms(){
 		algorithmType.setText("Classification");
 		algorithms.getChildren().add(algorithmType);
+		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType("Classification");
 		for(int i = 0; i < classificationAlgorithms.size(); i++){
 			algorithms.getChildren().add(classificationAlgorithms.get(i));
 		}
-		//algorithms.getChildren().add(runButton);
 		inputRegion.getChildren().add(algorithms);
 	}
 
@@ -295,16 +296,16 @@ public final class AppUI extends UITemplate {
 	}
 
 	/**
-	 * Enables the run button
+	 * Shows the run button
 	 */
-	public void enableRun(){
+	public void showRun(){
 		algorithms.getChildren().add(runButton);
 	}
 
 	/**
-	 * Disables the run button
+	 * Hides the run button
 	 */
-	public void disableRun(){
+	public void hideRun(){
 		algorithms.getChildren().remove(runButton);
 	}
 
@@ -444,29 +445,20 @@ public final class AppUI extends UITemplate {
 			}else{
 				selected = clusteringRadios.getSelectedToggle();
 			}
-			
-			if(selected != null){ // just a safety check - not really needed
-				if(appData.isConfigured()){
-					System.out.println("has been configured");
-					appData.startAlgorithm();
-				}else{
-					//if there's no configuration yet --> launch window
-					configWindow.show();
-				}
-			}
-			//if no algorithm is selected yet, don't do anything
-			
-
+			//need to call appData.isConfigured somewhere
+			appData.startAlgorithm();
 		});
 
 		clusteringButton.setOnAction(event ->{
 			hideAlgorithmTypes();
 			showClusteringAlgorithms();
+			runButton.setDisable(true);
 		});
 
 		classificationButton.setOnAction(event ->{
 			hideAlgorithmTypes();
 			showClassificationAlgorithms();
+			runButton.setDisable(true);
 		});
 
 		editToggleButton.setOnAction(event -> {
@@ -539,7 +531,7 @@ public final class AppUI extends UITemplate {
 		clusteringAlgorithms = new ArrayList<>();
 		clusteringRadios = new ToggleGroup();
 		for(int i = 0; i < clusteringSize; i++){
-			AlgorithmUI temp = new AlgorithmUI("Clustering", i);
+			AlgorithmUI temp = new AlgorithmUI(i);
 			clusteringAlgorithms.add(temp);
 		}
 
@@ -549,7 +541,7 @@ public final class AppUI extends UITemplate {
 		classificationAlgorithms = new ArrayList<>();
 		classificationRadios = new ToggleGroup();
 		for(int i = 0; i < classificationSize; i++){
-			AlgorithmUI temp = new AlgorithmUI("Classification", i);
+			AlgorithmUI temp = new AlgorithmUI(i);
 			classificationAlgorithms.add(temp);
 		}
 	}
@@ -559,11 +551,9 @@ public final class AppUI extends UITemplate {
 		private Button configButton;
 		private RadioButton chooseAlgorithm;
 		private ConfigWindow window;
-		private String algorithmType;
 		private int index;
 
-		public AlgorithmUI(String algorithmType, int index){
-			this.algorithmType = algorithmType;
+		public AlgorithmUI(int index){
 			this.index = index;
 			layoutAlgorithm();
 			setUpActions();
@@ -597,8 +587,13 @@ public final class AppUI extends UITemplate {
 			});
 
 			chooseAlgorithm.setOnAction(event -> {
-				((AppData) applicationTemplate.getDataComponent()).setAlgorithmToRun(algorithmType, index);
-				enableRun();
+				((AppData) applicationTemplate.getDataComponent()).setAlgorithmToRun(index);
+				if(chooseAlgorithm.isSelected()){
+					showRun();
+				}else{
+					hideRun();
+				}
+				//might have to fix for more algorithms
 			});
 
 			RotateTransition rot = new RotateTransition(Duration.seconds(2), configButton);
@@ -622,19 +617,19 @@ public final class AppUI extends UITemplate {
 		private Label sceneHeader;
 		private TextField iterationField; // TextField for entering the number of iterations
 		private Label iterationLabel;
-		private HBox iterationContainer;
+		private BorderPane iterationContainer;
 
 		private TextField intervalField; // TextField for entering the number of intervals
 		private Label intervalLabel;
-		private HBox intervalContainer;
+		private BorderPane intervalContainer;
 
 		private TextField numLabelsField; // TextField for the number of labels
 		private Label numLabelsLabel;
-		private HBox numLabelsContainer;
+		private BorderPane numLabelsContainer;
 
 		private CheckBox continuousCheck; // CheckBox whether the algorithm runs continuous or not
 		private Label checkBoxLabel;
-		private HBox checkBoxContainer;
+		private BorderPane checkBoxContainer;
 
 		private Scene currentScene;
 		private VBox container;
@@ -666,34 +661,37 @@ public final class AppUI extends UITemplate {
 			iterationField.setPrefWidth(50);
 			iterationLabel = new Label("Max Iterations:");
 			iterationLabel.getStyleClass().add("field-name");
-			iterationContainer = new HBox();
+			iterationContainer = new BorderPane();
 			iterationContainer.setPrefWidth(300);
-			//fixme - add border to help
 			iterationContainer.setPadding(insets);
-			iterationContainer.getChildren().addAll(iterationLabel, iterationField);
+			iterationContainer.setLeft(iterationLabel);
+			iterationContainer.setRight(iterationField);
 
 			intervalField = new TextField();
 			intervalField.setPrefWidth(50);
 			intervalLabel = new Label("Update Interval:");
 			intervalLabel.getStyleClass().add("field-name");
-			intervalContainer = new HBox();
+			intervalContainer = new BorderPane();
 			intervalContainer.setPadding(insets);
-			intervalContainer.getChildren().addAll(intervalLabel, intervalField);
+			intervalContainer.setLeft(intervalLabel);
+			intervalContainer.setRight(intervalField);
 
 			numLabelsField = new TextField();
 			numLabelsField.setPrefWidth(50);
 			numLabelsLabel = new Label("Number of Labels:");
 			numLabelsLabel.getStyleClass().add("field-name");
-			numLabelsContainer = new HBox();
+			numLabelsContainer = new BorderPane();
 			numLabelsContainer.setPadding(insets);
-			numLabelsContainer.getChildren().addAll(numLabelsLabel, numLabelsField);
+			numLabelsContainer.setLeft(numLabelsLabel);
+			numLabelsContainer.setRight(numLabelsField);
 
 			continuousCheck = new CheckBox();
 			checkBoxLabel = new Label("Continuous Run?");
 			checkBoxLabel.getStyleClass().add("field-name");
-			checkBoxContainer = new HBox();
+			checkBoxContainer = new BorderPane();
 			checkBoxContainer.setPadding(insets);
-			checkBoxContainer.getChildren().addAll(checkBoxLabel, continuousCheck);
+			checkBoxContainer.setLeft(checkBoxLabel);
+			checkBoxContainer.setRight(continuousCheck);
 
 			container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
 			//may not need to add labels field
@@ -703,6 +701,7 @@ public final class AppUI extends UITemplate {
 			this.setOnCloseRequest(event -> {
 				createConfig();
 				((AppData) applicationTemplate.getDataComponent()).setConfiguration(config);
+				runButton.setDisable(false);
 			});
 		}
 
