@@ -618,7 +618,7 @@ public final class AppUI extends UITemplate {
 				}else{
 					window.showLabelField();
 				}
-				window.show();
+				window.showAndWait();
 			});
 
 			chooseAlgorithm.setOnAction(event -> {
@@ -673,6 +673,7 @@ public final class AppUI extends UITemplate {
 
 		public ConfigWindow(){
 			initModality(Modality.WINDOW_MODAL); // modal => messages are blocked from reaching other windows
+        		initOwner(getPrimaryWindow());
 			layout();
 			setUpActions();
 			this.setTitle("Configure Algorithm");
