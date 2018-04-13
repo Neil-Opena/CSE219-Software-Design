@@ -74,6 +74,7 @@ public final class AppUI extends UITemplate {
 	private Button classificationButton;
 	private Button clusteringButton;
 	private Button displayButton;
+	private Button backButton;
 	private Label typesTitle;
 	private Label algorithmType;
 	private Label displayInfo;
@@ -270,10 +271,12 @@ public final class AppUI extends UITemplate {
 	 */
 	public void showClusteringAlgorithms(){
 		algorithmType.setText("Clustering");
-		algorithms.getChildren().add(algorithmType);
-		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLUSTERING);
-		for(int i = 0; i < clusteringAlgorithms.size(); i++){
-			algorithms.getChildren().add(clusteringAlgorithms.get(i));
+		if(algorithms.getChildren().isEmpty()){
+			algorithms.getChildren().add(algorithmType);
+			((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLUSTERING);
+			for(int i = 0; i < clusteringAlgorithms.size(); i++){
+				algorithms.getChildren().add(clusteringAlgorithms.get(i));
+			}
 		}
 		inputRegion.getChildren().add(algorithms);
 	}
@@ -283,10 +286,12 @@ public final class AppUI extends UITemplate {
 	 */
 	public void showClassificationAlgorithms(){
 		algorithmType.setText("Classification");
-		algorithms.getChildren().add(algorithmType);
-		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLASSIFICATION);
-		for(int i = 0; i < classificationAlgorithms.size(); i++){
-			algorithms.getChildren().add(classificationAlgorithms.get(i));
+		if(algorithms.getChildren().isEmpty()){
+			algorithms.getChildren().add(algorithmType);
+			((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLASSIFICATION);
+			for(int i = 0; i < classificationAlgorithms.size(); i++){
+				algorithms.getChildren().add(classificationAlgorithms.get(i));
+			}
 		}
 		inputRegion.getChildren().add(algorithms);
 	}
@@ -317,6 +322,14 @@ public final class AppUI extends UITemplate {
 			classificationButton.setDisable(false);
 		}
 		inputRegion.getChildren().add(typeContainer);
+	}
+
+	private void showBackButton(){
+		inputRegion.getChildren().add(backButton);
+	}
+
+	private void hideBackButton(){
+		inputRegion.getChildren().remove(backButton);
 	}
 
 
@@ -372,6 +385,10 @@ public final class AppUI extends UITemplate {
 		displayButton = new Button("Display");
 		displayButton.setPrefWidth(200);
 		displayButton.getStyleClass().add("types-button");
+		
+		backButton = setToolbarButton(iconsPath + separator + "back-arrow.png", "Return to Algorithm Types", false);
+		backButton.setPrefWidth(50);
+		backButton.getStyleClass().add("algorithm-ui");
 
 		typesTitle = new Label();
 		typesTitle.getStyleClass().add("types-title");
@@ -437,6 +454,12 @@ public final class AppUI extends UITemplate {
 			}
 		});
 
+		backButton.setOnAction(event -> {
+			hideBackButton();
+			inputRegion.getChildren().remove(algorithms);
+			inputRegion.getChildren().add(typeContainer);
+		});
+
 		runButton.setOnAction(event -> {
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
 			// will have to reset somewhere i think (when new or loaded)
@@ -455,12 +478,14 @@ public final class AppUI extends UITemplate {
 			hideAlgorithmTypes();
 			showClusteringAlgorithms();
 			runButton.setDisable(true);
+			showBackButton();
 		});
 
 		classificationButton.setOnAction(event ->{
 			hideAlgorithmTypes();
 			showClassificationAlgorithms();
 			runButton.setDisable(true);
+			showBackButton();
 		});
 
 		editToggleButton.setOnAction(event -> {
