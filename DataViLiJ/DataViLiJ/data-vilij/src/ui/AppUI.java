@@ -23,6 +23,7 @@ import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 import static settings.AppPropertyTypes.*;
 import actions.AppActions;
+import algorithms.AlgorithmTypes;
 import data.Config;
 import dataprocessors.AppData;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public final class AppUI extends UITemplate {
 	private ToggleGroup clusteringRadios;
 	private ToggleGroup classificationRadios;
 
-	public String iconsPath;
+	private String iconsPath;
 
 	private String displayedText; // text to check if current text matches saved text
 	private String savedText;
@@ -270,7 +271,7 @@ public final class AppUI extends UITemplate {
 	public void showClusteringAlgorithms(){
 		algorithmType.setText("Clustering");
 		algorithms.getChildren().add(algorithmType);
-		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType("Clustering");
+		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLUSTERING);
 		for(int i = 0; i < clusteringAlgorithms.size(); i++){
 			algorithms.getChildren().add(clusteringAlgorithms.get(i));
 		}
@@ -283,7 +284,7 @@ public final class AppUI extends UITemplate {
 	public void showClassificationAlgorithms(){
 		algorithmType.setText("Classification");
 		algorithms.getChildren().add(algorithmType);
-		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType("Classification");
+		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLASSIFICATION);
 		for(int i = 0; i < classificationAlgorithms.size(); i++){
 			algorithms.getChildren().add(classificationAlgorithms.get(i));
 		}
@@ -440,7 +441,8 @@ public final class AppUI extends UITemplate {
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
 			// will have to reset somewhere i think (when new or loaded)
 			Toggle selected;
-			if(algorithmType.getText().equals("Classification")){
+
+			if(appData.getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
 				selected = classificationRadios.getSelectedToggle();
 			}else{
 				selected = clusteringRadios.getSelectedToggle();
@@ -694,7 +696,6 @@ public final class AppUI extends UITemplate {
 			checkBoxContainer.setRight(continuousCheck);
 
 			container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
-			//may not need to add labels field
 		}
 
 		private void setUpActions(){
@@ -713,14 +714,9 @@ public final class AppUI extends UITemplate {
 		 */
 		private boolean checkInput(){
 			// no negative values or some shit
-			return true;
-		}
 
-		/**
-		 * Shows the label TextField inside the Config Window
-		 */
-		private void showLabelsField(){
-			//if current type showing is clustering or something, show labels field
+			//also have to check if num labels present or not
+			return true;
 		}
 
 		/**

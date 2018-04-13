@@ -2,8 +2,8 @@ package dataprocessors;
 
 import actions.AppActions;
 import algorithms.Algorithm;
+import algorithms.AlgorithmTypes;
 import classification.RandomClassifier;
-import clustering.RandomClustering;
 import data.Config;
 import data.DataSet;
 import java.io.BufferedReader;
@@ -48,7 +48,7 @@ public class AppData implements DataComponent {
 
 	private Algorithm algorithmToRun; //current algorithm queued up to run
 	private int algorithmIndex;
-	private String algorithmType;
+	private AlgorithmTypes algorithmType;
 	private int numClassificationAlgorithms;
 	private int numClusteringAlgorithms;
 
@@ -199,8 +199,8 @@ public class AppData implements DataComponent {
 	 * Return the current algorithm to run type
 	 * @return 
 	 */
-	public Algorithm getAlgorithmType(){
-		return null;
+	public AlgorithmTypes getAlgorithmType(){
+		return algorithmType;
 	}
 
 	public void startAlgorithm(){
@@ -234,7 +234,7 @@ public class AppData implements DataComponent {
 		algorithmIndex = index;
 	}
 
-	public void setAlgorithmType(String type){
+	public void setAlgorithmType(AlgorithmTypes type){
 		algorithmType = type;
 	}
 
@@ -242,10 +242,7 @@ public class AppData implements DataComponent {
 	What would happen if user configed without selecting algorithm?
 	*/
 	public void setConfiguration(Config config){
-		if(algorithmType != null){
-			//algorithm not set yet
-			//do nothing --> except save values in config window
-			if(algorithmType.equals("Classification")){
+			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
 				switch(algorithmIndex){
 					case 0: 
 						algorithmToRun = new RandomClassifier(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
@@ -254,12 +251,11 @@ public class AppData implements DataComponent {
 			}else{
 				switch(algorithmIndex){
 					case 0:
-						algorithmToRun = new RandomClustering(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
+						//algorithmToRun = new RandomClustering(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
 						//might how to use num labels shit
 						break;
 				}
 			}
-		}
 
 	}
 
@@ -283,7 +279,7 @@ public class AppData implements DataComponent {
 	}
 
 	/**
-	 * Returns the string represetation of the first ten lines
+	 * Returns the string representation of the first ten lines
 	 * @param data full text of a tsd file
 	 * @return te top ten lines of the text
 	 */
