@@ -43,6 +43,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.util.Duration;
 
 /**
@@ -671,6 +672,7 @@ public final class AppUI extends UITemplate {
 		private Config config;
 
 		public ConfigWindow(){
+			initModality(Modality.WINDOW_MODAL); // modal => messages are blocked from reaching other windows
 			layout();
 			setUpActions();
 			this.setTitle("Configure Algorithm");
@@ -755,7 +757,7 @@ public final class AppUI extends UITemplate {
 		 * Returns false otherwise
 		 * @return if input is valid
 		 */
-		private boolean checkInput(){
+		private boolean checkInput(AlgorithmTypes type){
 			// no negative values or some shit
 
 			//also have to check if num labels present or not
@@ -770,31 +772,59 @@ public final class AppUI extends UITemplate {
 		FIXME must depend on type
 		*/
 		private void createConfig(){
-			try{
-				int maxIterations = Integer.parseInt(iterationField.getText());
-				int updateInterval = Integer.parseInt(intervalField.getText());
-				boolean toContinue = continuousCheck.isSelected();
-
-				if(checkInput()){
-					config = new Config(maxIterations, updateInterval, toContinue);
-				}else{
-					invalidClassificationConfig();
+			if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLUSTERING)){
+				try{
+					int maxIterations = Integer.parseInt(iterationField.getText());
+					int updateInterval = Integer.parseInt(intervalField.getText());
+					boolean toContinue = continuousCheck.isSelected();
+					int numLabels = Integer.parseInt(numLabelsField.getText());
+					if(checkInput(AlgorithmTypes.CLUSTERING)){
+						config = new Config(maxIterations, updateInterval, toContinue, numLabels);
+						iterationField.setText("" + maxIterations);
+						intervalField.setText("" + updateInterval);
+						continuousCheck.setSelected(toContinue);
+						numLabelsField.setText("" + numLabels);
+					}else{
+						handleInvalidConfig(AlgorithmTypes.CLUSTERING);
+					}
+				}catch(NumberFormatException e){
+					handleInvalidConfig(AlgorithmTypes.CLUSTERING);
 				}
-			}catch(NumberFormatException e){
-				//will use default values
-				// should also change values in window
-				invalidClassificationConfig();
+			}else{
+				try{
+					int maxIterations = Integer.parseInt(iterationField.getText());
+					int updateInterval = Integer.parseInt(intervalField.getText());
+					boolean toContinue = continuousCheck.isSelected();
+					if(checkInput(AlgorithmTypes.CLASSIFICATION)){
+						config = new Config(maxIterations, updateInterval, toContinue);
+						iterationField.setText("" + maxIterations);
+						intervalField.setText("" + updateInterval);
+						continuousCheck.setSelected(toContinue);
+					}else{
+						handleInvalidConfig(AlgorithmTypes.CLASSIFICATION);
+					}
+				}catch(NumberFormatException e){
+					handleInvalidConfig(AlgorithmTypes.CLASSIFICATION);
+				}
 			}
 		}
 
-		private void invalidClassificationConfig(){
+		private void handleInvalidConfig(AlgorithmTypes type){
 			AppActions appActions = (AppActions) applicationTemplate.getActionComponent();
-			appActions.showErrorDialog("Fucked up values", "Your values are straight up ass");
-			config = new Config(1,1,false); //sets config to default values
-		}
-
-		private void invalidClusteringConfig(){
-
+			appActions.showErrorDialog("Invalid values", "Values for configuration are invalid. Default values have been inserted.");
+			int tempIteration = 1;
+			int tempInterval = 1;
+			boolean tempContinuous = true;
+			int tempLabels = 2;
+			if(type.equals(AlgorithmTypes.CLUSTERING)){
+				config = new Config(tempIteration, tempInterval, tempContinuous, tempLabels);
+				numLabelsField.setText("" + tempLabels);
+			}else{
+				config = new Config(tempIteration, tempInterval, tempContinuous);
+			}
+			iterationField.setText("" + tempIteration);
+			intervalField.setText("" + tempInterval);
+			continuousCheck.setSelected(tempContinuous);
 		}
 	}
 	

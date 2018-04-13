@@ -64,6 +64,7 @@ public class AppData implements DataComponent {
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
 		this.applicationTemplate = applicationTemplate;
+		this.algorithmIndex = -1;
 
 		appUI = (AppUI) applicationTemplate.getUIComponent();
 		appActions = (AppActions) applicationTemplate.getActionComponent();
@@ -240,8 +241,10 @@ public class AppData implements DataComponent {
 
 	/*
 	What would happen if user configed without selecting algorithm?
+	//FIXME
 	*/
 	public void setConfiguration(Config config){
+		if(algorithmIndex != -1){
 			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
 				switch(algorithmIndex){
 					case 0: 
@@ -256,7 +259,7 @@ public class AppData implements DataComponent {
 						break;
 				}
 			}
-
+		}
 	}
 
 	/**
