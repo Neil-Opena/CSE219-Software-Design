@@ -65,7 +65,8 @@ public final class AppUI extends UITemplate {
 	private VBox inputRegion; // container for input region
 	private Label inputTitle; // title for input region
 	private VBox typeContainer; // container that houses algorithm types options
-	private VBox algorithms; // container for the algorithms
+	private VBox classificationContainer; // container for the algorithms
+	private VBox clusteringContainer;
 
 	private TextArea textArea;       // text area for new data input
 	private LineChart<Number, Number> chart;          // the chart where data will be displayed
@@ -273,13 +274,13 @@ public final class AppUI extends UITemplate {
 	public void showClusteringAlgorithms(){
 		algorithmType.setText("Clustering");
 		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLUSTERING);
-		if(algorithms.getChildren().isEmpty()){
-			algorithms.getChildren().add(algorithmType);
+		if(clusteringContainer.getChildren().isEmpty()){
+			clusteringContainer.getChildren().add(algorithmType);
 			for(int i = 0; i < clusteringAlgorithms.size(); i++){
-				algorithms.getChildren().add(clusteringAlgorithms.get(i));
+				clusteringContainer.getChildren().add(clusteringAlgorithms.get(i));
 			}
 		}
-		inputRegion.getChildren().add(algorithms);
+		inputRegion.getChildren().add(clusteringContainer);
 	}
 
 	/**
@@ -288,32 +289,38 @@ public final class AppUI extends UITemplate {
 	public void showClassificationAlgorithms(){
 		algorithmType.setText("Classification");
 		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLASSIFICATION);
-		if(algorithms.getChildren().isEmpty()){
-			algorithms.getChildren().add(algorithmType);
+		if(classificationContainer.getChildren().isEmpty()){
+			classificationContainer.getChildren().add(algorithmType);
 			for(int i = 0; i < classificationAlgorithms.size(); i++){
-				algorithms.getChildren().add(classificationAlgorithms.get(i));
+				classificationContainer.getChildren().add(classificationAlgorithms.get(i));
 			}
 		}
-		inputRegion.getChildren().add(algorithms);
+		inputRegion.getChildren().add(classificationContainer);
 	}
 
 	private void resetAlgorithms(){
-		inputRegion.getChildren().remove(algorithms);
-		algorithms.getChildren().clear();
+		inputRegion.getChildren().removeAll(classificationContainer, clusteringContainer);
+		classificationContainer.getChildren().clear();
+		clusteringContainer.getChildren().clear();
 	}
 
 	/**
 	 * Shows the run button
 	 */
 	public void showRun(){
-		algorithms.getChildren().add(runButton);
+		if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
+			classificationContainer.getChildren().add(runButton);
+		}else{
+			clusteringContainer.getChildren().add(runButton);
+		}
 	}
 
 	/**
 	 * Hides the run button
 	 */
 	public void hideRun(){
-		algorithms.getChildren().remove(runButton);
+		classificationContainer.getChildren().remove(runButton);
+		clusteringContainer.getChildren().remove(runButton);
 	}
 
 	public void setUpAlgorithmTypes(int numLabels){
@@ -335,7 +342,8 @@ public final class AppUI extends UITemplate {
 
 
 	private void resetInputRegion(){
-		algorithms.getChildren().clear();
+		classificationContainer.getChildren().clear();
+		clusteringContainer.getChildren().clear();
 		inputRegion.getChildren().clear();
 	}
 /**
@@ -407,11 +415,16 @@ public final class AppUI extends UITemplate {
 		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton, displayButton);
 
 
-		algorithms = new VBox();
-		algorithms.setAlignment(Pos.CENTER);
-		algorithms.getStyleClass().add("algorithms");
-		algorithms.setSpacing(20);
-		VBox.setMargin(algorithms, new Insets(10));
+		classificationContainer = new VBox();
+		classificationContainer.setAlignment(Pos.CENTER);
+		classificationContainer.getStyleClass().add("algorithms");
+		classificationContainer.setSpacing(20);
+		VBox.setMargin(classificationContainer, new Insets(10));
+		clusteringContainer = new VBox();
+		clusteringContainer.setAlignment(Pos.CENTER);
+		clusteringContainer.getStyleClass().add("algorithms");
+		clusteringContainer.setSpacing(20);
+		VBox.setMargin(clusteringContainer, new Insets(10));
 
 		algorithmType = new Label();
 		algorithmType.getStyleClass().add("algorithm-type");
@@ -458,7 +471,7 @@ public final class AppUI extends UITemplate {
 		backButton.setOnAction(event -> {
 			hideBackButton();
 			//reset app data algorithm type
-			inputRegion.getChildren().remove(algorithms);
+			inputRegion.getChildren().removeAll(classificationContainer, clusteringContainer);
 			inputRegion.getChildren().add(typeContainer);
 		});
 
@@ -612,7 +625,6 @@ public final class AppUI extends UITemplate {
 		private void setUpActions(){
 
 			configButton.setOnAction(event -> {
-				System.out.println(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType());
 				if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
 					window.hideLabelField();
 				}else{
