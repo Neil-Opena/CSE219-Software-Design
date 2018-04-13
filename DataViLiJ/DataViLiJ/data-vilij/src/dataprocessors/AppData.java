@@ -93,7 +93,8 @@ public class AppData implements DataComponent {
 				}
 				
 				checkLabels();
-				appUI.displayInfo(numInstances, dataFilePath.toFile().getName());
+				String path = dataFilePath.toString();
+				appUI.displayInfo(numInstances, path);
 				appUI.setUpAlgorithmTypes(labels.size());
 				fromFile = true;
 			}catch(Exception e){

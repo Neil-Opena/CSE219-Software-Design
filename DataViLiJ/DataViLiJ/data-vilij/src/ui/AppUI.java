@@ -221,9 +221,9 @@ public final class AppUI extends UITemplate {
 
 		builder.append(numInstances + " instances with " + labels.size());
 		if(source != null){
-			builder.append(" labels loaded from " + source +". ");
+			builder.append(" labels loaded from " + source +".\n");
 		}else{
-			builder.append(" labels. ");
+			builder.append(" labels.\n");
 		}
 		
 		if(labels.size() > 0){
