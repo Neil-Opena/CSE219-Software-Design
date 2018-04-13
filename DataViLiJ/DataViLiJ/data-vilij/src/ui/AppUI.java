@@ -78,7 +78,9 @@ public final class AppUI extends UITemplate {
 	private Button displayButton;
 	private Button backButton;
 	private Label typesTitle;
-	private Label algorithmType;
+	private String algorithmType;
+	private Label clusteringType;
+	private Label classificationType;
 	private Label displayInfo;
 	private List<AlgorithmUI> clusteringAlgorithms;
 	private List<AlgorithmUI> classificationAlgorithms;
@@ -272,10 +274,10 @@ public final class AppUI extends UITemplate {
 	 * Shows the possible clustering algorithms
 	 */
 	public void showClusteringAlgorithms(){
-		algorithmType.setText("Clustering");
+		algorithmType = "Clustering";
 		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLUSTERING);
 		if(clusteringContainer.getChildren().isEmpty()){
-			clusteringContainer.getChildren().add(algorithmType);
+			clusteringContainer.getChildren().add(clusteringType);
 			for(int i = 0; i < clusteringAlgorithms.size(); i++){
 				clusteringContainer.getChildren().add(clusteringAlgorithms.get(i));
 			}
@@ -287,10 +289,10 @@ public final class AppUI extends UITemplate {
 	 * Shows the possible classification algorithms
 	 */
 	public void showClassificationAlgorithms(){
-		algorithmType.setText("Classification");
+		algorithmType = "Classification";
 		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLASSIFICATION);
 		if(classificationContainer.getChildren().isEmpty()){
-			classificationContainer.getChildren().add(algorithmType);
+			classificationContainer.getChildren().add(classificationType);
 			for(int i = 0; i < classificationAlgorithms.size(); i++){
 				classificationContainer.getChildren().add(classificationAlgorithms.get(i));
 			}
@@ -426,8 +428,14 @@ public final class AppUI extends UITemplate {
 		clusteringContainer.setSpacing(20);
 		VBox.setMargin(clusteringContainer, new Insets(10));
 
-		algorithmType = new Label();
-		algorithmType.getStyleClass().add("algorithm-type");
+		algorithmType = "";
+		classificationType = new Label();
+		classificationType.getStyleClass().add("algorithm-type");
+		classificationType.setText("Classification");
+		clusteringType = new Label();
+		clusteringType.getStyleClass().add("algorithm-type");
+		clusteringType.setText("Clustering");
+
 		runButton = setToolbarButton(iconsPath + separator + "play.png", "Run the algorithm", false);
 		runButton.setPrefSize(40, 40);
 		runButton.getStyleClass().add("run-button");
@@ -494,6 +502,11 @@ public final class AppUI extends UITemplate {
 			showClusteringAlgorithms();
 			runButton.setDisable(true);
 			showBackButton();
+			classificationRadios.selectToggle(null);
+			// other toggle group --> deselect buttons
+			/*
+			bug -->run button automatically disablee
+			*/
 		});
 
 		classificationButton.setOnAction(event ->{
@@ -501,6 +514,7 @@ public final class AppUI extends UITemplate {
 			showClassificationAlgorithms();
 			runButton.setDisable(true);
 			showBackButton();
+			clusteringRadios.selectToggle(null);
 		});
 
 		editToggleButton.setOnAction(event -> {
@@ -520,6 +534,7 @@ public final class AppUI extends UITemplate {
 			}else{
 				hideAlgorithmTypes();
 				resetAlgorithms();
+				hideBackButton();
 				editToggleButton.setText("Done");
 				setReadOnly(false);
 			}
