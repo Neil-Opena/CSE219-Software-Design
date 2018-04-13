@@ -272,7 +272,7 @@ public final class AppUI extends UITemplate {
 		for(int i = 0; i < clusteringAlgorithms.size(); i++){
 			algorithms.getChildren().add(clusteringAlgorithms.get(i));
 		}
-		algorithms.getChildren().add(runButton);
+		//algorithms.getChildren().add(runButton);
 		inputRegion.getChildren().add(algorithms);
 	}
 
@@ -285,7 +285,7 @@ public final class AppUI extends UITemplate {
 		for(int i = 0; i < classificationAlgorithms.size(); i++){
 			algorithms.getChildren().add(classificationAlgorithms.get(i));
 		}
-		algorithms.getChildren().add(runButton);
+		//algorithms.getChildren().add(runButton);
 		inputRegion.getChildren().add(algorithms);
 	}
 
@@ -298,13 +298,14 @@ public final class AppUI extends UITemplate {
 	 * Enables the run button
 	 */
 	public void enableRun(){
-
+		algorithms.getChildren().add(runButton);
 	}
 
 	/**
 	 * Disables the run button
 	 */
 	public void disableRun(){
+		algorithms.getChildren().remove(runButton);
 	}
 
 	public void setUpAlgorithmTypes(int numLabels){
@@ -444,7 +445,7 @@ public final class AppUI extends UITemplate {
 				selected = clusteringRadios.getSelectedToggle();
 			}
 			
-			if(selected != null){
+			if(selected != null){ // just a safety check - not really needed
 				if(appData.isConfigured()){
 					System.out.println("has been configured");
 					appData.startAlgorithm();
@@ -452,22 +453,20 @@ public final class AppUI extends UITemplate {
 					//if there's no configuration yet --> launch window
 					configWindow.show();
 				}
-			}else{
-				//if no algorithm is selected yet, don't do anything
 			}
+			//if no algorithm is selected yet, don't do anything
+			
 
 		});
 
 		clusteringButton.setOnAction(event ->{
 			hideAlgorithmTypes();
 			showClusteringAlgorithms();
-			enableRun();
 		});
 
 		classificationButton.setOnAction(event ->{
 			hideAlgorithmTypes();
 			showClassificationAlgorithms();
-			enableRun();
 		});
 
 		editToggleButton.setOnAction(event -> {
@@ -599,6 +598,7 @@ public final class AppUI extends UITemplate {
 
 			chooseAlgorithm.setOnAction(event -> {
 				((AppData) applicationTemplate.getDataComponent()).setAlgorithmToRun(algorithmType, index);
+				enableRun();
 			});
 
 			RotateTransition rot = new RotateTransition(Duration.seconds(2), configButton);
@@ -727,6 +727,10 @@ public final class AppUI extends UITemplate {
 		/**
 		 * Create a Configuration based on the input
 		 */
+
+		/*
+		FIXME must depend on type
+		*/
 		private void createConfig(){
 			try{
 				int maxIterations = Integer.parseInt(iterationField.getText());
@@ -736,17 +740,23 @@ public final class AppUI extends UITemplate {
 				if(checkInput()){
 					config = new Config(maxIterations, updateInterval, toContinue);
 				}else{
-					System.out.println("your values are ass");
-					//show error dialog here
-					config = new Config(1,1,false);
+					invalidClassificationConfig();
 				}
 			}catch(NumberFormatException e){
 				//will use default values
-				System.out.println("your values are ass");
-				//show error dialog here
 				// should also change values in window
-				config = new Config(1,1, false);
+				invalidClassificationConfig();
 			}
+		}
+
+		private void invalidClassificationConfig(){
+			AppActions appActions = (AppActions) applicationTemplate.getActionComponent();
+			appActions.showErrorDialog("Fucked up values", "Your values are straight up ass");
+			config = new Config(1,1,false); //sets config to default values
+		}
+
+		private void invalidClusteringConfig(){
+
 		}
 	}
 	
