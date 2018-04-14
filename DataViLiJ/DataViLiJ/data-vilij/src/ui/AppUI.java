@@ -481,6 +481,7 @@ public final class AppUI extends UITemplate {
 			//reset app data algorithm type
 			inputRegion.getChildren().removeAll(classificationContainer, clusteringContainer);
 			inputRegion.getChildren().add(typeContainer);
+			hideRun();
 		});
 
 		runButton.setOnAction(event -> {
@@ -590,6 +591,7 @@ public final class AppUI extends UITemplate {
 		for(int i = 0; i < clusteringSize; i++){
 			AlgorithmUI temp = new AlgorithmUI(i);
 			clusteringAlgorithms.add(temp);
+			temp.chooseAlgorithm.setToggleGroup(clusteringRadios);
 		}
 
 		// each configure button corresponds to a window
@@ -600,6 +602,7 @@ public final class AppUI extends UITemplate {
 		for(int i = 0; i < classificationSize; i++){
 			AlgorithmUI temp = new AlgorithmUI(i);
 			classificationAlgorithms.add(temp);
+			temp.chooseAlgorithm.setToggleGroup(classificationRadios);
 		}
 	}
 
@@ -622,7 +625,7 @@ public final class AppUI extends UITemplate {
 			configButton = setToolbarButton(iconsPath + separator + "gears.png", "Configure Algorithm", false);
 			configButton.getStyleClass().add("config-button");
 			chooseAlgorithm = new RadioButton();
-			chooseAlgorithm.setUserData(index);
+			chooseAlgorithm.setUserData(false);
 			window = new ConfigWindow();
 
 			if(algorithmType.equals("Classification")){
@@ -637,6 +640,16 @@ public final class AppUI extends UITemplate {
 			this.setSpacing(15);
 		}
 
+		private boolean isConfigured(){
+			return (boolean) chooseAlgorithm.getUserData();
+		}
+
+		private void testForConfiguration(){
+			if(isConfigured()){
+				runButton.setDisable(false);
+			}
+		}
+
 		private void setUpActions(){
 
 			configButton.setOnAction(event -> {
@@ -646,12 +659,15 @@ public final class AppUI extends UITemplate {
 					window.showLabelField();
 				}
 				window.showAndWait();
+				chooseAlgorithm.setUserData(true);
+				testForConfiguration();
 			});
 
 			chooseAlgorithm.setOnAction(event -> {
 				((AppData) applicationTemplate.getDataComponent()).setAlgorithmToRun(index);
 				if(chooseAlgorithm.isSelected()){
 					showRun();
+					testForConfiguration();
 				}else{
 					hideRun();
 				}
@@ -764,7 +780,6 @@ public final class AppUI extends UITemplate {
 			this.setOnCloseRequest(event -> {
 				createConfig();
 				((AppData) applicationTemplate.getDataComponent()).setConfiguration(config);
-				runButton.setDisable(false);
 			});
 		}
 
