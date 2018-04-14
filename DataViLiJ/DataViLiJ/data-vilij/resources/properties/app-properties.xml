@@ -10,9 +10,17 @@ functionality within the main workspace. -->
 
         <!-- USER INTERFACE ICON FILES -->
         <property name="SCREENSHOT_ICON" value="screenshot.png"/>
+	<property name="BACK_ICON" value="back-arrow.png"/>
+	<property name="PLAY_ICON" value="play.png"/>
+	<property name="GEAR_ICON" value="gears.png"/>
 
         <!-- TOOLTIPS FOR BUTTONS -->
         <property name="SCREENSHOT_TOOLTIP" value="Screenshot"/> <!-- will print current view of image to a file -->
+	<property name="BACK_TOOLTIP" value="Return to Algorithm Types"/>
+	<property name="CLASSIFICATION_TOOLTIP" value="Display Classification Algorithms"/>
+	<property name="CLUSTERING_TOOLTIP" value="Display Clustering Algorithms"/>
+	<property name="PLAY_TOOLTIP" value="Run the Algorithm"/>
+	<property name="CONFIG_TOOLTIP" value="Configure Algorithm"/>
 
         <!-- WARNING MESSAGES -->
         <property name="EXIT_WHILE_RUNNING_WARNING"
@@ -30,6 +38,7 @@ functionality within the main workspace. -->
 	<property name="LARGE_DATA_MESSAGE_2" value=" lines.&#xD;Showing only the first 10 in the text area."/>
 	<property name="FILE_NOT_FOUND_MESSAGE" value="Specified File was not found."/>
 	<property name="LINE" value="Line "/>
+	<property name="INVALID_CONFIG_MESSAGE" value="Values for configuration are invalid. Default values have been inserted."/>
 
         <!-- APPLICATION-SPECIFIC MESSAGE TITLES -->
         <property name="SAVE_UNSAVED_WORK_TITLE" value="Save Current Work"/>
@@ -39,6 +48,10 @@ functionality within the main workspace. -->
 	<property name="LOAD_ERROR_TITLE" value="Cannot Load File"/>
 	<property name="LARGE_DATA_TITLE" value="Data Exceeded Capacity"/>
 	<property name="FILE_NOT_FOUND_TITLE" value="File Not Found"/>
+	<property name="APPLICATION_TITLE" value="Data ViLiJ"/>
+	<property name="CONFIG_TITLE" value="Configure Algorithm"/>
+	<property name="CONFIG_WINDOW_TITLE" value="Algorithm Run Configuration"/>
+	<property name="INVALID_CONFIG_TITLE" value="Invalid values"/>
 
         <!-- APPLICATION-SPECIFIC MESSAGES -->
         <property name="SAVE_UNSAVED_WORK" value="Would you like to save current work?"/>
@@ -60,12 +73,39 @@ functionality within the main workspace. -->
 	<property name="TITLE_STYLE" value="chart-title"/>
 	<property name="DISPLAY_BUTTON" value="Display"/>
 	<property name="CHART_TITLE" value="Data Visualization"/>
+	<property name="DONE" value="Done"/>
+	<property name="EDIT" value="Edit"/>
+	<property name="ALGORITHM_TYPE" value="Algorithm Type"/>
+	<property name="ALGORITHM" value="Algorithm "/>
+	<property name="ITERATION_LABEL" value="Max Iterations:"/>
+	<property name="INTERVAL_LABEL" value="Update Interval:"/>
+	<property name="NUMLABELS_LABEL" value="Number of Labels:"/>
+	<property name="CHECKBOX_LABEL" value="Continuous Run?"/>
 
 	<!-- CSS -->
 	<property name="CSS_FILE" value="data-vilij.css"/>
 	<property name="GRAY_TEXT" value="gray"/>
 	<property name="HIDE_SYMBOL" value="hide-symbol"/>
 	<property name="DISPLAY_LINE" value="display-line"/>
+	<property name="TOOLBAR" value="toolbar"/>
+	<property name="DISPLAY_INFO" value="display-info"/>
+	<property name="TYPE_CONTAINER" value="type-container"/>
+	<property name="TYPES_BUTTON" value="types-button"/>
+	<property name="ALGORITHM_UI" value="algorithm-ui"/>
+	<property name="TYPES_TITLE" value="types-title"/>
+	<property name="ALGORITHMS_CSS" value="algorithms"/>
+	<property name="ALGORITHM_TYPE_CSS" value="algorithm-type"/>
+	<property name="ALGORITHM_NAME_CSS" value="algorithm-name"/>
+	<property name="RUN_BUTTON" value="run-button"/>
+	<property name="TOGGLE_BUTTON" value="toggle-button"/>
+	<property name="CONFIG_BUTTON" value="config-button"/>
+	<property name="CONFIG_TITLE_CSS" value="config-window-title"/>
+
+	<!-- STRING MESSAGES -->
+	<property name="INFO_1" value=" instances with "/>
+	<property name="INFO_2" value=" labels loaded from "/>
+	<property name="INFO_3" value=" labels. &#xD;"/>
+	<property name="INFO_4" value="The labels are:&#xD;"/>
 
     </property_list>
     <property_options_list/>

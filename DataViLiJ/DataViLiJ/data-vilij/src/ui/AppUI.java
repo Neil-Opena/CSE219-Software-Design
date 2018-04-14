@@ -101,7 +101,7 @@ public final class AppUI extends UITemplate {
                                     manager.getPropertyValue(CSS_FILE.name()));
 		this.getPrimaryScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
 
-		primaryStage.setTitle("Data ViLiJ"); // FIXME
+		primaryStage.setTitle(manager.getPropertyValue(APPLICATION_TITLE.name()));
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public final class AppUI extends UITemplate {
 		scrnshotButton = setToolbarButton(scrnshotIconPath, manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()), true);
 		newButton.setDisable(false);
 		toolBar.getItems().add(scrnshotButton);
-		toolBar.getStyleClass().add("toolbar"); // FIXME
+		toolBar.getStyleClass().add(manager.getPropertyValue(TOOLBAR.name()));
 	}
 
 	@Override
@@ -226,15 +226,15 @@ public final class AppUI extends UITemplate {
 		StringBuilder builder = new StringBuilder();
 		Set labels = appData.getLabels();
 
-		builder.append(numInstances + " instances with " + labels.size());
+		builder.append(numInstances + manager.getPropertyValue(INFO_1.name()) + labels.size());
 		if(source != null){
-			builder.append(" labels loaded from " + source +".\n");
+			builder.append(manager.getPropertyValue(INFO_2.name()) + source +".\n");
 		}else{
-			builder.append(" labels.\n");
+			builder.append(manager.getPropertyValue(INFO_3.name()));
 		}
 		
 		if(labels.size() > 0){
-			builder.append("The labels are:\n");
+			builder.append(manager.getPropertyValue(INFO_4.name()));
 			labels.forEach(label -> {
 				builder.append("\t- " + label.toString() + "\n");
 			});
@@ -259,7 +259,7 @@ public final class AppUI extends UITemplate {
 	 */
 	public void showEditToggle(){
 		inputRegion.getChildren().add(editToggleButton);
-		editToggleButton.setText("Done");
+		editToggleButton.setText(manager.getPropertyValue(DONE.name()));
 		setReadOnly(false);
 	}
 
@@ -274,7 +274,7 @@ public final class AppUI extends UITemplate {
 	 * Shows the possible clustering algorithms
 	 */
 	public void showClusteringAlgorithms(){
-		algorithmType = "Clustering";
+		algorithmType = AlgorithmTypes.CLUSTERING.toString();
 		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLUSTERING);
 		if(clusteringContainer.getChildren().isEmpty()){
 			clusteringContainer.getChildren().add(clusteringType);
@@ -289,7 +289,7 @@ public final class AppUI extends UITemplate {
 	 * Shows the possible classification algorithms
 	 */
 	public void showClassificationAlgorithms(){
-		algorithmType = "Classification";
+		algorithmType = AlgorithmTypes.CLASSIFICATION.toString();
 		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLASSIFICATION);
 		if(classificationContainer.getChildren().isEmpty()){
 			classificationContainer.getChildren().add(classificationType);
@@ -393,65 +393,64 @@ public final class AppUI extends UITemplate {
 
 		displayInfo = new Label();
 		displayInfo.setWrapText(true);
-		displayInfo.getStyleClass().add("display-info");
+		displayInfo.getStyleClass().add(manager.getPropertyValue(DISPLAY_INFO.name()));
 		displayInfo.setEllipsisString("");
 		VBox.setMargin(displayInfo, new Insets(10));
 
 		typeContainer = new VBox();
 		typeContainer.setAlignment(Pos.CENTER);
-		typeContainer.getStyleClass().add("type-container");
+		typeContainer.getStyleClass().add(manager.getPropertyValue(TYPE_CONTAINER.name()));
 		typeContainer.setMaxWidth(200);
 		VBox.setMargin(typeContainer, new Insets(10));
 
-		displayButton = new Button("Display");
+		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
 		displayButton.setPrefWidth(200);
-		displayButton.getStyleClass().add("types-button");
+		displayButton.getStyleClass().add(manager.getPropertyValue(TYPES_BUTTON.name()));
 		
-		backButton = setToolbarButton(iconsPath + separator + "back-arrow.png", "Return to Algorithm Types", false);
+		backButton = setToolbarButton(iconsPath + separator + manager.getPropertyValue(BACK_ICON.name()), manager.getPropertyValue(BACK_TOOLTIP.name()), false);
 		backButton.setPrefWidth(50);
-		backButton.getStyleClass().add("algorithm-ui");
+		backButton.getStyleClass().add(manager.getPropertyValue(ALGORITHM_UI.name()));
 
 		typesTitle = new Label();
-		typesTitle.getStyleClass().add("types-title");
+		typesTitle.getStyleClass().add(manager.getPropertyValue(TYPES_TITLE.name()));
 		typesTitle.setPrefWidth(200);
-		classificationButton = new Button("Classification");
-		classificationButton.getStyleClass().addAll("types-button");
+		classificationButton = new Button(AlgorithmTypes.CLASSIFICATION.toString());
+		classificationButton.getStyleClass().addAll(manager.getPropertyValue(TYPES_BUTTON.name()));
 		classificationButton.setPrefWidth(200);
-		classificationButton.setTooltip(new Tooltip("Display Classification Algorithms"));
-		clusteringButton = new Button("Clustering");
-		clusteringButton.getStyleClass().addAll("types-button");
-		clusteringButton.getStyleClass().add("toolbar-button");
-		clusteringButton.setTooltip(new Tooltip("Display Clustering Algorithms"));
+		classificationButton.setTooltip(new Tooltip(manager.getPropertyValue(CLASSIFICATION_TOOLTIP.name())));
+		clusteringButton = new Button(AlgorithmTypes.CLUSTERING.toString());
+		clusteringButton.getStyleClass().addAll(manager.getPropertyValue(TYPES_BUTTON.name()));
+		clusteringButton.setTooltip(new Tooltip(manager.getPropertyValue(CLUSTERING_TOOLTIP.name())));
 		clusteringButton.setPrefWidth(200);
-		typesTitle.setText("Algorithm Type");
+		typesTitle.setText(manager.getPropertyValue(ALGORITHM_TYPE.name()));
 		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton, displayButton);
 
 
 		classificationContainer = new VBox();
 		classificationContainer.setAlignment(Pos.CENTER);
-		classificationContainer.getStyleClass().add("algorithms");
+		classificationContainer.getStyleClass().add(manager.getPropertyValue(ALGORITHMS_CSS.name()));
 		classificationContainer.setSpacing(20);
 		VBox.setMargin(classificationContainer, new Insets(10));
 		clusteringContainer = new VBox();
 		clusteringContainer.setAlignment(Pos.CENTER);
-		clusteringContainer.getStyleClass().add("algorithms");
+		clusteringContainer.getStyleClass().add(manager.getPropertyValue(ALGORITHMS_CSS.name()));
 		clusteringContainer.setSpacing(20);
 		VBox.setMargin(clusteringContainer, new Insets(10));
 
 		algorithmType = "";
 		classificationType = new Label();
-		classificationType.getStyleClass().add("algorithm-type");
-		classificationType.setText("Classification");
+		classificationType.getStyleClass().add(manager.getPropertyValue(ALGORITHM_TYPE_CSS.name()));
+		classificationType.setText(AlgorithmTypes.CLASSIFICATION.toString());
 		clusteringType = new Label();
-		clusteringType.getStyleClass().add("algorithm-type");
-		clusteringType.setText("Clustering");
+		clusteringType.getStyleClass().add(manager.getPropertyValue(ALGORITHM_TYPE_CSS.name()));
+		clusteringType.setText(AlgorithmTypes.CLUSTERING.toString());
 
-		runButton = setToolbarButton(iconsPath + separator + "play.png", "Run the algorithm", false);
+		runButton = setToolbarButton(iconsPath + separator + manager.getPropertyValue(PLAY_ICON.name()), manager.getPropertyValue(PLAY_TOOLTIP.name()), false);
 		runButton.setPrefSize(40, 40);
-		runButton.getStyleClass().add("run-button");
+		runButton.getStyleClass().add(manager.getPropertyValue(RUN_BUTTON.name()));
 
-		editToggleButton = new Button("Done");
-		editToggleButton.getStyleClass().addAll("toggle-button", "types-button", "done");
+		editToggleButton = new Button(manager.getPropertyValue(DONE.name()));
+		editToggleButton.getStyleClass().addAll(manager.getPropertyValue(TOGGLE_BUTTON.name()), manager.getPropertyValue(TYPES_BUTTON.name()));
 		editToggleButton.setPrefWidth(100);
 
 		chart = new LineChart<>(new NumberAxis(), new NumberAxis());
@@ -533,21 +532,21 @@ public final class AppUI extends UITemplate {
 			String curr = editToggleButton.getText();
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 			AppActions appActions = ((AppActions) applicationTemplate.getActionComponent());
-			if(curr.equals("Done")){
+			if(curr.equals(manager.getPropertyValue(DONE.name()))){
 				String result = checkTextAreaText();
 				if(result == null){
-					editToggleButton.setText("Edit");
+					editToggleButton.setText(manager.getPropertyValue(EDIT.name()));
 					setReadOnly(true);
 					appData.loadData(textArea.getText());
 					setUpAlgorithmTypes(appData.getLabels().size());
 				}else{
-					appActions.showErrorDialog("some title", result);
+					appActions.showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), result);
 				}
 			}else{
 				hideAlgorithmTypes();
 				resetAlgorithms();
 				hideBackButton();
-				editToggleButton.setText("Done");
+				editToggleButton.setText(manager.getPropertyValue(DONE.name()));
 				setReadOnly(false);
 			}
 		});
@@ -631,22 +630,22 @@ public final class AppUI extends UITemplate {
 		}
 
 		private void layoutAlgorithm(){
-			algorithmName = new Label("Algorithm " + (index + 1));
-			algorithmName.getStyleClass().add("algorithm-name");
-			configButton = setToolbarButton(iconsPath + separator + "gears.png", "Configure Algorithm", false);
-			configButton.getStyleClass().add("config-button");
+			algorithmName = new Label(manager.getPropertyValue(ALGORITHM.name()) + (index + 1));
+			algorithmName.getStyleClass().add(manager.getPropertyValue(ALGORITHM_NAME_CSS.name()));
+			configButton = setToolbarButton(iconsPath + separator + manager.getPropertyValue(GEAR_ICON.name()), manager.getPropertyValue(CONFIG_TOOLTIP.name()), false);
+			configButton.getStyleClass().add(manager.getPropertyValue(CONFIG_BUTTON.name()));
 			chooseAlgorithm = new RadioButton();
 			chooseAlgorithm.setUserData(false);
 			window = new ConfigWindow();
 
-			if(algorithmType.equals("Classification")){
+			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION.toString())){
 				chooseAlgorithm.setToggleGroup(classificationRadios);
-			}else if(algorithmType.equals("Clustering")){
+			}else if(algorithmType.equals(AlgorithmTypes.CLUSTERING.toString())){
 				chooseAlgorithm.setToggleGroup(clusteringRadios);
 			}
 
 			this.getChildren().addAll(chooseAlgorithm, algorithmName, configButton);
-			this.getStyleClass().add("algorithm-ui");
+			this.getStyleClass().add(manager.getPropertyValue(ALGORITHM_UI.name()));
 			this.setAlignment(Pos.CENTER);
 			this.setSpacing(15);
 		}
@@ -730,7 +729,7 @@ public final class AppUI extends UITemplate {
         		initOwner(getPrimaryWindow());
 			layout();
 			setUpActions();
-			this.setTitle("Configure Algorithm");
+			this.setTitle(manager.getPropertyValue(CONFIG_TITLE.name()));
 			this.setScene(currentScene);
 			this.getScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
 		}
@@ -745,13 +744,12 @@ public final class AppUI extends UITemplate {
 			container.setAlignment(Pos.CENTER);
 			currentScene = new Scene(container);
 
-			sceneHeader = new Label("Algorithm Run Configuration");
-			sceneHeader.getStyleClass().add("config-window-title");
+			sceneHeader = new Label(manager.getPropertyValue(CONFIG_WINDOW_TITLE.name()));
+			sceneHeader.getStyleClass().add(manager.getPropertyValue(CONFIG_TITLE_CSS.name()));
 
 			iterationField = new TextField();
 			iterationField.setPrefWidth(50);
-			iterationLabel = new Label("Max Iterations:");
-			iterationLabel.getStyleClass().add("field-name");
+			iterationLabel = new Label(manager.getPropertyValue(ITERATION_LABEL.name()));
 			iterationContainer = new BorderPane();
 			iterationContainer.setPrefWidth(300);
 			iterationContainer.setPadding(insets);
@@ -760,8 +758,7 @@ public final class AppUI extends UITemplate {
 
 			intervalField = new TextField();
 			intervalField.setPrefWidth(50);
-			intervalLabel = new Label("Update Interval:");
-			intervalLabel.getStyleClass().add("field-name");
+			intervalLabel = new Label(manager.getPropertyValue(INTERVAL_LABEL.name()));
 			intervalContainer = new BorderPane();
 			intervalContainer.setPadding(insets);
 			intervalContainer.setLeft(intervalLabel);
@@ -769,16 +766,14 @@ public final class AppUI extends UITemplate {
 
 			numLabelsField = new TextField();
 			numLabelsField.setPrefWidth(50);
-			numLabelsLabel = new Label("Number of Labels:");
-			numLabelsLabel.getStyleClass().add("field-name");
+			numLabelsLabel = new Label(manager.getPropertyValue(NUMLABELS_LABEL.name()));
 			numLabelsContainer = new BorderPane();
 			numLabelsContainer.setPadding(insets);
 			numLabelsContainer.setLeft(numLabelsLabel);
 			numLabelsContainer.setRight(numLabelsField);
 
 			continuousCheck = new CheckBox();
-			checkBoxLabel = new Label("Continuous Run?");
-			checkBoxLabel.getStyleClass().add("field-name");
+			checkBoxLabel = new Label(manager.getPropertyValue(CHECKBOX_LABEL.name()));
 			checkBoxContainer = new BorderPane();
 			checkBoxContainer.setPadding(insets);
 			checkBoxContainer.setLeft(checkBoxLabel);
@@ -865,7 +860,7 @@ public final class AppUI extends UITemplate {
 
 		private void handleInvalidConfig(AlgorithmTypes type){
 			AppActions appActions = (AppActions) applicationTemplate.getActionComponent();
-			appActions.showErrorDialog("Invalid values", "Values for configuration are invalid. Default values have been inserted.");
+			appActions.showErrorDialog(manager.getPropertyValue(INVALID_CONFIG_TITLE.name()), manager.getPropertyValue(INVALID_CONFIG_MESSAGE.name()));
 			int tempIteration = 1;
 			int tempInterval = 1;
 			boolean tempContinuous = true;

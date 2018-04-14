@@ -15,9 +15,17 @@ public enum AppPropertyTypes {
 
     /* user interface icon file names */
     SCREENSHOT_ICON,
+    BACK_ICON,
+    PLAY_ICON,
+    GEAR_ICON,
 
     /* tooltips for user interface buttons */
     SCREENSHOT_TOOLTIP,
+    BACK_TOOLTIP,
+    CLASSIFICATION_TOOLTIP,
+    CLUSTERING_TOOLTIP,
+    PLAY_TOOLTIP,
+    CONFIG_TOOLTIP,
 
     /* error messages */
     RESOURCE_SUBDIR_NOT_FOUND,
@@ -31,6 +39,7 @@ public enum AppPropertyTypes {
     LARGE_DATA_MESSAGE_2,
     FILE_NOT_FOUND_MESSAGE,
     LINE,
+    INVALID_CONFIG_MESSAGE,
 
     /* application-specific message titles */
     SAVE_UNSAVED_WORK_TITLE,
@@ -40,6 +49,10 @@ public enum AppPropertyTypes {
     LOAD_ERROR_TITLE,
     LARGE_DATA_TITLE,
     FILE_NOT_FOUND_TITLE,
+    APPLICATION_TITLE,
+    CONFIG_TITLE,
+    CONFIG_WINDOW_TITLE,
+    INVALID_CONFIG_TITLE,
 
     /* application-specific messages */
     SAVE_UNSAVED_WORK,
@@ -61,11 +74,39 @@ public enum AppPropertyTypes {
     TITLE_STYLE,
     DISPLAY_BUTTON,
     CHART_TITLE,
+    DONE,
+    EDIT,
+    ALGORITHM_TYPE,
+    ALGORITHM,
+    ITERATION_LABEL,
+    INTERVAL_LABEL,
+    NUMLABELS_LABEL,
+    CHECKBOX_LABEL,
 
     /* css */
     CSS_FILE,
     GRAY_TEXT,
     HIDE_SYMBOL,
     DISPLAY_LINE,
+    TOOLBAR,
+    DISPLAY_INFO,
+    TYPE_CONTAINER,
+    TYPES_BUTTON,
+    ALGORITHM_UI,
+    TYPES_TITLE,
+    ALGORITHMS_CSS,
+    ALGORITHM_TYPE_CSS,
+    ALGORITHM_NAME_CSS,
+    RUN_BUTTON,
+    TOGGLE_BUTTON,
+    CONFIG_BUTTON,
+    CONFIG_TITLE_CSS,
+    
+    
+    /* string messages */
+    INFO_1,
+    INFO_2,
+    INFO_3,
+    INFO_4,
 
 }
