@@ -68,6 +68,7 @@ functionality within the main workspace. -->
 	<property name="AVERAGE_Y" value="Average Y"/>
 	<property name="AVERAGE_Y_TOOLTIP" value="Average Y Value = "/>
 	<property name="DECIMAL_FORMAT" value="%.2f"/>
+	<property name="NULL" value="null"/>
 
 	<!-- LAYOUT USER INTERFACE -->
 	<property name="TITLE_STYLE" value="chart-title"/>

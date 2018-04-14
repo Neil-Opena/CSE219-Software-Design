@@ -82,6 +82,7 @@ public enum AppPropertyTypes {
     INTERVAL_LABEL,
     NUMLABELS_LABEL,
     CHECKBOX_LABEL,
+    NULL,
 
     /* css */
     CSS_FILE,

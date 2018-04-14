@@ -205,7 +205,7 @@ public class AppData implements DataComponent {
 	}
 
 	public void startAlgorithm(){
-		System.out.println("is running");
+
 	}
 
 	public boolean isConfigured(){
@@ -300,7 +300,7 @@ public class AppData implements DataComponent {
 	 * Removes the null label from the labels set
 	 */
 	private void checkLabels() {
-		labels.remove("null");
+		labels.remove(manager.getPropertyValue(NULL.name()));
 	}
 
 }
