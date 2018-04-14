@@ -342,6 +342,16 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().remove(backButton);
 	}
 
+	private void resetToggles(){
+		Toggle selected = classificationRadios.getSelectedToggle();
+		if(selected != null){
+			selected.setSelected(false);
+		}
+		selected = clusteringRadios.getSelectedToggle();
+		if(selected != null){
+			selected.setSelected(false);
+		}
+	}
 
 	private void resetInputRegion(){
 		classificationContainer.getChildren().clear();
@@ -481,6 +491,7 @@ public final class AppUI extends UITemplate {
 			//reset app data algorithm type
 			inputRegion.getChildren().removeAll(classificationContainer, clusteringContainer);
 			inputRegion.getChildren().add(typeContainer);
+			resetToggles();
 			hideRun();
 		});
 
