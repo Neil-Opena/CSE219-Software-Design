@@ -175,25 +175,44 @@ public final class AppUI extends UITemplate {
 		textArea.setText(text);
 	} 
 
+	/**
+	 * Returns if the input region is currently showing the text area
+	 * @return true if text area showing
+	 */
 	public boolean textAreaShown(){
 		return inputRegion.getChildren().contains(textArea);
 	}
 
+	/**
+	 * Tests to see if the current text is different from the text
+	 * that was most recently saved
+	 * @return true if different from saved text
+	 */
 	public boolean isDifferentFromSaved(){
 		return !textArea.getText().trim().equals(savedText);
 	}
 
+	/**
+	 * Tests to see if the displayed text is different from the current text
+	 * Displayed text is the data that is currently being displayed by the
+	 * plot
+	 * @return true if different from displayed text
+	 */
 	private boolean isDifferentFromDisplayed(){
 		return !textArea.getText().trim().equals(displayedText);
 	}
 
 	/**
-	 * Sets the current text as the last saved text
+	 * Sets the current text as the most recent saved text
 	 */
 	public void setSavedText(){
 		this.savedText = textArea.getText().trim();
 	}
 
+	/**
+	 * Returns the text that was most recently saved
+	 * @return String of most recently saved text
+	 */
 	public String getSavedText(){
 		return this.savedText;
 	}
@@ -216,8 +235,6 @@ public final class AppUI extends UITemplate {
 	/**
 	 * Sets the display information when a data file is loaded
 	 * @param numInstances the number of instances or data points to be plotted
-	 * @param numLabels the number of labels of the given data set
-	 * @param labelNames the names of the labels
 	 * @param source the source of the file (fileName)
 	 */
 	public void displayInfo(int numInstances, String source){
@@ -246,7 +263,9 @@ public final class AppUI extends UITemplate {
 	}
 
 	/**
-	 * Displays the input region to the user
+	 * Displays the text area to the user
+	 * Mainly used when initiating the application
+	 * Input region is reset prior to displaying the text area
 	 */
 	public void showTextArea(){
 		resetInputRegion();
@@ -256,6 +275,7 @@ public final class AppUI extends UITemplate {
 
 	/**
 	 * Displays the edit toggle button to the user
+	 * Default shows the toggle being set to DONE
 	 */
 	public void showEditToggle(){
 		inputRegion.getChildren().add(editToggleButton);
@@ -300,6 +320,10 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(classificationContainer);
 	}
 
+	/**
+	 * Hides the shown algorithms and resets the algorithms of each respective
+	 * type
+	 */
 	private void resetAlgorithms(){
 		inputRegion.getChildren().removeAll(classificationContainer, clusteringContainer);
 		classificationContainer.getChildren().clear();
@@ -325,6 +349,11 @@ public final class AppUI extends UITemplate {
 		clusteringContainer.getChildren().remove(runButton);
 	}
 
+	/**
+	 * Tests to see if user can select certain type based on labels of data
+	 * Disables classification type if the number of labels < 2
+	 * @param numLabels the number of labels of the data
+	 */
 	public void setUpAlgorithmTypes(int numLabels){
 		if(numLabels < 2){
 			classificationButton.setDisable(true);
@@ -334,14 +363,24 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(typeContainer);
 	}
 
+	/**
+	 * Shows the back button to the user
+	 */
 	private void showBackButton(){
 		inputRegion.getChildren().add(backButton);
 	}
 
+	/**
+	 * Hides the back button
+	 */
 	private void hideBackButton(){
 		inputRegion.getChildren().remove(backButton);
 	}
 
+	/**
+	 * Reset the toggle groups by un-selecting the selected toggles. 
+	 * In this case, the radio buttons
+	 */
 	private void resetToggles(){
 		Toggle selected = classificationRadios.getSelectedToggle();
 		if(selected != null){
@@ -353,12 +392,16 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
+	/**
+	 * Resets the whole input region, including the text area
+	 */
 	private void resetInputRegion(){
 		classificationContainer.getChildren().clear();
 		clusteringContainer.getChildren().clear();
 		inputRegion.getChildren().clear();
 	}
-/**
+
+	/**
 	 * Sets the text area to be read only depending on the parameter
 	 * @param readOnly true to set the text area to be read only, false otherwise
 	 */
@@ -560,10 +603,12 @@ public final class AppUI extends UITemplate {
 		});
 	}
 
-	public boolean isModified(){
-		return false;
-	}
 
+	/**
+	 * Validates the current text in the text area if it satisfies the
+	 * specified tsd format
+	 * @return 
+	 */
 	private String checkTextAreaText(){
 		AppData appData = ((AppData) applicationTemplate.getDataComponent());
 		String toTest = textArea.getText().trim();
@@ -588,6 +633,9 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
+	/**
+	 * Initiates the algorithms by forming a ui component for each one
+	 */
 	private void initAlgorithms(){
 		AppData appData = ((AppData) applicationTemplate.getDataComponent());
 		
@@ -616,6 +664,10 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
+	/**
+	 * This objects of this class represents an algorithm that the user can 
+	 * select from. Each object can be selected or configured.
+	 */
 	private class AlgorithmUI extends HBox{
 		private Label algorithmName;
 		private Button configButton;
@@ -629,6 +681,9 @@ public final class AppUI extends UITemplate {
 			setUpActions();
 		}
 
+		/**
+		 * Lays out the UI display of the algorithm choice
+		 */
 		private void layoutAlgorithm(){
 			algorithmName = new Label(manager.getPropertyValue(ALGORITHM.name()) + (index + 1));
 			algorithmName.getStyleClass().add(manager.getPropertyValue(ALGORITHM_NAME_CSS.name()));
@@ -650,16 +705,27 @@ public final class AppUI extends UITemplate {
 			this.setSpacing(15);
 		}
 
+		/**
+		 * Returns whether the algorithm chosen has been configured
+		 * @return 
+		 */
 		private boolean isConfigured(){
 			return (boolean) chooseAlgorithm.getUserData();
 		}
 
+		/**
+		 * Tests to see if the current algorithm has been configured.
+		 * Affects the display of the run button
+		 */
 		private void testForConfiguration(){
 			if(isConfigured()){
 				runButton.setDisable(false);
 			}
 		}
 
+		/**
+		 * Sets up the event handlers of the algorithm UI display
+		 */
 		private void setUpActions(){
 
 			configButton.setOnAction(event -> {
@@ -782,6 +848,9 @@ public final class AppUI extends UITemplate {
 			container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
 		}
 
+		/**
+		 * Sets up the event handlers corresponding to the window
+		 */
 		private void setUpActions(){
 			this.setOnCloseRequest(event -> {
 				createConfig();
@@ -789,10 +858,16 @@ public final class AppUI extends UITemplate {
 			});
 		}
 
+		/**
+		 * Hides the number of labels field in the window. 
+		 */
 		private void hideLabelField(){
 			container.getChildren().remove(numLabelsContainer);
 		}
 
+		/**
+		 * Shows the number of labels field in the window.
+		 */
 		private void showLabelField(){
 			if(!container.getChildren().contains(numLabelsContainer)){
 				container.getChildren().clear();
@@ -808,18 +883,18 @@ public final class AppUI extends UITemplate {
 		 */
 		private boolean checkInput(AlgorithmTypes type){
 			// no negative values or some shit
-
+			
 			//also have to check if num labels present or not
 			return true;
+		}
+
+		private void createConfig(AlgorithmTypes type){
+
 		}
 
 		/**
 		 * Create a Configuration based on the input
 		 */
-
-		/*
-		FIXME must depend on type
-		*/
 		private void createConfig(){
 			if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLUSTERING)){
 				try{
@@ -858,6 +933,11 @@ public final class AppUI extends UITemplate {
 			}
 		}
 
+		/**
+		 * Displays an error dialog to the user and uses default values
+		 * for the algorithm configuration
+		 * @param type 
+		 */
 		private void handleInvalidConfig(AlgorithmTypes type){
 			AppActions appActions = (AppActions) applicationTemplate.getActionComponent();
 			appActions.showErrorDialog(manager.getPropertyValue(INVALID_CONFIG_TITLE.name()), manager.getPropertyValue(INVALID_CONFIG_MESSAGE.name()));
