@@ -852,9 +852,10 @@ public final class AppUI extends UITemplate {
 		 * Sets up the event handlers corresponding to the window
 		 */
 		private void setUpActions(){
+			AppData appData = (AppData) applicationTemplate.getDataComponent();
 			this.setOnCloseRequest(event -> {
-				createConfig();
-				((AppData) applicationTemplate.getDataComponent()).setConfiguration(config);
+				createConfig(appData.getAlgorithmType());
+				appData.setConfiguration(config);
 			});
 		}
 
@@ -889,47 +890,30 @@ public final class AppUI extends UITemplate {
 		}
 
 		private void createConfig(AlgorithmTypes type){
+			try{
+				int maxIterations = Integer.parseInt(iterationField.getText());
+				int updateInterval = Integer.parseInt(intervalField.getText());
+				boolean toContinue = continuousCheck.isSelected();
+				int numLabels = 0;
+				if(type.equals(AlgorithmTypes.CLUSTERING)){
+					numLabels = Integer.parseInt(numLabelsField.getText());
+				}
 
-		}
-
-		/**
-		 * Create a Configuration based on the input
-		 */
-		private void createConfig(){
-			if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLUSTERING)){
-				try{
-					int maxIterations = Integer.parseInt(iterationField.getText());
-					int updateInterval = Integer.parseInt(intervalField.getText());
-					boolean toContinue = continuousCheck.isSelected();
-					int numLabels = Integer.parseInt(numLabelsField.getText());
-					if(checkInput(AlgorithmTypes.CLUSTERING)){
+				if(checkInput(type)){
+					if(type.equals(AlgorithmTypes.CLUSTERING)){
 						config = new Config(maxIterations, updateInterval, toContinue, numLabels);
-						iterationField.setText("" + maxIterations);
-						intervalField.setText("" + updateInterval);
-						continuousCheck.setSelected(toContinue);
 						numLabelsField.setText("" + numLabels);
 					}else{
-						handleInvalidConfig(AlgorithmTypes.CLUSTERING);
-					}
-				}catch(NumberFormatException e){
-					handleInvalidConfig(AlgorithmTypes.CLUSTERING);
-				}
-			}else{
-				try{
-					int maxIterations = Integer.parseInt(iterationField.getText());
-					int updateInterval = Integer.parseInt(intervalField.getText());
-					boolean toContinue = continuousCheck.isSelected();
-					if(checkInput(AlgorithmTypes.CLASSIFICATION)){
 						config = new Config(maxIterations, updateInterval, toContinue);
-						iterationField.setText("" + maxIterations);
-						intervalField.setText("" + updateInterval);
-						continuousCheck.setSelected(toContinue);
-					}else{
-						handleInvalidConfig(AlgorithmTypes.CLASSIFICATION);
 					}
-				}catch(NumberFormatException e){
-					handleInvalidConfig(AlgorithmTypes.CLASSIFICATION);
+					iterationField.setText("" + maxIterations);
+					intervalField.setText("" + updateInterval);
+					continuousCheck.setSelected(toContinue);
+				}else{
+					handleInvalidConfig(type);
 				}
+			}catch(NumberFormatException e){
+				handleInvalidConfig(type);
 			}
 		}
 
