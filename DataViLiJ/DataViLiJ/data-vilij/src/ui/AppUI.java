@@ -884,37 +884,53 @@ public final class AppUI extends UITemplate {
 		 */
 		private boolean checkInput(AlgorithmTypes type){
 			// no negative values or some shit
-			
-			//also have to check if num labels present or not
-			return true;
-		}
-
-		private void createConfig(AlgorithmTypes type){
 			try{
 				int maxIterations = Integer.parseInt(iterationField.getText());
 				int updateInterval = Integer.parseInt(intervalField.getText());
-				boolean toContinue = continuousCheck.isSelected();
 				int numLabels = 0;
 				if(type.equals(AlgorithmTypes.CLUSTERING)){
 					numLabels = Integer.parseInt(numLabelsField.getText());
-				}
-
-				if(checkInput(type)){
-					if(type.equals(AlgorithmTypes.CLUSTERING)){
-						config = new Config(maxIterations, updateInterval, toContinue, numLabels);
-						numLabelsField.setText("" + numLabels);
-					}else{
-						config = new Config(maxIterations, updateInterval, toContinue);
+					int dataLabels = ((AppData) applicationTemplate.getDataComponent()).getLabels().size();
+					if(numLabels < 0 || numLabels > dataLabels){
+						return false;
 					}
-					iterationField.setText("" + maxIterations);
-					intervalField.setText("" + updateInterval);
-					continuousCheck.setSelected(toContinue);
-				}else{
-					handleInvalidConfig(type);
+				}
+				if(maxIterations < 0){
+					return false;
+				}
+				if(updateInterval < 0){
+					return false;
 				}
 			}catch(NumberFormatException e){
-				handleInvalidConfig(type);
+				return false;
 			}
+			return true;
+		}
+		//refactor --> check validity of configuration here
+
+		/**
+		 * Creates a configuration object based on the given type
+		 * @param type of the algorithm
+		 */
+		private void createConfig(AlgorithmTypes type){
+			if(!checkInput(type)){
+				handleInvalidConfig(type);
+				return;
+			}
+			int maxIterations = Integer.parseInt(iterationField.getText());
+			int updateInterval = Integer.parseInt(intervalField.getText());
+			boolean toContinue = continuousCheck.isSelected();
+			int numLabels = 0;
+			if(type.equals(AlgorithmTypes.CLUSTERING)){
+				numLabels = Integer.parseInt(numLabelsField.getText());
+				config = new Config(maxIterations, updateInterval, toContinue, numLabels);
+				numLabelsField.setText("" + numLabels);
+			}else{
+				config = new Config(maxIterations, updateInterval, toContinue);
+			}
+			iterationField.setText("" + maxIterations);
+			intervalField.setText("" + updateInterval);
+			continuousCheck.setSelected(toContinue);
 		}
 
 		/**
