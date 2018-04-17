@@ -22,6 +22,7 @@ public class RandomClustering extends Clusterer{
 
     private final int maxIterations;
     private final int updateInterval;
+    private final int numLabels;
 
 	// currently, this value does not change after instantiation
     private final AtomicBoolean tocontinue;
@@ -44,10 +45,12 @@ public class RandomClustering extends Clusterer{
     public RandomClustering(DataSet dataset,
                             int maxIterations,
                             int updateInterval,
-                            boolean tocontinue) {
+                            boolean tocontinue,
+			    int numLabels) {
         this.dataset = dataset;
         this.maxIterations = maxIterations;
         this.updateInterval = updateInterval;
+	this.numLabels = numLabels;
         this.tocontinue = new AtomicBoolean(tocontinue);
 
 	//NULL pointer
