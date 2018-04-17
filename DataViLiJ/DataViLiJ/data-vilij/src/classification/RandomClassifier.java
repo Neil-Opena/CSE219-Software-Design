@@ -73,6 +73,11 @@ public class RandomClassifier extends Classifier {
         }
     }
 
+    @Override
+    public String toString(){
+	return "[" + this.getClass() + ": maxIterations=" + maxIterations + ", updateInterval=" + updateInterval + ", tocontinue=" + tocontinue + "]";
+    }
+
     // for internal viewing only
     protected void flush() {
         System.out.printf("%d\t%d\t%d%n", output.get(0), output.get(1), output.get(2));
