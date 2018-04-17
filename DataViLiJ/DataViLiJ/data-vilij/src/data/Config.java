@@ -44,4 +44,9 @@ public class Config {
 	public boolean getToContinue(){
 		return tocontinue.get();
 	}
+
+	@Override
+	public String toString(){
+		return "[maxIterations=" + maxIterations + ", updateInterval=" + updateInterval + ", toContinue=" + tocontinue + ", numLabels=" + numLabels +"]";
+	}
 }
