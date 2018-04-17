@@ -4,6 +4,7 @@ import actions.AppActions;
 import algorithms.Algorithm;
 import algorithms.AlgorithmTypes;
 import classification.RandomClassifier;
+import clustering.RandomClustering;
 import data.Config;
 import data.DataSet;
 import java.io.BufferedReader;
@@ -59,8 +60,6 @@ public class AppData implements DataComponent {
 	private boolean isRunning; //test if algorithm is running
 	private boolean fromFile;
 
-	private String lastSavedText;
-
 	public AppData(ApplicationTemplate applicationTemplate) {
 		this.processor = new TSDProcessor();
 		this.applicationTemplate = applicationTemplate;
@@ -107,6 +106,10 @@ public class AppData implements DataComponent {
 		}
 	}
 
+	/**
+	 * Load data from a given string input
+	 * @param dataString String representation of the data to be loaded
+	 */
 	public void loadData(String dataString) {
 		fromFile = false;
 		data = DataSet.fromText(dataString);
@@ -137,7 +140,6 @@ public class AppData implements DataComponent {
 		processor.clear();
 		appUI.getChart().getData().clear();
 		data = null;
-		lastSavedText = null;
 		fromFile = false;
 	}
 
@@ -148,14 +150,18 @@ public class AppData implements DataComponent {
 		processor.toChartData(appUI.getChart());
 	}
 
-//	public DataSet getData(){
-//		return this.data;
-//	}
-
+	/**
+	 * Gets the labels of the current data
+	 * @return Set of data labels
+	 */
 	public Set getLabels(){
 		return labels;
 	}
 
+	/**
+	 * Indicates whether the given data is loaded from a file
+	 * @return true if data is from a file
+	 */
 	public boolean isFromFile(){
 		return fromFile;
 	}
@@ -204,10 +210,17 @@ public class AppData implements DataComponent {
 		return algorithmType;
 	}
 
+	/**
+	 * Starts the algorithm
+	 */
 	public void startAlgorithm(){
-
+		System.out.println("will run");
 	}
 
+	/**
+	 * Checks to see if the selected algorithm is configured to run
+	 * @return 
+	 */
 	public boolean isConfigured(){
 		if(algorithmToRun != null){
 			return true;
@@ -222,23 +235,43 @@ public class AppData implements DataComponent {
 
 	}
 
+	/**
+	 * Returns the number of classification algorithms available
+	 * @return number of classification algorithms
+	 */
 	public int getNumClassificationAlgorithms(){
 		return numClassificationAlgorithms;
 	}
 
+	/**
+	 * Returns the number of clustering algorithms available
+	 * @return number of clustering algorithms
+	 */
 	public int getNumClusteringAlgorithms(){
 		return numClusteringAlgorithms;
 	}
 
+	/**
+	 * Sets the algorithm to run
+	 * @param index of the algorithm to be run by the application
+	 */
 	public void setAlgorithmToRun(int index){
 		algorithmToRun = null;
 		algorithmIndex = index;
 	}
 
+	/**
+	 * Set the type of algorithm to be run
+	 * @param type of algorithm from AlgorithmTypes enum
+	 */
 	public void setAlgorithmType(AlgorithmTypes type){
 		algorithmType = type;
 	}
 
+	/**
+	 * Sets the configuration of the current selected algorithm
+	 * @param config configuration to be set
+	 */
 	public void setConfiguration(Config config){
 		if(algorithmIndex != -1){
 			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
@@ -250,8 +283,7 @@ public class AppData implements DataComponent {
 			}else{
 				switch(algorithmIndex){
 					case 0:
-						//algorithmToRun = new RandomClustering(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
-						//might how to use num labels shit
+						algorithmToRun = new RandomClustering(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue(), config.getNumLabels());
 						break;
 				}
 			}
