@@ -733,20 +733,21 @@ public final class AppUI extends UITemplate {
 		 * Sets up the event handlers of the algorithm UI display
 		 */
 		private void setUpActions(){
-
+			AppData appData = (AppData) applicationTemplate.getDataComponent();
 			configButton.setOnAction(event -> {
-				if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
+				if(appData.getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
 					window.hideLabelField();
 				}else{
 					window.showLabelField();
 				}
 				window.showAndWait();
+				appData.setConfiguration(window.config);
 				chooseAlgorithm.setUserData(true);
 				testForConfiguration();
 			});
 
 			chooseAlgorithm.setOnAction(event -> {
-				((AppData) applicationTemplate.getDataComponent()).setAlgorithmToRun(index);
+				appData.setAlgorithmToRun(index);
 				if(chooseAlgorithm.isSelected()){
 					showRun();
 					testForConfiguration();
@@ -754,6 +755,9 @@ public final class AppUI extends UITemplate {
 					hideRun();
 				}
 				//might have to fix for more algorithms
+				/*
+				when an algorithm is selected, get the created config and pass to app data
+				*/
 			});
 
 			RotateTransition rot = new RotateTransition(Duration.seconds(2), configButton);
@@ -861,9 +865,15 @@ public final class AppUI extends UITemplate {
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
 			this.setOnCloseRequest(event -> {
 				createConfig(appData.getAlgorithmType());
-				appData.setConfiguration(config);
+				//appData.setConfiguration(config);
 			});
 		}
+
+		/*
+		Each algorithm has a configuration window that can produce a config
+		When the window is closed --> it produces a config object
+		everytime that the window is closed --> it should set the config for the alogrithm in the data itself
+		*/
 
 		/**
 		 * Hides the number of labels field in the window. 

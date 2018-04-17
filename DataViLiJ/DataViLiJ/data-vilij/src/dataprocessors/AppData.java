@@ -52,6 +52,7 @@ public class AppData implements DataComponent {
 	private AlgorithmTypes algorithmType;
 	private int numClassificationAlgorithms;
 	private int numClusteringAlgorithms;
+	private Config configuration;
 
 	/*
 	every algorithm has an index
@@ -210,24 +211,31 @@ public class AppData implements DataComponent {
 		return algorithmType;
 	}
 
+	private void setUpAlgorithm(){
+		if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
+			switch(algorithmIndex){
+				case (0) :
+					algorithmToRun = new RandomClassifier(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue());
+					break;
+			}
+		}else{
+			switch(algorithmIndex){
+				case (0) : 
+					System.out.println("ha");
+					algorithmToRun = new RandomClustering(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), configuration.getNumLabels());
+					break;
+			}
+		}
+	}
+
 	/**
 	 * Starts the algorithm
 	 */
 	public void startAlgorithm(){
-		System.out.println("will run");
+		setUpAlgorithm();
+		System.out.println(algorithmToRun + " will run");
 	}
 
-	/**
-	 * Checks to see if the selected algorithm is configured to run
-	 * @return 
-	 */
-	public boolean isConfigured(){
-		if(algorithmToRun != null){
-			return true;
-		}
-		return false; // algorithm has not been configured yet
-	}
-	
 	/**
 	 * Continue the algorithm
 	 */
@@ -256,7 +264,6 @@ public class AppData implements DataComponent {
 	 * @param index of the algorithm to be run by the application
 	 */
 	public void setAlgorithmToRun(int index){
-		algorithmToRun = null;
 		algorithmIndex = index;
 	}
 
@@ -273,22 +280,14 @@ public class AppData implements DataComponent {
 	 * @param config configuration to be set
 	 */
 	public void setConfiguration(Config config){
-		if(algorithmIndex != -1){
-			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
-				switch(algorithmIndex){
-					case 0: 
-						algorithmToRun = new RandomClassifier(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue());
-						break;
-				}
-			}else{
-				switch(algorithmIndex){
-					case 0:
-						algorithmToRun = new RandomClustering(data, config.getMaxIterations(), config.getUpdateInterval(), config.getToContinue(), config.getNumLabels());
-						break;
-				}
-			}
-		}
+		configuration = config;
+		System.out.println(config);
 	}
+
+	/*
+	when user clicks algorithm --> it sets the algorithm to run
+	if there's no configuration --> can't actually run
+	*/
 
 	/**
 	 * Returns the text within a given file
