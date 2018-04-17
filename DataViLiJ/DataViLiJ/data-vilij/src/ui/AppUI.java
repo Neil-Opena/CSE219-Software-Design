@@ -397,7 +397,13 @@ public final class AppUI extends UITemplate {
 	 */
 	private void resetInputRegion(){
 		classificationContainer.getChildren().clear();
+		classificationAlgorithms.forEach(action -> {
+			action.window.resetConfigWindow();
+		});
 		clusteringContainer.getChildren().clear();
+		clusteringAlgorithms.forEach(action -> {
+			action.window.resetConfigWindow();
+		});
 		inputRegion.getChildren().clear();
 	}
 
@@ -906,7 +912,6 @@ public final class AppUI extends UITemplate {
 			}
 			return true;
 		}
-		//refactor --> check validity of configuration here
 
 		/**
 		 * Creates a configuration object based on the given type
@@ -931,6 +936,13 @@ public final class AppUI extends UITemplate {
 			iterationField.setText("" + maxIterations);
 			intervalField.setText("" + updateInterval);
 			continuousCheck.setSelected(toContinue);
+		}
+
+		private void resetConfigWindow(){
+			iterationField.setText("");
+			intervalField.setText("");
+			continuousCheck.setSelected(false);
+			numLabelsField.setText("");
 		}
 
 		/**

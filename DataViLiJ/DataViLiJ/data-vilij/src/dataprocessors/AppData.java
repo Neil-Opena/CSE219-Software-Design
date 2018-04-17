@@ -239,10 +239,6 @@ public class AppData implements DataComponent {
 		algorithmType = type;
 	}
 
-	/*
-	What would happen if user configed without selecting algorithm?
-	//FIXME
-	*/
 	public void setConfiguration(Config config){
 		if(algorithmIndex != -1){
 			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
