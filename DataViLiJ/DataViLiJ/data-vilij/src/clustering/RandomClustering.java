@@ -7,13 +7,12 @@ package clustering;
 
 import algorithms.Clusterer;
 import data.DataSet;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
- * @author Neil Opean
+ * @author Neil Opena
  */
 public class RandomClustering extends Clusterer{
     private static final Random RAND = new Random();
@@ -52,9 +51,6 @@ public class RandomClustering extends Clusterer{
         this.updateInterval = updateInterval;
 	this.numLabels = numLabels;
         this.tocontinue = new AtomicBoolean(tocontinue);
-
-	//NULL pointer
-	if(dataset != null) this.labels = (List<String>) dataset.getLabels().values();
     }
 
     @Override
