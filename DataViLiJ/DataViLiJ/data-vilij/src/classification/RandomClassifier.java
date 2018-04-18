@@ -70,6 +70,7 @@ public class RandomClassifier extends Classifier {
                 flush();
                 break;
             }
+	    System.out.println(output);
         }
     }
 

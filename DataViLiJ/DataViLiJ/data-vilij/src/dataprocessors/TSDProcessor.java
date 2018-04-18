@@ -115,6 +115,13 @@ public final class TSDProcessor {
 		}
 	}
 
+	void displayLine(XYChart<Number, Number> chart, int xCoefficient, int yCoefficient, int constant){
+		XYChart.Series<Number, Number> series = new XYChart.Series<>();
+		series.setName("line");
+		series.getData().add(new XYChart.Data<>(xCoefficient, yCoefficient)); //not right at all lol
+		chart.getData().add(series);
+	}
+
 	/**
 	 * 
 	 * @return 

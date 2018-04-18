@@ -3,6 +3,7 @@ package dataprocessors;
 import actions.AppActions;
 import algorithms.Algorithm;
 import algorithms.AlgorithmTypes;
+import algorithms.Classifier;
 import classification.RandomClassifier;
 import clustering.RandomClustering;
 import data.Config;
@@ -221,7 +222,6 @@ public class AppData implements DataComponent {
 		}else{
 			switch(algorithmIndex){
 				case (0) : 
-					System.out.println("ha");
 					algorithmToRun = new RandomClustering(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), configuration.getNumLabels());
 					break;
 			}
@@ -233,8 +233,26 @@ public class AppData implements DataComponent {
 	 */
 	public void startAlgorithm(){
 		setUpAlgorithm();
-		System.out.println(algorithmToRun + " will run");
+		//System.out.println(algorithmToRun + " is running");
+		Thread algo = new Thread(algorithmToRun, "Test Thread");
+		algo.start();
+		try{
+			algo.join(); //wait for algorithm to die
+			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
+				List<Integer> output =((Classifier) algorithmToRun).getOutput();
+				System.out.println("output = " + output);
+				output.forEach(action -> {
+					processor.displayLine(appUI.getChart(), output.get(0), output.get(1), output.get(2));
+				});
+			}
+		}catch(InterruptedException e){
+			System.out.println("interrupted");
+		}
 	}
+
+	/*
+	Why does output return to null though
+	*/
 
 	/**
 	 * Continue the algorithm
@@ -281,7 +299,6 @@ public class AppData implements DataComponent {
 	 */
 	public void setConfiguration(Config config){
 		configuration = config;
-		System.out.println(config);
 	}
 
 	/*
