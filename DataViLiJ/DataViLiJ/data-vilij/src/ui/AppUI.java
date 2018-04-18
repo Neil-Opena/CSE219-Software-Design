@@ -149,6 +149,8 @@ public final class AppUI extends UITemplate {
 	@Override
 	public void clear() {
 		((AppData) applicationTemplate.getDataComponent()).clear();
+		resetInputRegion();
+		resetRadioUserData();
 		textArea.clear();
 		scrnshotButton.setDisable(true);
 		displayedText = null;
@@ -268,7 +270,6 @@ public final class AppUI extends UITemplate {
 	 * Input region is reset prior to displaying the text area
 	 */
 	public void showTextArea(){
-		resetInputRegion();
 		inputRegion.getChildren().addAll(inputTitle, textArea);
 	}
 
@@ -392,15 +393,30 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
+	private void resetRadioUserData(){
+		classificationRadios.getToggles().forEach(action -> {
+			action.setUserData(false);
+		});
+		clusteringRadios.getToggles().forEach(action -> {
+			action.setUserData(false);
+		});
+		/*
+		user data is used to check if the current radio button = algorithm has been configured
+		*/
+		
+	}
+
 	/**
 	 * Resets the whole input region, including the text area
 	 */
 	private void resetInputRegion(){
-		classificationContainer.getChildren().clear();
+		resetAlgorithms();
+		resetToggles();
+		//run button should be disabled or some shit
+		//should reset user data of user
 		classificationAlgorithms.forEach(action -> {
 			action.window.resetConfigWindow();
 		});
-		clusteringContainer.getChildren().clear();
 		clusteringAlgorithms.forEach(action -> {
 			action.window.resetConfigWindow();
 		});

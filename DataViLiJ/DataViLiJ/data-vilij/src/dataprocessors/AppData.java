@@ -48,11 +48,12 @@ public class AppData implements DataComponent {
 	private DataSet data;
 	private Set labels;
 
-	private Algorithm algorithmToRun; //current algorithm queued up to run
-	private int algorithmIndex;
-	private AlgorithmTypes algorithmType;
 	private int numClassificationAlgorithms;
 	private int numClusteringAlgorithms;
+
+	private AlgorithmTypes algorithmType;
+	private int algorithmIndex;
+	private Algorithm algorithmToRun; //current algorithm queued up to run
 	private Config configuration;
 
 	/*
@@ -141,6 +142,10 @@ public class AppData implements DataComponent {
 	public void clear() {
 		processor.clear();
 		appUI.getChart().getData().clear();
+		algorithmType = null;
+		algorithmIndex = -1;
+		algorithmToRun = null;
+		configuration = null;
 		data = null;
 		fromFile = false;
 	}
