@@ -154,7 +154,10 @@ public class AppData implements DataComponent {
 	 * Display the current data stored in the chart
 	 */
 	public void displayData() {
-		processor.toChartData(appUI.getChart());
+		if(appUI.isDifferentFromDisplayed()){
+			appUI.setDisplayedText();
+			processor.toChartData(appUI.getChart());
+		}
 	}
 
 	/**
@@ -243,12 +246,11 @@ public class AppData implements DataComponent {
 		algo.start();
 		try{
 			algo.join(); //wait for algorithm to die
+			displayData();
 			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
 				List<Integer> output =((Classifier) algorithmToRun).getOutput();
 				System.out.println("output = " + output);
-				output.forEach(action -> {
-					processor.displayLine(appUI.getChart(), output.get(0), output.get(1), output.get(2));
-				});
+				processor.displayLine(appUI.getChart(), output.get(0), output.get(1), output.get(2));
 			}
 		}catch(InterruptedException e){
 			System.out.println("interrupted");

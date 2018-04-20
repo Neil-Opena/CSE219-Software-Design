@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
+import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import javafx.geometry.Point2D;
 
@@ -51,6 +52,7 @@ public final class TSDProcessor {
 
 	private Map<String, String> dataLabels;
 	private Map<String, Point2D> dataPoints;
+	private XYChart.Series line;
 
 	public TSDProcessor() {
 		dataLabels = new LinkedHashMap<>();
@@ -102,6 +104,7 @@ public final class TSDProcessor {
 	 * @param chart the specified chart
 	 */
 	void toChartData(XYChart<Number, Number> chart) {
+		chart.getData().clear();
 		Set<String> labels = new LinkedHashSet<>(dataLabels.values());
 		for (String label : labels) {
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
@@ -115,11 +118,41 @@ public final class TSDProcessor {
 		}
 	}
 
-	void displayLine(XYChart<Number, Number> chart, int xCoefficient, int yCoefficient, int constant){
-		XYChart.Series<Number, Number> series = new XYChart.Series<>();
-		series.setName("line");
-		series.getData().add(new XYChart.Data<>(xCoefficient, yCoefficient)); //not right at all lol
-		chart.getData().add(series);
+	void displayLine(XYChart<Number, Number> chart, int a, int b, int c){
+		if(line != null){
+			chart.getData().remove(line);
+		}
+		line = new XYChart.Series<>();
+		line.setName("line");
+
+		double min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
+		double max = min;
+
+		for(XYChart.Series serie : chart.getData()){
+			for(XYChart.Data point : (ObservableList<XYChart.Data>) serie.getData()){
+
+				double testXVal = Double.parseDouble(point.getXValue().toString());
+				if(testXVal < min){
+					min = testXVal;
+				}else if(testXVal > max){
+					max = testXVal;
+				}
+				
+			}
+		}
+
+		double yVal;
+		yVal = (1.0/b) * ((a * min) + c);
+		XYChart.Data minX = new XYChart.Data(min, yVal);
+		yVal = (1.0/b) * ((a * max) + c);
+		XYChart.Data maxX = new XYChart.Data(max, yVal);
+		line.getData().add(minX);
+		line.getData().add(maxX);
+
+		chart.getData().add(line);
+		minX.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name())); 
+		maxX.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name()));
+		line.getNode().getStyleClass().add("line");
 	}
 
 	/**

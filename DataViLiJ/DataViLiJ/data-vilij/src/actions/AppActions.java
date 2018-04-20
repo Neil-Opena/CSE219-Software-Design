@@ -96,11 +96,15 @@ public final class AppActions implements ActionComponent {
 	When displaying the file, the processor actually checks the data
 	*/
 	private void setUpNewFile(){
+		((AppData) applicationTemplate.getDataComponent()).clear();
 		dataFilePath = null;
 		appUI.clear();
 		appUI.showTextArea();
 		appUI.showEditToggle();
 		//find a way to check if from file is false;
+		/*
+		Prolly need to fix
+		*/
 	}
 
 	/*
@@ -144,7 +148,7 @@ public final class AppActions implements ActionComponent {
 	@Override
 	public void handleLoadRequest() {
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
-
+		//add condition to check if text area is blank
 		if(appData.isFromFile() || !appUI.textAreaShown() || !appUI.isDifferentFromSaved()){
 			loadFile();
 		}else{

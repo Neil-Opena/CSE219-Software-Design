@@ -34,8 +34,7 @@ import javafx.animation.RotateTransition;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -58,8 +57,6 @@ public final class AppUI extends UITemplate {
 	 */
 	ApplicationTemplate applicationTemplate;
 	private PropertyManager manager;
-
-	private ConfigWindow configWindow;
 
 	@SuppressWarnings("FieldCanBeLocal")
 	private VBox inputRegion; // container for input region
@@ -148,7 +145,6 @@ public final class AppUI extends UITemplate {
 
 	@Override
 	public void clear() {
-		((AppData) applicationTemplate.getDataComponent()).clear();
 		resetInputRegion();
 		resetRadioUserData();
 		textArea.clear();
@@ -200,8 +196,12 @@ public final class AppUI extends UITemplate {
 	 * plot
 	 * @return true if different from displayed text
 	 */
-	private boolean isDifferentFromDisplayed(){
+	public boolean isDifferentFromDisplayed(){
 		return !textArea.getText().trim().equals(displayedText);
+	}
+
+	public void setDisplayedText(){
+		this.displayedText = textArea.getText().trim();
 	}
 
 	/**
@@ -437,6 +437,25 @@ public final class AppUI extends UITemplate {
 	}
 
 	/**
+	 * Adds listeners to the data points inside the chart
+	 */
+	private void addDataPointListeners(){
+		for(XYChart.Series series : chart.getData()){
+			for(XYChart.Data point : (ObservableList<XYChart.Data>) series.getData()){
+				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
+
+				point.getNode().setOnMouseEntered(e -> {
+					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
+				});
+				point.getNode().setOnMouseExited(e -> {
+					getPrimaryScene().setCursor(Cursor.DEFAULT);
+				});
+			}
+		}
+	}
+	//move to app data
+
+	/**
 	 * Lays out the arrangement of the user interface
 	 * Instantiates the graphical user interface objects for use  
 	 */
@@ -524,8 +543,6 @@ public final class AppUI extends UITemplate {
 
 		workspace.getChildren().addAll(inputRegion, chart);
 		appPane.getChildren().add(workspace);
-		
-		configWindow = new ConfigWindow();
 	}
 
 	/**
@@ -535,18 +552,13 @@ public final class AppUI extends UITemplate {
 
 		displayButton.setOnAction(event -> {
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
+			appData.displayData();
 			
-			if(isDifferentFromDisplayed()){
-				chart.getData().clear();
-				appData.displayData();
-				addDataPointListeners();
-				displayedText = textArea.getText().trim();
-			}
-
 			if(chart.getData().isEmpty()){
 				scrnshotButton.setDisable(true);
 			}else{
 				scrnshotButton.setDisable(false);
+				addDataPointListeners();
 			}
 		});
 
@@ -635,24 +647,6 @@ public final class AppUI extends UITemplate {
 		AppData appData = ((AppData) applicationTemplate.getDataComponent());
 		String toTest = textArea.getText().trim();
 		return appData.validateText(toTest);
-	}
-
-	/**
-	 * Adds listeners to the data points inside the chart
-	 */
-	private void addDataPointListeners(){
-		for(Series series : chart.getData()){
-			for(Data point : (ObservableList<Data>) series.getData()){
-				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
-
-				point.getNode().setOnMouseEntered(e -> {
-					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
-				});
-				point.getNode().setOnMouseExited(e -> {
-					getPrimaryScene().setCursor(Cursor.DEFAULT);
-				});
-			}
-		}
 	}
 
 	/**

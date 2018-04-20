@@ -26,8 +26,8 @@ and open the template in the editor.
 	-fx-stroke: null;
 }
 
-.display-line{
-	-fx-stroke: dodgerblue;
+.line{
+	-fx-stroke: black;
 }
 
 .hide-symbol{
