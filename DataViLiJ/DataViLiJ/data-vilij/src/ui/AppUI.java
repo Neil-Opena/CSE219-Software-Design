@@ -340,10 +340,14 @@ public final class AppUI extends UITemplate {
 	}
 
 	public void disableRun(){
+		scrnshotButton.setDisable(true); //also disables screen shot button
 		runButton.setDisable(true);
 	}
 
 	public void enableRun(){
+		if(!chart.getData().isEmpty()){
+			scrnshotButton.setDisable(false); //enables screen shot button if chart is not empty
+		}
 		runButton.setDisable(false);
 	}
 
