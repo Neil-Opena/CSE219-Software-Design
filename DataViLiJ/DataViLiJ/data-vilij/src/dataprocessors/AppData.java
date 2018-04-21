@@ -246,6 +246,11 @@ public class AppData implements DataComponent {
 		isRunning = true;
 	}
 
+	public void completeAlgorithm(){
+		appActions.showErrorDialog("Algorithm completed", "ALgorithm has finished");
+		appUI.enableRun(); //should algorithm start over again?
+	}
+
 	public void enableRun(){
 		appUI.enableRun();
 	}

@@ -105,6 +105,8 @@ public class RandomClassifier extends Classifier {
 				break;
 			}
 		}
+		//algorithm has finished
+		Platform.runLater(() -> appData.completeAlgorithm());
 	}
 	
 	@Override
