@@ -84,18 +84,19 @@ public class RandomClassifier extends Classifier {
 			if (i % updateInterval == 0) {
 				System.out.printf("Iteration number %d: ", i); //
 				flush();
-				updateData();
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(1000); //simulate performing algorithm 
+					updateData();
 				} catch (InterruptedException ex) {
 					//do nothing
 				}
 				if(!isInitContinue()){
-					appData.alertUI();
+					appData.enableRun();
 					tocontinue.set(false);
 					while(!tocontinue()){
 						//don't do anything until it is set to continue
 					}
+					appData.disableRun();
 				}
 			}
 			if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
@@ -113,6 +114,7 @@ public class RandomClassifier extends Classifier {
 		int c = output.get(2);
 
 		if(b == 0 || a == 0){
+			System.out.println("Not a valid line");
 			return;
 		}
 
