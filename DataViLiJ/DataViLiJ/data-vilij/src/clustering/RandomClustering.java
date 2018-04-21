@@ -86,4 +86,17 @@ public class RandomClustering extends Clusterer{
     protected void flush() {
         System.out.print("label modified");
     }
+
+    public void startAlgorithm(){
+
+    }
+
+    public void continueAlgorithm(){
+
+    }
+
+	@Override
+	public void updateData() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }
