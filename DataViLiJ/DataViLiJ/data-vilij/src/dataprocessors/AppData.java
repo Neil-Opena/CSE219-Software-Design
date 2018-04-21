@@ -223,7 +223,7 @@ public class AppData implements DataComponent {
 		if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
 			switch(algorithmIndex){
 				case (0) :
-					algorithmToRun = new RandomClassifier(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), appUI.getChart());
+					algorithmToRun = new RandomClassifier(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), appUI.getChart(), this);
 					break;
 			}
 		}else{
@@ -242,13 +242,20 @@ public class AppData implements DataComponent {
 		setUpAlgorithm();
 		displayData();
 		algorithmToRun.startAlgorithm();
+		appUI.disableRun();
+	}
+
+	public void alertUI(){
+		if(!configuration.getToContinue()){
+			appUI.enableRun();
+		}
 	}
 
 	/**
 	 * Continue the algorithm
 	 */
 	public void continueAlgorithm(){
-
+		algorithmToRun.continueAlgorithm();
 	}
 
 	/**

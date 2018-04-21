@@ -31,10 +31,7 @@ import java.util.List;
 import java.util.Set;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
-import javafx.collections.ObservableList;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -342,6 +339,14 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
+	public void disableRun(){
+		runButton.setDisable(true);
+	}
+
+	public void enableRun(){
+		runButton.setDisable(false);
+	}
+
 	/**
 	 * Hides the run button
 	 */
@@ -435,25 +440,6 @@ public final class AppUI extends UITemplate {
 			textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
 		}
 	}
-
-	/**
-	 * Adds listeners to the data points inside the chart
-	 */
-	private void addDataPointListeners(){
-		for(XYChart.Series series : chart.getData()){
-			for(XYChart.Data point : (ObservableList<XYChart.Data>) series.getData()){
-				Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
-
-				point.getNode().setOnMouseEntered(e -> {
-					getPrimaryScene().setCursor(Cursor.CROSSHAIR);
-				});
-				point.getNode().setOnMouseExited(e -> {
-					getPrimaryScene().setCursor(Cursor.DEFAULT);
-				});
-			}
-		}
-	}
-	//move to app data
 
 	/**
 	 * Lays out the arrangement of the user interface
@@ -558,7 +544,6 @@ public final class AppUI extends UITemplate {
 				scrnshotButton.setDisable(true);
 			}else{
 				scrnshotButton.setDisable(false);
-				addDataPointListeners();
 			}
 		});
 

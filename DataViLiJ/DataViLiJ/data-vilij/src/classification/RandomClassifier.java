@@ -2,12 +2,11 @@ package classification;
 
 import algorithms.Classifier;
 import data.DataSet;
+import dataprocessors.AppData;
 
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
@@ -27,12 +26,13 @@ public class RandomClassifier extends Classifier {
 	private XYChart.Series line;
 
 	private final Thread algorithm;
+	private final AppData appData;
 
 	private final int maxIterations;
 	private final int updateInterval;
 
 	// currently, this value does not change after instantiation
-	private final AtomicBoolean tocontinue;
+	private AtomicBoolean tocontinue;
 
 	@Override
 	public int getMaxIterations() {
@@ -45,26 +45,27 @@ public class RandomClassifier extends Classifier {
 	}
 
 	@Override
-	public boolean tocontinue() {
+	public final boolean tocontinue() {
 		return tocontinue.get();
 	}
 
 	public RandomClassifier(DataSet dataset,
 		int maxIterations,
 		int updateInterval,
-		boolean tocontinue, XYChart chart) {
+		boolean tocontinue, XYChart chart, AppData appData) {
 		this.dataset = dataset;
 		this.maxIterations = maxIterations;
 		this.updateInterval = updateInterval;
 		algorithm = new Thread(this);
 		this.tocontinue = new AtomicBoolean(tocontinue);
 		this.chart = chart;
+		this.appData = appData;
 	}
 
 	@Override
 	public void run() {
 		initLine();
-		for (int i = 1; i <= maxIterations && tocontinue(); i++) {
+		for (int i = 1; i <= maxIterations; i++) {
 			int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
 			int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
 			int constant = new Double(RAND.nextDouble() * 100).intValue();
@@ -80,9 +81,14 @@ public class RandomClassifier extends Classifier {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException ex) {
-					Logger.getLogger(RandomClassifier.class.getName()).log(Level.SEVERE, null, ex);
+					//do nothing
 				}
 				updateData();
+				appData.alertUI();
+				while(!tocontinue()){
+					System.out.println("waiting to continue...");
+					//tell appdata that it is currently paused
+				}
 			}
 			if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
 				System.out.printf("Iteration number %d: ", i);
@@ -98,15 +104,19 @@ public class RandomClassifier extends Classifier {
 		int b = output.get(1);
 		int c = output.get(2);
 
+		if(b == 0 || a == 0){
+			return;
+		}
+
 
 		Platform.runLater(() -> {
 			XYChart.Series line = (chart.getData().get(chart.getData().size() - 1));
 			Data min = (Data) line.getData().get(0);
 			Data max = (Data) line.getData().get(1);
 			double yVal;
-			yVal = (1.0/b) * ((a * (double) min.getXValue()) + c);
+			yVal = ((-(a * (double) min.getXValue())) - c) / b;
 			min.setYValue(yVal);
-			yVal = (1.0/b) * ((a * (double) max.getXValue()) + c);
+			yVal = ((-(a * (double) max.getXValue())) - c) / b;
 			min.setYValue(yVal);
 		});
 	}
@@ -139,6 +149,8 @@ public class RandomClassifier extends Classifier {
 		Platform.runLater(() -> {
 			chart.getData().add(line);
 			line.getNode().getStyleClass().add("line");
+			((XYChart.Data) line.getData().get(0)).getNode().getStyleClass().add("hide-symbol");
+			((XYChart.Data) line.getData().get(1)).getNode().getStyleClass().add("hide-symbol");
 		});
 	}
 
@@ -166,6 +178,6 @@ public class RandomClassifier extends Classifier {
 
 	@Override
 	public void continueAlgorithm() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		tocontinue.set(true);
 	}
 }
