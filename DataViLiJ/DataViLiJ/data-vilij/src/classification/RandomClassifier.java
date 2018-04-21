@@ -62,6 +62,8 @@ public class RandomClassifier extends Classifier {
 		this.maxIterations = maxIterations;
 		this.updateInterval = updateInterval;
 		algorithm = new Thread(this);
+		algorithm.setName(this.getClass().toString());
+
 		this.tocontinue = new AtomicBoolean(tocontinue);
 		this.initContinue = new AtomicBoolean(tocontinue);
 		this.chart = chart;
@@ -71,7 +73,8 @@ public class RandomClassifier extends Classifier {
 	@Override
 	public void run() {
 		initLine();
-		for (int i = 1; i <= maxIterations; i++) {
+		for (int i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
+			System.out.println(Thread.interrupted());
 			int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
 			int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
 			int constant = new Double(RAND.nextDouble() * 100).intValue();
@@ -89,6 +92,7 @@ public class RandomClassifier extends Classifier {
 					updateData();
 				} catch (InterruptedException ex) {
 					//do nothing
+					return;
 				}
 				if(!isInitContinue()){
 					appData.enableRun();
@@ -191,5 +195,10 @@ public class RandomClassifier extends Classifier {
 	@Override
 	public void continueAlgorithm() {
 		tocontinue.set(true);
+	}
+
+	@Override
+	public void stopAlgorithm(){
+		algorithm.interrupt();
 	}
 }

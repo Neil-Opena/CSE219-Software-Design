@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.Chart;
@@ -14,6 +13,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javax.imageio.ImageIO;
 
 import dataprocessors.AppData;
+import javafx.application.Platform;
 import vilij.components.ActionComponent;
 import vilij.components.ConfirmationDialog;
 import vilij.components.ConfirmationDialog.Option;
@@ -191,6 +191,11 @@ public final class AppActions implements ActionComponent {
 
 	@Override
 	public void handleExitRequest() {
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
+		if(appData.isRunning()){
+			System.out.println("algorithm is still running bruh");
+			appData.stopAlgorithm();
+		}
 		Platform.exit();
 	}
 

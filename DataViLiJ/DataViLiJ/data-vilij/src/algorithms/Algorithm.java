@@ -23,4 +23,6 @@ public interface Algorithm extends Runnable {
     void continueAlgorithm();
 
     void updateData();
+
+    void stopAlgorithm();
 }
