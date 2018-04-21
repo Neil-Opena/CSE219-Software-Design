@@ -243,12 +243,17 @@ public class AppData implements DataComponent {
 		displayData();
 		algorithmToRun.startAlgorithm();
 		appUI.disableRun();
+		isRunning = true;
 	}
 
 	public void alertUI(){
 		if(!configuration.getToContinue()){
 			appUI.enableRun();
 		}
+	}
+
+	public boolean isRunning(){
+		return isRunning;
 	}
 
 	/**

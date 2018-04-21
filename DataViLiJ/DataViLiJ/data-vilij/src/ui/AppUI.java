@@ -558,16 +558,18 @@ public final class AppUI extends UITemplate {
 
 		runButton.setOnAction(event -> {
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
-			// will have to reset somewhere i think (when new or loaded)
-			Toggle selected;
-
-			if(appData.getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
-				selected = classificationRadios.getSelectedToggle();
+			if(!appData.isRunning()){
+				Toggle selected;
+				if(appData.getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
+					selected = classificationRadios.getSelectedToggle();
+				}else{
+					selected = clusteringRadios.getSelectedToggle();
+				}
+				appData.startAlgorithm();
 			}else{
-				selected = clusteringRadios.getSelectedToggle();
+				appData.continueAlgorithm();
 			}
-			//need to call appData.isConfigured somewhere
-			appData.startAlgorithm();
+
 		});
 
 		clusteringButton.setOnAction(event ->{
