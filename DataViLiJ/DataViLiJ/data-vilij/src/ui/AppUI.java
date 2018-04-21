@@ -184,6 +184,12 @@ public final class AppUI extends UITemplate {
 	 * @return true if different from saved text
 	 */
 	public boolean isDifferentFromSaved(){
+		/*
+		text area is empty, and file has not been saved yet
+		*/
+		if(textArea.getText().trim().isEmpty() && savedText == null){
+			return false;
+		}
 		return !textArea.getText().trim().equals(savedText);
 	}
 
