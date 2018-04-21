@@ -247,9 +247,7 @@ public class AppData implements DataComponent {
 	}
 
 	public void alertUI(){
-		if(!configuration.getToContinue()){
-			appUI.enableRun();
-		}
+		appUI.enableRun();
 	}
 
 	public boolean isRunning(){

@@ -33,6 +33,7 @@ public class RandomClassifier extends Classifier {
 
 	// currently, this value does not change after instantiation
 	private AtomicBoolean tocontinue;
+	private AtomicBoolean initContinue; //value that does not change
 
 	@Override
 	public int getMaxIterations() {
@@ -49,6 +50,10 @@ public class RandomClassifier extends Classifier {
 		return tocontinue.get();
 	}
 
+	public final boolean isInitContinue(){
+		return initContinue.get();
+	}
+
 	public RandomClassifier(DataSet dataset,
 		int maxIterations,
 		int updateInterval,
@@ -58,6 +63,7 @@ public class RandomClassifier extends Classifier {
 		this.updateInterval = updateInterval;
 		algorithm = new Thread(this);
 		this.tocontinue = new AtomicBoolean(tocontinue);
+		this.initContinue = new AtomicBoolean(tocontinue);
 		this.chart = chart;
 		this.appData = appData;
 	}
@@ -78,16 +84,18 @@ public class RandomClassifier extends Classifier {
 			if (i % updateInterval == 0) {
 				System.out.printf("Iteration number %d: ", i); //
 				flush();
+				updateData();
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException ex) {
 					//do nothing
 				}
-				updateData();
-				appData.alertUI();
-				while(!tocontinue()){
-					System.out.println("waiting to continue...");
-					//tell appdata that it is currently paused
+				if(!isInitContinue()){
+					appData.alertUI();
+					tocontinue.set(false);
+					while(!tocontinue()){
+						//don't do anything until it is set to continue
+					}
 				}
 			}
 			if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
