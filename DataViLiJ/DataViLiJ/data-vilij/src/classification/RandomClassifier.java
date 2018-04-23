@@ -74,7 +74,6 @@ public class RandomClassifier extends Classifier {
 	public void run() {
 		initLine();
 		for (int i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
-			System.out.println(Thread.interrupted());
 			int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
 			int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
 			int constant = new Double(RAND.nextDouble() * 100).intValue();
@@ -138,9 +137,9 @@ public class RandomClassifier extends Classifier {
 	}
 
 	private void initLine(){
-		line = new XYChart.Series<>();
-		line.setName("line");
-
+		/*
+		Traverse data of the chart first
+		*/
 		double min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
 		double max = min;
 
@@ -156,6 +155,19 @@ public class RandomClassifier extends Classifier {
 				
 			}
 		}
+
+		/*
+		Modify chart after traversing data to avoid ConcurrentModificationException
+		*/
+		XYChart.Series potentialLine = chart.getData().get(chart.getData().size() - 1);
+		if(potentialLine.getName().equals("line")){
+			Platform.runLater(() -> {
+				chart.getData().remove(potentialLine);
+				
+			});
+		}
+		line = new XYChart.Series<>();
+		line.setName("line");
 
 		XYChart.Data minX = new XYChart.Data(min, 0);
 		XYChart.Data maxX = new XYChart.Data(max, 0);
