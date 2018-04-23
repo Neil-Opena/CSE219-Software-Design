@@ -27,6 +27,9 @@ public enum AppPropertyTypes {
     PLAY_TOOLTIP,
     CONFIG_TOOLTIP,
 
+    /* warning message */
+    EXIT_WHILE_RUNNING_WARNING,
+
     /* error messages */
     RESOURCE_SUBDIR_NOT_FOUND,
     INVALID_DATA_MESSAGE,

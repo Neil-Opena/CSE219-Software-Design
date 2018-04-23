@@ -160,14 +160,14 @@ public class RandomClassifier extends Classifier {
 		Modify chart after traversing data to avoid ConcurrentModificationException
 		*/
 		XYChart.Series potentialLine = chart.getData().get(chart.getData().size() - 1);
-		if(potentialLine.getName().equals("line")){
+		if(potentialLine.getName().equals("classification")){
 			Platform.runLater(() -> {
 				chart.getData().remove(potentialLine);
 				
 			});
 		}
 		line = new XYChart.Series<>();
-		line.setName("line");
+		line.setName("classification");
 
 		XYChart.Data minX = new XYChart.Data(min, 0);
 		XYChart.Data maxX = new XYChart.Data(max, 0);

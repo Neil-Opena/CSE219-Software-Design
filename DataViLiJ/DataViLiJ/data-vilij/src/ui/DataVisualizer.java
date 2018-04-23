@@ -5,7 +5,6 @@ import javafx.stage.Stage;
 import actions.AppActions;
 import components.AlgorithmDialog;
 import dataprocessors.AppData;
-import vilij.components.Dialog;
 import vilij.templates.ApplicationTemplate;
 import static vilij.settings.InitializationParams.*;
 
@@ -52,7 +51,7 @@ public final class DataVisualizer extends ApplicationTemplate {
 		uiComponent.initialize();
 	}
 
-	public Dialog getAlgorithmDialog(){
+	public AlgorithmDialog getAlgorithmDialog(){
 		return this.algorithmDialog;
 	}
 

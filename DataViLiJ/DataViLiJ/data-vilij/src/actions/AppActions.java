@@ -1,5 +1,6 @@
 package actions;
 
+import components.AlgorithmDialog;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -209,11 +210,11 @@ public final class AppActions implements ActionComponent {
 
 	private void exit(){
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
-		if(appData.isRunning()){
-			showTerminateDialog();
+		if(appData.isRunning() && showTerminateDialog()){
 			appData.stopAlgorithm();
+			Platform.exit();
+			//add case when algorithm is running and then finishes --> automatically close dialog
 		}
-		Platform.exit();
 	}
 
 	@Override
@@ -310,8 +311,18 @@ public final class AppActions implements ActionComponent {
 		(a) terminate the algorithm right away and close the application
 		(b) return to the application
 		*/
-		Dialog algorithmDialog = ((DataVisualizer) applicationTemplate).getAlgorithmDialog();
-		algorithmDialog.show("BRUH", "BRUHHHH");
-		return false;
+		AlgorithmDialog algorithmDialog = ((DataVisualizer) applicationTemplate).getAlgorithmDialog();
+		algorithmDialog.show("Algorithm is running", manager.getPropertyValue(EXIT_WHILE_RUNNING_WARNING.name()));
+		
+		AlgorithmDialog.Option option = algorithmDialog.getSelectedOption();
+		if(option == AlgorithmDialog.Option.YES){
+			//yes selected
+			System.out.println("yes");
+			return true;
+		}else{
+			//no selected
+			System.out.println("no");
+			return false;
+		}
 	}
 }
