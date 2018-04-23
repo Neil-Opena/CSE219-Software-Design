@@ -22,6 +22,7 @@ import vilij.propertymanager.PropertyManager;
 import vilij.templates.ApplicationTemplate;
 import ui.AppUI;
 import static settings.AppPropertyTypes.*;
+import ui.DataVisualizer;
 
 /**
  * This is the concrete implementation of the action handlers required by the
@@ -209,7 +210,7 @@ public final class AppActions implements ActionComponent {
 	private void exit(){
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		if(appData.isRunning()){
-			System.out.println("algorithm is still running bruh");
+			showTerminateDialog();
 			appData.stopAlgorithm();
 		}
 		Platform.exit();
@@ -265,8 +266,6 @@ public final class AppActions implements ActionComponent {
 	 * <code>true</code> otherwise.
 	 */
 	private boolean promptToSave() throws IOException {
-		AppData appData = (AppData) applicationTemplate.getDataComponent();
-
 		ConfirmationDialog confirmDialog = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
 		confirmDialog.show(manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
 
@@ -306,6 +305,13 @@ public final class AppActions implements ActionComponent {
 	 * @return true if user does not want to complete algorithm
 	 */
 	private boolean showTerminateDialog(){
+		/*
+		If there is an algorithm running, the user is shown a dialog with a two way choice:
+		(a) terminate the algorithm right away and close the application
+		(b) return to the application
+		*/
+		Dialog algorithmDialog = ((DataVisualizer) applicationTemplate).getAlgorithmDialog();
+		algorithmDialog.show("BRUH", "BRUHHHH");
 		return false;
 	}
 }

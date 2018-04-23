@@ -3,45 +3,61 @@ package ui;
 import javafx.stage.Stage;
 
 import actions.AppActions;
+import components.AlgorithmDialog;
 import dataprocessors.AppData;
+import vilij.components.Dialog;
 import vilij.templates.ApplicationTemplate;
 import static vilij.settings.InitializationParams.*;
 
-
 /**
- * The main class from which the application is run. The various components used here must be concrete implementations
- * of types defined in {@link vilij.components}.
+ * The main class from which the application is run. The various components used
+ * here must be concrete implementations of types defined in
+ * {@link vilij.components}.
  *
  * @author Ritwik Banerjee
  */
 public final class DataVisualizer extends ApplicationTemplate {
 
-    @Override
-    public void start(Stage primaryStage) {
-        dialogsAudit(primaryStage);
-        if (propertyAudit())
-            userInterfaceAudit(primaryStage);
-    }
+	private final AlgorithmDialog algorithmDialog = AlgorithmDialog.getDialog();
 
-    @Override
-    protected boolean propertyAudit() {
-        boolean failed = manager == null || !(loadProperties(PROPERTIES_XML) && loadProperties(WORKSPACE_PROPERTIES_XML));
-        if (failed)
-            errorDialog.show(LOAD_ERROR_TITLE.getParameterName(), PROPERTIES_LOAD_ERROR_MESSAGE.getParameterName());
-        return !failed;
-    }
+	@Override
+	public void start(Stage primaryStage) {
+		dialogsAudit(primaryStage);
+		if (propertyAudit()) {
+			userInterfaceAudit(primaryStage);
+		}
+	}
 
-    @Override
-    protected void userInterfaceAudit(Stage primaryStage) {
-        setUIComponent(new AppUI(primaryStage, this));
-        setActionComponent(new AppActions(this));
-        setDataComponent(new AppData(this));
+	@Override
+	protected void dialogsAudit(Stage primaryStage) {
+		super.dialogsAudit(primaryStage);
+		algorithmDialog.init(primaryStage);
+	}
 
-        uiComponent.initialize();
-    }
-    
-    public static void main(String[] args) {
-        launch();
-    }
+	@Override
+	protected boolean propertyAudit() {
+		boolean failed = manager == null || !(loadProperties(PROPERTIES_XML) && loadProperties(WORKSPACE_PROPERTIES_XML));
+		if (failed) {
+			errorDialog.show(LOAD_ERROR_TITLE.getParameterName(), PROPERTIES_LOAD_ERROR_MESSAGE.getParameterName());
+		}
+		return !failed;
+	}
+
+	@Override
+	protected void userInterfaceAudit(Stage primaryStage) {
+		setUIComponent(new AppUI(primaryStage, this));
+		setActionComponent(new AppActions(this));
+		setDataComponent(new AppData(this));
+
+		uiComponent.initialize();
+	}
+
+	public Dialog getAlgorithmDialog(){
+		return this.algorithmDialog;
+	}
+
+	public static void main(String[] args) {
+		launch();
+	}
 
 }
