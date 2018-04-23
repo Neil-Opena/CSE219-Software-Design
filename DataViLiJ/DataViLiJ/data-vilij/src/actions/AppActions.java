@@ -192,6 +192,22 @@ public final class AppActions implements ActionComponent {
 	@Override
 	public void handleExitRequest() {
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
+
+		if(appData.isFromFile() || !appUI.textAreaShown() || !appUI.isDifferentFromSaved()){
+			exit();
+		}else{
+			try {
+				if(promptToSave() && canContinue){ // user pressed yes or no 
+					exit();
+				}
+			} catch (IOException ex) {
+				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+			}
+		}
+	}
+
+	private void exit(){
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		if(appData.isRunning()){
 			System.out.println("algorithm is still running bruh");
 			appData.stopAlgorithm();
