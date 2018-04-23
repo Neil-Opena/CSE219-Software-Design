@@ -53,6 +53,8 @@ public final class TSDProcessor {
 	private Map<String, String> dataLabels;
 	private Map<String, Point2D> dataPoints;
 	private XYChart.Series line;
+	private double min;
+	private double max;
 
 	public TSDProcessor() {
 		dataLabels = new LinkedHashMap<>();
@@ -86,7 +88,7 @@ public final class TSDProcessor {
 					dataPoints.put(name, point);
 				} catch (Exception e) {
 					errorMessage.setLength(0);
-					errorMessage.append(manager.getPropertyValue(LINE.name())+ (dataPoints.size() + 1) + ": ");
+					errorMessage.append(manager.getPropertyValue(LINE.name()) + (dataPoints.size() + 1) + ": ");
 					if (e instanceof InvalidDataNameException || e instanceof DuplicateNameException) {
 						errorMessage.append(e.getMessage());
 					}
@@ -116,55 +118,58 @@ public final class TSDProcessor {
 			});
 			chart.getData().add(series);
 		}
+		getXExtrema(chart);
 	}
 
-	void displayLine(XYChart<Number, Number> chart, int a, int b, int c){
-		if(line != null){
+	void getXExtrema(XYChart<Number, Number> chart) {
+		min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
+		max = min;
+
+		for (XYChart.Series serie : chart.getData()) {
+			for (XYChart.Data point : (ObservableList<XYChart.Data>) serie.getData()) {
+
+				double testXVal = Double.parseDouble(point.getXValue().toString());
+				if (testXVal < min) {
+					min = testXVal;
+				} else if (testXVal > max) {
+					max = testXVal;
+				}
+
+			}
+		}
+	}
+
+	void displayLine(XYChart<Number, Number> chart, int a, int b, int c) {
+		if (line != null) {
 			chart.getData().remove(line);
 		}
 		line = new XYChart.Series<>();
 		line.setName("line");
 
-		double min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
-		double max = min;
-
-		for(XYChart.Series serie : chart.getData()){
-			for(XYChart.Data point : (ObservableList<XYChart.Data>) serie.getData()){
-
-				double testXVal = Double.parseDouble(point.getXValue().toString());
-				if(testXVal < min){
-					min = testXVal;
-				}else if(testXVal > max){
-					max = testXVal;
-				}
-				
-			}
-		}
-
 		double yVal;
-		yVal = (1.0/b) * ((a * min) + c);
+		yVal = (1.0 / b) * ((a * min) + c);
 		XYChart.Data minX = new XYChart.Data(min, yVal);
-		yVal = (1.0/b) * ((a * max) + c);
+		yVal = (1.0 / b) * ((a * max) + c);
 		XYChart.Data maxX = new XYChart.Data(max, yVal);
 		line.getData().add(minX);
 		line.getData().add(maxX);
 
 		chart.getData().add(line);
-		minX.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name())); 
+		minX.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name()));
 		maxX.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name()));
 		line.getNode().getStyleClass().add("line");
 	}
 
 	/**
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 */
-	public List getDataPoints(){
+	public List getDataPoints() {
 		return Arrays.asList(dataPoints.values().toArray());
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	void clear() {
 		dataPoints.clear();
@@ -172,18 +177,18 @@ public final class TSDProcessor {
 	}
 
 	/**
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 */
-	public List getLabelList(){
+	public List getLabelList() {
 		return Arrays.asList(dataLabels.values().toArray());
 	}
 
 	/**
-	 * 
+	 *
 	 * @param name
 	 * @return
-	 * @throws dataprocessors.TSDProcessor.InvalidDataNameException 
+	 * @throws dataprocessors.TSDProcessor.InvalidDataNameException
 	 */
 	private String checkedname(String name) throws InvalidDataNameException {
 		if (!name.startsWith("@")) {
