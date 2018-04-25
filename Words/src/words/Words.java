@@ -19,7 +19,7 @@ public class Words {
 	WordCounter wc = new WordCounter();
 
 	try {
-	    Word w;
+	    String w;
 	    while((w = ws.nextWord()) != null && !w.isEmpty())
 		wc.countWord(w);
 	    rdr.close();

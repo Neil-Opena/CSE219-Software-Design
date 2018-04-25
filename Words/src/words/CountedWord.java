@@ -1,15 +1,15 @@
 package words;
 
 public class CountedWord implements Comparable<CountedWord> {
-    private final Word word;
+    private final String word;
     private int count;
     
-    public CountedWord(Word w) {
+    public CountedWord(String w) {
         word = w;
 	count = 0;
     }
     
-    public Word getWord() {
+    public String getWord() {
         return word;
     }
 

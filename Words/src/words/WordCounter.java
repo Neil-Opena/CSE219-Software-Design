@@ -5,14 +5,14 @@ import java.util.Map;
 
 public class WordCounter {
     //private final List<CountedWord> words;
-    private final Map<Word, CountedWord> words;
+    private final Map<String, CountedWord> words;
 
     WordCounter() {
 	//words = new LinkedList<>();
 	words = new LinkedHashMap<>();
     }
     
-    private CountedWord findWord(Word w) {
+    private CountedWord findWord(String w) {
 	if(words.containsKey(w)){
 		return words.get(w);
 	}
@@ -25,7 +25,7 @@ public class WordCounter {
 //        return null;
     }
 
-    void countWord(Word w) {
+    void countWord(String w) {
         CountedWord cw = findWord(w);
 	if(cw == null) {
 	    cw = new CountedWord(w);
@@ -35,7 +35,7 @@ public class WordCounter {
 	cw.tally();
     }
 
-    int getCount(Word w) {
+    int getCount(String w) {
 	CountedWord cw = findWord(w);
 	if(cw == null)
 	    return(0);

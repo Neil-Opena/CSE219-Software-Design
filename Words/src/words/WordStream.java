@@ -13,7 +13,7 @@ public class WordStream {
 	return(Character.isLetterOrDigit((char)c));
     }
 
-    Word nextWord() throws java.io.IOException {
+    String nextWord() throws java.io.IOException {
         String text = "";
 	int c;
 	while((c = input.read()) != -1 && !isAlphanumeric(c))
@@ -24,7 +24,7 @@ public class WordStream {
 	    while((c = input.read()) != -1 && isAlphanumeric(c));
 	}
 	if(text.length() != 0)
-	    return new Word(text);
+	    return (text);
 	else
 	    return null;
     }
