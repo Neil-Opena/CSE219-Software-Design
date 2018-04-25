@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 
@@ -118,10 +117,24 @@ public class RandomClassifier extends Classifier {
 		int b = output.get(1);
 		int c = output.get(2);
 
-		if(b == 0 || a == 0){
-			System.out.println("Not a valid line");
+		/*
+		Note that if just *one* of the coefficients A and B is zero, 
+		the equation Ax + By + C = 0 still determines a line.  
+		It is only if *both* A and B are zero that the equation is degenerate.  
+		*/
+
+		if(a == 0 && b == 0){
+			//not a valid line
+			//should create default line
 			return;
 		}
+
+		/*
+		If the line does not intersect the display window, 
+		an appropriate action might be to provide some sort of 
+		visual indication as to the direction in which the line lies, 
+		relative to the displayed rectangle.
+		*/
 
 
 		Platform.runLater(() -> {
@@ -141,21 +154,11 @@ public class RandomClassifier extends Classifier {
 		Traverse data of the chart first
 		//see if you can translate using DataSet instead
 		*/
-		double min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
-		double max = min;
 
-		for(XYChart.Series serie : chart.getData()){
-			for(XYChart.Data point : (ObservableList<XYChart.Data>) serie.getData()){
-
-				double testXVal = Double.parseDouble(point.getXValue().toString());
-				if(testXVal < min){
-					min = testXVal;
-				}else if(testXVal > max){
-					max = testXVal;
-				}
-				
-			}
-		}
+		dataset.sortValues();
+		
+		double min = dataset.getMinX();
+		double max = dataset.getMaxX();
 
 		/*
 		Modify chart after traversing data to avoid ConcurrentModificationException
