@@ -139,6 +139,7 @@ public class RandomClassifier extends Classifier {
 	private void initLine(){
 		/*
 		Traverse data of the chart first
+		//see if you can translate using DataSet instead
 		*/
 		double min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
 		double max = min;

@@ -171,6 +171,15 @@ public final class AppActions implements ActionComponent {
 		if no text area is shown --> load automatically
 		if the data is the same as the saved data --> load automatically
 		*/
+
+		/*
+		ERROR --> what if user edits data --> algorithm should fail
+		ERROR --> can't exit the app whn there's no data lol
+		ERROR --> back button functionality with algorithm
+		ERROR --> some threads not killed
+		ERROR --> what if user edits configuration again
+		ERROR --> null pointer exception if algorithm running and file loaded
+		*/
 	}
 
 	private void loadFile(){
@@ -214,6 +223,8 @@ public final class AppActions implements ActionComponent {
 			appData.stopAlgorithm();
 			Platform.exit();
 			//add case when algorithm is running and then finishes --> automatically close dialog
+		}else{
+			Platform.exit();
 		}
 	}
 
@@ -315,14 +326,7 @@ public final class AppActions implements ActionComponent {
 		algorithmDialog.show("Algorithm is running", manager.getPropertyValue(EXIT_WHILE_RUNNING_WARNING.name()));
 		
 		AlgorithmDialog.Option option = algorithmDialog.getSelectedOption();
-		if(option == AlgorithmDialog.Option.YES){
-			//yes selected
-			System.out.println("yes");
-			return true;
-		}else{
-			//no selected
-			System.out.println("no");
-			return false;
-		}
+		//what if algorithm has finished
+		return option == AlgorithmDialog.Option.YES;
 	}
 }
