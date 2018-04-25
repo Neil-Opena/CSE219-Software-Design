@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
-import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import javafx.geometry.Point2D;
 
@@ -117,25 +116,6 @@ public final class TSDProcessor {
 				series.getData().add(new XYChart.Data<>(point.getX(), point.getY(), name));
 			});
 			chart.getData().add(series);
-		}
-		getXExtrema(chart);
-	}
-
-	void getXExtrema(XYChart<Number, Number> chart) {
-		min = Double.parseDouble(chart.getData().get(0).getData().get(0).getXValue().toString());
-		max = min;
-
-		for (XYChart.Series serie : chart.getData()) {
-			for (XYChart.Data point : (ObservableList<XYChart.Data>) serie.getData()) {
-
-				double testXVal = Double.parseDouble(point.getXValue().toString());
-				if (testXVal < min) {
-					min = testXVal;
-				} else if (testXVal > max) {
-					max = testXVal;
-				}
-
-			}
 		}
 	}
 
