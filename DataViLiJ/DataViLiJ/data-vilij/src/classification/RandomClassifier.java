@@ -49,7 +49,7 @@ public class RandomClassifier extends Classifier {
 		return tocontinue.get();
 	}
 
-	public final boolean isInitContinue(){
+	public final boolean isInitContinue() {
 		return initContinue.get();
 	}
 
@@ -72,10 +72,21 @@ public class RandomClassifier extends Classifier {
 	@Override
 	public void run() {
 		initLine();
+		try {
+			Thread.sleep(500); //display chart first 
+		} catch (InterruptedException ex) {
+			return;
+		}
+		chart.getXAxis().setAutoRanging(false);
+		chart.getYAxis().setAutoRanging(false);
 		for (int i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
-			int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
-			int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
-			int constant = new Double(RAND.nextDouble() * 100).intValue();
+			//int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
+			//int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
+			//int constant = new Double(RAND.nextDouble() * 100).intValue();
+
+			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 1) * 10)).intValue();
+			int yCoefficient = 10;
+			int constant = RAND.nextInt(11);
 
 			// this is the real output of the classifier
 			output = Arrays.asList(xCoefficient, yCoefficient, constant);
@@ -92,10 +103,10 @@ public class RandomClassifier extends Classifier {
 					//do nothing
 					return;
 				}
-				if(!isInitContinue()){
+				if (!isInitContinue()) {
 					appData.enableRun();
 					tocontinue.set(false);
-					while(!tocontinue()){
+					while (!tocontinue()) {
 						//don't do anything until it is set to continue
 					}
 					appData.disableRun();
@@ -110,9 +121,9 @@ public class RandomClassifier extends Classifier {
 		//algorithm has finished
 		Platform.runLater(() -> appData.completeAlgorithm());
 	}
-	
+
 	@Override
-	public void updateData(){
+	public void updateData() {
 		int a = output.get(0);
 		int b = output.get(1);
 		int c = output.get(2);
@@ -121,9 +132,9 @@ public class RandomClassifier extends Classifier {
 		Note that if just *one* of the coefficients A and B is zero, 
 		the equation Ax + By + C = 0 still determines a line.  
 		It is only if *both* A and B are zero that the equation is degenerate.  
-		*/
-
-		if(a == 0 && b == 0){
+		 */
+		//in order to prevent axis resizing, the line should always be inside range
+		if (a == 0 && b == 0) {
 			//not a valid line
 			//should create default line
 			return;
@@ -134,9 +145,7 @@ public class RandomClassifier extends Classifier {
 		an appropriate action might be to provide some sort of 
 		visual indication as to the direction in which the line lies, 
 		relative to the displayed rectangle.
-		*/
-
-
+		 */
 		Platform.runLater(() -> {
 			XYChart.Series line = (chart.getData().get(chart.getData().size() - 1));
 			Data min = (Data) line.getData().get(0);
@@ -149,25 +158,25 @@ public class RandomClassifier extends Classifier {
 		});
 	}
 
-	private void initLine(){
-		/*
-		Traverse data of the chart first
-		//see if you can translate using DataSet instead
-		*/
+	private void initLine() {
 
+		/*
+		There will have to be some mechanism for querying the Dataset 
+		to determine the range of data values, so that suitable 
+		ranges can be set for the charts 
+		 */
 		dataset.sortValues();
-		
 		double min = dataset.getMinX();
 		double max = dataset.getMaxX();
 
 		/*
 		Modify chart after traversing data to avoid ConcurrentModificationException
-		*/
+		 */
 		XYChart.Series potentialLine = chart.getData().get(chart.getData().size() - 1);
-		if(potentialLine.getName().equals("classification")){
+		if (potentialLine.getName().equals("classification")) {
 			Platform.runLater(() -> {
 				chart.getData().remove(potentialLine);
-				
+
 			});
 		}
 		line = new XYChart.Series<>();
@@ -202,7 +211,6 @@ public class RandomClassifier extends Classifier {
 //        RandomClassifier classifier = new RandomClassifier(dataset, 100, 5, true);
 //        classifier.run(); // no multithreading yet
 //    }
-
 	@Override
 	public void startAlgorithm() {
 		algorithm.start();
@@ -214,7 +222,7 @@ public class RandomClassifier extends Classifier {
 	}
 
 	@Override
-	public void stopAlgorithm(){
+	public void stopAlgorithm() {
 		algorithm.interrupt();
 	}
 }

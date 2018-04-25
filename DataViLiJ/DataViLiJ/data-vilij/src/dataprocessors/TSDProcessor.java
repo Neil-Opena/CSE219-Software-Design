@@ -106,6 +106,8 @@ public final class TSDProcessor {
 	 */
 	void toChartData(XYChart<Number, Number> chart) {
 		chart.getData().clear();
+		chart.getXAxis().setAutoRanging(true);
+		chart.getYAxis().setAutoRanging(true);
 		Set<String> labels = new LinkedHashSet<>(dataLabels.values());
 		for (String label : labels) {
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
@@ -117,27 +119,6 @@ public final class TSDProcessor {
 			});
 			chart.getData().add(series);
 		}
-	}
-
-	void displayLine(XYChart<Number, Number> chart, int a, int b, int c) {
-		if (line != null) {
-			chart.getData().remove(line);
-		}
-		line = new XYChart.Series<>();
-		line.setName("line");
-
-		double yVal;
-		yVal = (1.0 / b) * ((a * min) + c);
-		XYChart.Data minX = new XYChart.Data(min, yVal);
-		yVal = (1.0 / b) * ((a * max) + c);
-		XYChart.Data maxX = new XYChart.Data(max, yVal);
-		line.getData().add(minX);
-		line.getData().add(maxX);
-
-		chart.getData().add(line);
-		minX.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name()));
-		maxX.getNode().getStyleClass().add(manager.getPropertyValue(HIDE_SYMBOL.name()));
-		line.getNode().getStyleClass().add("line");
 	}
 
 	/**

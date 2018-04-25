@@ -248,6 +248,8 @@ public class AppData implements DataComponent {
 
 	public void stopAlgorithm(){
 		algorithmToRun.stopAlgorithm();
+		isRunning = false;
+		appUI.enableRun();
 	}
 
 	public void completeAlgorithm(){
