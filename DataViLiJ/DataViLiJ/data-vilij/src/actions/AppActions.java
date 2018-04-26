@@ -100,23 +100,18 @@ public final class AppActions implements ActionComponent {
 	private void setUpNewFile(){
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		if(checkIsRunning()){
-			appData.stopAlgorithm();
+			try{
+				appData.stopAlgorithm();
+			}catch(NullPointerException e){
+				//do nothing
+			}
+			((AppData) applicationTemplate.getDataComponent()).clear();
+			dataFilePath = null;
+			appUI.clear();
+			appUI.showTextArea();
+			appUI.showEditToggle();
 		}
-
-		((AppData) applicationTemplate.getDataComponent()).clear();
-		dataFilePath = null;
-		appUI.clear();
-		appUI.showTextArea();
-		appUI.showEditToggle();
-		//find a way to check if from file is false;
-		/*
-		Prolly need to fix
-		*/
 	}
-
-	/*
-	FIXME what implement private handlerequests return true if successful
-	*/
 
 	@Override
 	public void handleSaveRequest() {
@@ -179,9 +174,10 @@ public final class AppActions implements ActionComponent {
 		/*
 		ERROR --> what if user edits data --> algorithm should fail
 		ERROR --> back button functionality with algorithm
-		ERROR --> some threads not killed
 		ERROR --> what if user edits configuration again
 		ERROR --> null pointer exception if algorithm running and file loaded
+
+		should probably not allow user to change algorithm chosen
 
 		TEST --> algorithm pause --> exit?
 		Should algorithm pause, when dialog is shown?
@@ -192,21 +188,25 @@ public final class AppActions implements ActionComponent {
 	private void loadFile(){
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		if(checkIsRunning()){
-			appData.stopAlgorithm();
-		}
-		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
-		try {
-			String result = appData.validateText(file);
-			if(result == null){
-				applicationTemplate.getUIComponent().clear();
-				appData.loadData(file.toPath());
-				dataFilePath = file.toPath();
-				appUI.disableSaveButton(); 
-			} else {
-				showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + result);
+			try{
+				appData.stopAlgorithm();
+			}catch(NullPointerException e){
+				//do nothing
 			}
-		} catch (NullPointerException e) {
-			//load cancelled
+			File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+			try {
+				String result = appData.validateText(file);
+				if(result == null){
+					applicationTemplate.getUIComponent().clear();
+					appData.loadData(file.toPath());
+					dataFilePath = file.toPath();
+					appUI.disableSaveButton(); 
+				} else {
+					showErrorDialog(manager.getPropertyValue(LOAD_ERROR_TITLE.name()), manager.getPropertyValue(LOAD_ERROR_MESSAGE.name()) + result);
+				}
+			} catch (NullPointerException e) {
+				//load cancelled
+			}
 		}
 	}
 
@@ -229,16 +229,19 @@ public final class AppActions implements ActionComponent {
 
 	private boolean checkIsRunning(){
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
-		return appData.isRunning() && showTerminateDialog();
+		return ((appData.isRunning() && showTerminateDialog()) || (!appData.isRunning()));
 	}
 
 	private void exit(){
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		if(checkIsRunning()){
-			appData.stopAlgorithm();
-			//add case when algorithm is running and then finishes --> automatically close dialog
+			try{
+				appData.stopAlgorithm();
+			}catch(NullPointerException e){
+				//do nothing
+			}
+			Platform.exit();
 		}
-		Platform.exit();
 	}
 
 	@Override
@@ -337,7 +340,7 @@ public final class AppActions implements ActionComponent {
 		*/
 		AlgorithmDialog algorithmDialog = ((DataVisualizer) applicationTemplate).getAlgorithmDialog();
 		algorithmDialog.show("Algorithm is running", manager.getPropertyValue(EXIT_WHILE_RUNNING_WARNING.name()));
-		
+		//when this dialog is showing, the algorithm should be paused
 		AlgorithmDialog.Option option = algorithmDialog.getSelectedOption();
 		//what if algorithm has finished
 		return option == AlgorithmDialog.Option.YES;
