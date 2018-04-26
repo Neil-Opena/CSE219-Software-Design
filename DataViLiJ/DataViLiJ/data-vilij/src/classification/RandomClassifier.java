@@ -33,6 +33,7 @@ public class RandomClassifier extends Classifier {
 	// currently, this value does not change after instantiation
 	private AtomicBoolean tocontinue;
 	private AtomicBoolean initContinue; //value that does not change
+	private AtomicBoolean isPaused;
 
 	@Override
 	public int getMaxIterations() {
@@ -67,6 +68,8 @@ public class RandomClassifier extends Classifier {
 		this.initContinue = new AtomicBoolean(tocontinue);
 		this.chart = chart;
 		this.appData = appData;
+
+		this.isPaused = new AtomicBoolean(false);
 	}
 
 	@Override
@@ -92,23 +95,21 @@ public class RandomClassifier extends Classifier {
 			if (i % updateInterval == 0) {
 				System.out.printf("Iteration number %d: ", i); //
 				flush();
-				try {
-					Thread.sleep(1000); //simulate performing algorithm 
-					updateData();
-				} catch (InterruptedException ex) {
-					//do nothing
-					return;
-				}
-				if (!isInitContinue()) {
+				updateData();
+				if(!isInitContinue()){
 					appData.enableRun();
 					tocontinue.set(false);
-					while (!tocontinue()) {
-						//don't do anything until it is set to continue
+					while(!tocontinue()){ //wait until play is clicked
 						if(Thread.interrupted()){
 							return;
 						}
 					}
 					appData.disableRun();
+				}
+				try{
+					Thread.sleep(1000);
+				}catch(InterruptedException ex){
+					return;
 				}
 			}
 			if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
@@ -132,11 +133,10 @@ public class RandomClassifier extends Classifier {
 		the equation Ax + By + C = 0 still determines a line.  
 		It is only if *both* A and B are zero that the equation is degenerate.  
 		 */
-		//in order to prevent axis resizing, the line should always be inside range
-		//if (a == 0 && b == 0) {
+		if (a == 0 && b == 0) {
 			//not a valid line --> pause algorithm --> show dialog
-			//return;
-		//}
+			return;
+		}
 
 		//ax + by + c = 0
 		// y = (-c -ax) / b
@@ -147,37 +147,34 @@ public class RandomClassifier extends Classifier {
 		visual indication as to the direction in which the line lies, 
 		relative to the displayed rectangle.
 		 */
+
+		/*
+		Your tool should be able to handle the situation in which the 
+		line intersects the display range, and it should be able to 
+		handle the situation in which the line does not intersect the display range.
+		*/
 		Platform.runLater(() -> {
 			XYChart.Series line = (chart.getData().get(chart.getData().size() - 1));
 			Data min = (Data) line.getData().get(0);
 			Data max = (Data) line.getData().get(1);
 			double yVal;
 
-			//double minX = (double) min.getXValue();
-			//yVal = (-c - (a * minX)) / b;
-			//min.setYValue(yVal);
-
-			//double maxX = (double) max.getXValue();
-			//yVal = (-c - (a * maxX)) / b;
-			//max.setYValue(yVal);
-
-			//my implementation
-			double minY = dataset.getMinY();
-			double maxY = dataset.getMaxY();
-			
-			yVal = minY + (Math.random() * maxY);
+			double minX = (double) min.getXValue();
+			yVal = (-c - (a * minX)) / b;
 			min.setYValue(yVal);
-			yVal = minY + (Math.random() * maxY);
+
+			double maxX = (double) max.getXValue();
+			yVal = (-c - (a * maxX)) / b;
 			max.setYValue(yVal);
 
+			//check if line is in chart
 		});
 	}
 
 	/*
 	A better idea would be to have a label in the display that shows the current iteration number that corresponds to what is showing in the chart.
 	task idea!!
-	*/
-
+	 */
 	private void initLine() {
 
 		/*
@@ -225,12 +222,6 @@ public class RandomClassifier extends Classifier {
 		System.out.printf("%d\t%d\t%d%n", output.get(0), output.get(1), output.get(2));
 	}
 
-//    /** A placeholder main method to just make sure this code runs smoothly */
-//    public static void main(String... args) throws IOException {
-//        DataSet          dataset    = DataSet.fromTSDFile(Paths.get("/path/to/some-data.tsd"));
-//        RandomClassifier classifier = new RandomClassifier(dataset, 100, 5, true);
-//        classifier.run(); // no multithreading yet
-//    }
 	@Override
 	public void startAlgorithm() {
 		algorithm.start();
