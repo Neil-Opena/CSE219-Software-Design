@@ -84,7 +84,9 @@ public class RandomClassifier extends Classifier {
 			//int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
 			//int constant = new Double(RAND.nextDouble() * 100).intValue();
 
-			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 1) * 10)).intValue();
+			//need to modify such that new line is inside range
+
+			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 2) * 10)).intValue();
 			int yCoefficient = 10;
 			int constant = RAND.nextInt(11);
 
@@ -135,10 +137,12 @@ public class RandomClassifier extends Classifier {
 		 */
 		//in order to prevent axis resizing, the line should always be inside range
 		if (a == 0 && b == 0) {
-			//not a valid line
-			//should create default line
+			//not a valid line --> pause algorithm --> show dialog
 			return;
 		}
+
+		//ax + by + c = 0
+		// y = (-c -ax) / b
 
 		/*
 		If the line does not intersect the display window, 
@@ -151,12 +155,31 @@ public class RandomClassifier extends Classifier {
 			Data min = (Data) line.getData().get(0);
 			Data max = (Data) line.getData().get(1);
 			double yVal;
-			yVal = ((-(a * (double) min.getXValue())) - c) / b;
+
+			double minX = (double) min.getXValue();
+			yVal = (-c - (a * minX)) / b;
 			min.setYValue(yVal);
-			yVal = ((-(a * (double) max.getXValue())) - c) / b;
+
+			double maxX = (double) max.getXValue();
+			yVal = (-c - (a * maxX)) / b;
+			max.setYValue(yVal);
+
+			//my implementation
+			double minY = dataset.getMinY();
+			double maxY = dataset.getMaxY();
+			
+			yVal = minY + (Math.random() * maxY);
 			min.setYValue(yVal);
+			yVal = minY + (Math.random() * maxY);
+			max.setYValue(yVal);
+
 		});
 	}
+
+	/*
+	A better idea would be to have a label in the display that shows the current iteration number that corresponds to what is showing in the chart.
+	task idea!!
+	*/
 
 	private void initLine() {
 

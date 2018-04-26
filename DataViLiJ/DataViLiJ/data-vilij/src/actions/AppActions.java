@@ -178,6 +178,7 @@ public final class AppActions implements ActionComponent {
 		ERROR --> some threads not killed
 		ERROR --> what if user edits configuration again
 		ERROR --> null pointer exception if algorithm running and file loaded
+		ERROR --> if non continuous --> thread not killed
 
 		TEST --> algorithm pause --> exit?
 		Should algorithm pause, when dialog is shown?
