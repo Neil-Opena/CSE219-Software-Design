@@ -80,13 +80,7 @@ public class RandomClassifier extends Classifier {
 		chart.getXAxis().setAutoRanging(false);
 		chart.getYAxis().setAutoRanging(false);
 		for (int i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
-			//int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
-			//int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
-			//int constant = new Double(RAND.nextDouble() * 100).intValue();
-
-			//need to modify such that new line is inside range
-
-			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 2) * 10)).intValue();
+			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 1) * 10)).intValue();
 			int yCoefficient = 10;
 			int constant = RAND.nextInt(11);
 
@@ -110,6 +104,9 @@ public class RandomClassifier extends Classifier {
 					tocontinue.set(false);
 					while (!tocontinue()) {
 						//don't do anything until it is set to continue
+						if(Thread.interrupted()){
+							return;
+						}
 					}
 					appData.disableRun();
 				}
@@ -136,10 +133,10 @@ public class RandomClassifier extends Classifier {
 		It is only if *both* A and B are zero that the equation is degenerate.  
 		 */
 		//in order to prevent axis resizing, the line should always be inside range
-		if (a == 0 && b == 0) {
+		//if (a == 0 && b == 0) {
 			//not a valid line --> pause algorithm --> show dialog
-			return;
-		}
+			//return;
+		//}
 
 		//ax + by + c = 0
 		// y = (-c -ax) / b
@@ -156,13 +153,13 @@ public class RandomClassifier extends Classifier {
 			Data max = (Data) line.getData().get(1);
 			double yVal;
 
-			double minX = (double) min.getXValue();
-			yVal = (-c - (a * minX)) / b;
-			min.setYValue(yVal);
+			//double minX = (double) min.getXValue();
+			//yVal = (-c - (a * minX)) / b;
+			//min.setYValue(yVal);
 
-			double maxX = (double) max.getXValue();
-			yVal = (-c - (a * maxX)) / b;
-			max.setYValue(yVal);
+			//double maxX = (double) max.getXValue();
+			//yVal = (-c - (a * maxX)) / b;
+			//max.setYValue(yVal);
 
 			//my implementation
 			double minY = dataset.getMinY();
