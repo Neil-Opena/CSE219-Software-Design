@@ -98,6 +98,11 @@ public final class AppActions implements ActionComponent {
 	When displaying the file, the processor actually checks the data
 	*/
 	private void setUpNewFile(){
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
+		if(checkIsRunning()){
+			appData.stopAlgorithm();
+		}
+
 		((AppData) applicationTemplate.getDataComponent()).clear();
 		dataFilePath = null;
 		appUI.clear();
@@ -150,16 +155,12 @@ public final class AppActions implements ActionComponent {
 	@Override
 	public void handleLoadRequest() {
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
-		//add condition to check if text area is blank
 		if(appData.isFromFile() || !appUI.textAreaShown() || !appUI.isDifferentFromSaved()){
 			loadFile();
 		}else{
 			try {
 				if(promptToSave() && canContinue){ // user pressed yes or no 
 					loadFile();
-					/*
-					what would happen if user said yes and then pressed cancel
-					*/
 				}
 			} catch (IOException ex) {
 				showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()),manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
@@ -172,13 +173,15 @@ public final class AppActions implements ActionComponent {
 		if the data is the same as the saved data --> load automatically
 		*/
 
+		//ask if user can save while algorithm is running
+		//ask if user can edit configuration while algorithm is running
+
 		/*
 		ERROR --> what if user edits data --> algorithm should fail
 		ERROR --> back button functionality with algorithm
 		ERROR --> some threads not killed
 		ERROR --> what if user edits configuration again
 		ERROR --> null pointer exception if algorithm running and file loaded
-		ERROR --> if non continuous --> thread not killed
 
 		TEST --> algorithm pause --> exit?
 		Should algorithm pause, when dialog is shown?
@@ -187,8 +190,11 @@ public final class AppActions implements ActionComponent {
 	}
 
 	private void loadFile(){
-		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
+		if(checkIsRunning()){
+			appData.stopAlgorithm();
+		}
+		File file = tsdFileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
 		try {
 			String result = appData.validateText(file);
 			if(result == null){
@@ -221,15 +227,18 @@ public final class AppActions implements ActionComponent {
 		}
 	}
 
+	private boolean checkIsRunning(){
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
+		return appData.isRunning() && showTerminateDialog();
+	}
+
 	private void exit(){
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
-		if(appData.isRunning() && showTerminateDialog()){
+		if(checkIsRunning()){
 			appData.stopAlgorithm();
-			Platform.exit();
 			//add case when algorithm is running and then finishes --> automatically close dialog
-		}else{
-			Platform.exit();
 		}
+		Platform.exit();
 	}
 
 	@Override
