@@ -244,17 +244,24 @@ public class AppData implements DataComponent {
 		algorithmToRun.startAlgorithm();
 		appUI.disableRun();
 		isRunning = true;
+
+		if(!fromFile){
+			//user created data
+			appUI.disableEditToggle();
+		}
 	}
 
 	public void stopAlgorithm(){
 		algorithmToRun.stopAlgorithm();
 		isRunning = false;
-		appUI.enableRun();
+		appUI.enableEditToggle(); //algorithm has finished --> user can edit again
+		enableRun();
 	}
 
 	public void completeAlgorithm(){
 		appActions.showErrorDialog("Algorithm completed", "ALgorithm has finished");
-		appUI.enableRun(); //should algorithm start over again?
+		enableRun();
+		appUI.enableEditToggle();
 		isRunning = false;
 	}
 
