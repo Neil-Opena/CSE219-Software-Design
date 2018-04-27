@@ -83,7 +83,8 @@ public class RandomClassifier extends Classifier {
 		chart.getXAxis().setAutoRanging(false);
 		chart.getYAxis().setAutoRanging(false);
 		for (int i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
-			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 1) * 10)).intValue();
+			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 0) * 10)).intValue();
+			//change 0 to -1 for original implementation
 			int yCoefficient = 10;
 			int constant = RAND.nextInt(11);
 
@@ -118,6 +119,9 @@ public class RandomClassifier extends Classifier {
 				break;
 			}
 		}
+		System.out.printf("Iteration number %d: ", maxIterations);
+		flush();
+		updateData(); //show last update
 		//algorithm has finished
 		Platform.runLater(() -> appData.completeAlgorithm());
 	}
@@ -133,13 +137,7 @@ public class RandomClassifier extends Classifier {
 		the equation Ax + By + C = 0 still determines a line.  
 		It is only if *both* A and B are zero that the equation is degenerate.  
 		 */
-		if (a == 0 && b == 0) {
-			//not a valid line --> pause algorithm --> show dialog
-			return;
-		}
 
-		//ax + by + c = 0
-		// y = (-c -ax) / b
 
 		/*
 		If the line does not intersect the display window, 
@@ -159,6 +157,9 @@ public class RandomClassifier extends Classifier {
 			Data max = (Data) line.getData().get(1);
 			double yVal;
 
+			//ax + by + c = 0
+			// y = (-c -ax) / b
+
 			double minX = (double) min.getXValue();
 			yVal = (-c - (a * minX)) / b;
 			min.setYValue(yVal);
@@ -166,6 +167,12 @@ public class RandomClassifier extends Classifier {
 			double maxX = (double) max.getXValue();
 			yVal = (-c - (a * maxX)) / b;
 			max.setYValue(yVal);
+
+			if(a == 0 && b == 0){
+				min.setYValue(dataset.getMinY());
+				max.setYValue(dataset.getMaxY());
+				System.out.println("generated numbers not a line");
+			}
 
 			//check if line is in chart
 		});
