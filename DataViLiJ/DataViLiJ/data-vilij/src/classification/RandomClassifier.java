@@ -33,7 +33,6 @@ public class RandomClassifier extends Classifier {
 	// currently, this value does not change after instantiation
 	private AtomicBoolean tocontinue;
 	private AtomicBoolean initContinue; //value that does not change
-	private AtomicBoolean isPaused;
 
 	@Override
 	public int getMaxIterations() {
@@ -68,8 +67,6 @@ public class RandomClassifier extends Classifier {
 		this.initContinue = new AtomicBoolean(tocontinue);
 		this.chart = chart;
 		this.appData = appData;
-
-		this.isPaused = new AtomicBoolean(false);
 	}
 
 	@Override
@@ -118,6 +115,11 @@ public class RandomClassifier extends Classifier {
 				flush();
 				break;
 			}
+			//do to --> fix this window thing
+			//fix clustering algorithm
+			//run a shit ton of tests
+			appData.updateIteration(i, String.format("Iteration number %d: ", i) + output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0");
+			//check if line in chart
 		}
 		System.out.printf("Iteration number %d: ", maxIterations);
 		flush();

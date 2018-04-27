@@ -32,6 +32,7 @@ import java.util.Set;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -80,6 +81,11 @@ public final class AppUI extends UITemplate {
 	private List<AlgorithmUI> classificationAlgorithms;
 	private ToggleGroup clusteringRadios;
 	private ToggleGroup classificationRadios;
+	private Stage algorithmRunWindow;
+	private VBox algorithmRunContainer;
+	private ProgressIndicator algorithmProgress;
+	private Label algorithmRunInfo;
+
 
 	private String iconsPath;
 
@@ -96,6 +102,7 @@ public final class AppUI extends UITemplate {
 		this.getPrimaryScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
 
 		primaryStage.setTitle(manager.getPropertyValue(APPLICATION_TITLE.name()));
+		setAlgorithmWindow();
 	}
 
 	@Override
@@ -498,6 +505,41 @@ public final class AppUI extends UITemplate {
 		if(readOnly){
 			textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
 		}
+	}
+
+	private void setAlgorithmWindow(){
+		algorithmRunContainer = new VBox();
+		algorithmRunContainer.setSpacing(20);
+		algorithmRunContainer.setAlignment(Pos.CENTER);
+		algorithmRunWindow = new Stage();
+
+		algorithmProgress = new ProgressIndicator();
+		algorithmRunInfo = new Label("");
+
+		algorithmRunContainer.getChildren().addAll(algorithmProgress, algorithmRunInfo);
+		algorithmRunWindow.setScene(new Scene(algorithmRunContainer));
+		algorithmRunWindow.setMinHeight(250);
+		algorithmRunWindow.setMinWidth(300);
+		algorithmRunWindow.setResizable(false);
+	}
+
+	private void resetAlgorithmRunWindow(){
+		algorithmProgress.setProgress(0);
+		algorithmRunInfo.setText("");
+	};
+
+	public void showAlgorithmRunWindow(){
+		resetAlgorithmRunWindow();
+		algorithmRunWindow.show();
+	}
+
+	public void closeAlgorithmRunWindow(){
+		algorithmRunWindow.close();
+	}
+
+	public void updateAlgorithmRunWindow(double percent, String info){
+		algorithmProgress.setProgress(percent);
+		algorithmRunInfo.setText(info);
 	}
 
 	/**

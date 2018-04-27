@@ -19,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+import javafx.application.Platform;
 
 import vilij.propertymanager.PropertyManager;
 import vilij.components.DataComponent;
@@ -233,7 +234,8 @@ public class AppData implements DataComponent {
 		}else{
 			switch(algorithmIndex){
 				case (0) : 
-					algorithmToRun = new RandomClustering(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), configuration.getNumLabels());
+					//need to change constructor and pass in labels
+					algorithmToRun = new RandomClustering(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), appUI.getChart(), this);
 					break;
 			}
 		}
@@ -255,6 +257,14 @@ public class AppData implements DataComponent {
 			//user created data
 			appUI.disableEditToggle();
 		}
+
+		//should test if window is closed before algorithm ends
+		Platform.runLater(() -> appUI.showAlgorithmRunWindow());
+	}
+
+	public void updateIteration(int iteration, String info){
+		double percent = ((double) iteration) / configuration.getMaxIterations();
+		Platform.runLater(() -> appUI.updateAlgorithmRunWindow(percent, info));
 	}
 
 	public void stopAlgorithm(){
@@ -273,6 +283,10 @@ public class AppData implements DataComponent {
 		appUI.enableEditToggle();
 		appUI.enableBackButton();
 		appUI.enableAlgorithmChanges();
+		//should reset progress indicator
+		Platform.runLater(() -> {
+			appUI.closeAlgorithmRunWindow();
+		});
 	}
 
 	public void enableRun(){
