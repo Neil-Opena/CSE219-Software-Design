@@ -25,4 +25,6 @@ public interface Algorithm extends Runnable {
     void updateData();
 
     void stopAlgorithm();
+
+    String getName();
 }

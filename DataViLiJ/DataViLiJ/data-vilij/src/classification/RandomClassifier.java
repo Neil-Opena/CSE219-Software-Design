@@ -243,4 +243,9 @@ public class RandomClassifier extends Classifier {
 	public void stopAlgorithm() {
 		algorithm.interrupt();
 	}
+
+	@Override
+	public String getName() {
+		return "RandomClassifier";
+	}
 }
