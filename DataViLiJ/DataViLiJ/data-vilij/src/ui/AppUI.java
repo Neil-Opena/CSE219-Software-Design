@@ -523,6 +523,7 @@ public final class AppUI extends UITemplate {
 		algorithmRunWindow.setMinHeight(250);
 		algorithmRunWindow.setMinWidth(300);
 		algorithmRunWindow.setResizable(false);
+		algorithmRunWindow.setAlwaysOnTop(true);
 	}
 
 	private void resetAlgorithmRunWindow(){
