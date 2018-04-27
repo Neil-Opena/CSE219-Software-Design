@@ -219,6 +219,10 @@ public class AppData implements DataComponent {
 		return algorithmType;
 	}
 
+	public String getAlgorithmName(int index){
+		return null;
+	}
+
 	private void setUpAlgorithm(){
 		if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
 			switch(algorithmIndex){

@@ -748,6 +748,8 @@ public final class AppUI extends UITemplate {
 		 * Lays out the UI display of the algorithm choice
 		 */
 		private void layoutAlgorithm(){
+			//AppData appData = (AppData) applicationTemplate.getDataComponent();
+			//appData.getAlgorithmName(index);
 			algorithmName = new Label(manager.getPropertyValue(ALGORITHM.name()) + (index + 1));
 			algorithmName.getStyleClass().add(manager.getPropertyValue(ALGORITHM_NAME_CSS.name()));
 			configButton = setToolbarButton(iconsPath + separator + manager.getPropertyValue(GEAR_ICON.name()), manager.getPropertyValue(CONFIG_TOOLTIP.name()), false);
