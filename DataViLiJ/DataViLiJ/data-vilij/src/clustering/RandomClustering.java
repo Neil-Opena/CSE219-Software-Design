@@ -5,108 +5,104 @@
  */
 package clustering;
 
-import algorithms.Clusterer;
+import algorithms.Classifier;
 import data.DataSet;
+import dataprocessors.AppData;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javafx.application.Platform;
+import javafx.scene.chart.XYChart;
 
 /**
  *
  * @author Neil Opena
  */
-public class RandomClustering extends Clusterer{
-    private static final Random RAND = new Random();
+public class RandomClustering extends Classifier { //problem with CLuster
 
-    private DataSet dataset;
+	private static final Random RAND = new Random();
 
-    private final int maxIterations;
-    private final int updateInterval;
-    private final int numLabels;
+	@SuppressWarnings("FieldCanBeLocal")
+	private DataSet dataset;
+	private XYChart<Number, Number> chart;
+	private XYChart.Series line;
+
+	private final Thread algorithm;
+	private final AppData appData;
+
+	private final int maxIterations;
+	private final int updateInterval;
 
 	// currently, this value does not change after instantiation
-    private final AtomicBoolean tocontinue;
+	private AtomicBoolean tocontinue;
+	private AtomicBoolean initContinue; //value that does not change
 
-    @Override
-    public int getMaxIterations() {
-        return maxIterations;
-    }
+	@Override
+	public int getMaxIterations() {
+		return maxIterations;
+	}
 
-    @Override
-    public int getUpdateInterval() {
-        return updateInterval;
-    }
+	@Override
+	public int getUpdateInterval() {
+		return updateInterval;
+	}
 
-    @Override
-    public boolean tocontinue() {
-        return tocontinue.get();
-    }
+	@Override
+	public final boolean tocontinue() {
+		return tocontinue.get();
+	}
 
-    public RandomClustering(DataSet dataset,
-                            int maxIterations,
-                            int updateInterval,
-                            boolean tocontinue,
-			    int numLabels) {
-        this.dataset = dataset;
-        this.maxIterations = maxIterations;
-        this.updateInterval = updateInterval;
-	this.numLabels = numLabels;
-        this.tocontinue = new AtomicBoolean(tocontinue);
-    }
+	public final boolean isInitContinue() {
+		return initContinue.get();
+	}
 
-    @Override
-    public void run() {
-        for (int i = 1; i <= maxIterations && tocontinue(); i++) {
+	public RandomClustering(DataSet dataset,
+		int maxIterations,
+		int updateInterval,
+		boolean tocontinue, XYChart chart, AppData appData) {
+		this.dataset = dataset;
+		this.maxIterations = maxIterations;
+		this.updateInterval = updateInterval;
+		algorithm = new Thread(this);
+		algorithm.setName(this.getClass().toString());
 
-	    modifyLabels();
-            // everything below is just for internal viewing of how the output is changing
-            // in the final project, such changes will be dynamically visible in the UI
-            if (i % updateInterval == 0) {
-                System.out.printf("Iteration number %d: ", i); //
-                flush();
-            }
-            if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
-                System.out.printf("Iteration number %d: ", i);
-                flush();
-                break;
-            }
-        }
-    }
+		this.tocontinue = new AtomicBoolean(tocontinue);
+		this.initContinue = new AtomicBoolean(tocontinue);
+		this.chart = chart;
+		this.appData = appData;
+	}
 
-    public void modifyLabels(){
-	int numLabels = labels.size();
-	int labelIndex = RAND.nextInt(numLabels);
-	String label = labels.get(labelIndex);
-	
-	dataset.getLabels().forEach((String name, String currLabel) -> {
-    		currLabel = label;
-   	 });
-    }
-
-    // for internal viewing only
-    protected void flush() {
-        System.out.print("label modified");
-    }
-
-    public void startAlgorithm(){
-
-    }
-
-    public void continueAlgorithm(){
-
-    }
+	@Override
+	public void run() {
+		System.out.println("does nothing so far");
+		Platform.runLater(() -> appData.completeAlgorithm());
+	}
 
 	@Override
 	public void updateData() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public String toString() {
+		return "[" + this.getClass() + ": maxIterations=" + maxIterations + ", updateInterval=" + updateInterval + ", tocontinue=" + tocontinue + "]";
+	}
+
+	@Override
+	public void startAlgorithm() {
+		algorithm.start();
+	}
+
+	@Override
+	public void continueAlgorithm() {
+		tocontinue.set(true);
 	}
 
 	@Override
 	public void stopAlgorithm() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		algorithm.interrupt();
 	}
 
 	@Override
 	public String getName() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return "RandomClustering";
 	}
 }
