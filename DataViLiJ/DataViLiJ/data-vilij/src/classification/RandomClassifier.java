@@ -79,7 +79,8 @@ public class RandomClassifier extends Classifier {
 		}
 		chart.getXAxis().setAutoRanging(false);
 		chart.getYAxis().setAutoRanging(false);
-		for (int i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
+		int i;
+		for (i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
 			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 0) * 10)).intValue();
 			//change 0 to -1 for original implementation
 			int yCoefficient = 10;
@@ -87,9 +88,15 @@ public class RandomClassifier extends Classifier {
 
 			// this is the real output of the classifier
 			output = Arrays.asList(xCoefficient, yCoefficient, constant);
+			try{
+				Thread.sleep(500);
+			}catch(InterruptedException ex){
+				return;
+			}
 
 			// everything below is just for internal viewing of how the output is changing
 			// in the final project, such changes will be dynamically visible in the UI
+			appData.updateIteration(i, String.format("Iteration number %d: ", i) + output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0");
 			if (i % updateInterval == 0) {
 				System.out.printf("Iteration number %d: ", i); //
 				flush();
@@ -104,11 +111,6 @@ public class RandomClassifier extends Classifier {
 					}
 					appData.disableRun();
 				}
-				try{
-					Thread.sleep(1000);
-				}catch(InterruptedException ex){
-					return;
-				}
 			}
 			if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
 				System.out.printf("Iteration number %d: ", i);
@@ -118,10 +120,9 @@ public class RandomClassifier extends Classifier {
 			//do to --> fix this window thing
 			//fix clustering algorithm
 			//run a shit ton of tests
-			appData.updateIteration(i, String.format("Iteration number %d: ", i) + output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0");
 			//check if line in chart
 		}
-		System.out.printf("Iteration number %d: ", maxIterations);
+		System.out.printf("Iteration number %d: ", i);
 		flush();
 		updateData(); //show last update
 		//algorithm has finished

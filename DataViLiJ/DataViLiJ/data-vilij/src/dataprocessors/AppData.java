@@ -258,7 +258,6 @@ public class AppData implements DataComponent {
 			appUI.disableEditToggle();
 		}
 
-		//should test if window is closed before algorithm ends
 		Platform.runLater(() -> appUI.showAlgorithmRunWindow());
 	}
 
