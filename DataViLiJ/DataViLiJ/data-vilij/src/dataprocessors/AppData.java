@@ -244,15 +244,13 @@ public class AppData implements DataComponent {
 		algorithmToRun.startAlgorithm();
 		appUI.disableRun();
 		appUI.disableBackButton();
+		appUI.disableAlgorithmChanges();
 		isRunning = true;
 
 		if(!fromFile){
 			//user created data
 			appUI.disableEditToggle();
 		}
-
-		//should probably disable other controls --> can't select other algorithms
-		//probably disable configuration
 	}
 
 	public void stopAlgorithm(){
@@ -270,6 +268,7 @@ public class AppData implements DataComponent {
 		enableRun();
 		appUI.enableEditToggle();
 		appUI.enableBackButton();
+		appUI.enableAlgorithmChanges();
 	}
 
 	public void enableRun(){

@@ -332,6 +332,39 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(classificationContainer);
 	}
 
+	public void disableAlgorithmChanges(){
+		//disable choosing another algorithm
+		//disable configuring algorithm
+		if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
+			for(int i = 0; i < classificationAlgorithms.size(); i++){
+				classificationAlgorithms.get(i).configButton.setDisable(true);
+				classificationAlgorithms.get(i).chooseAlgorithm.setDisable(true);
+			}
+		}else{
+			for(int i = 0; i < clusteringAlgorithms.size(); i++){
+				clusteringAlgorithms.get(i).configButton.setDisable(true);
+				clusteringAlgorithms.get(i).chooseAlgorithm.setDisable(true);
+			}
+
+		}
+	}
+
+	public void enableAlgorithmChanges(){
+		if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
+			for(int i = 0; i < classificationAlgorithms.size(); i++){
+				classificationAlgorithms.get(i).configButton.setDisable(false);
+				classificationAlgorithms.get(i).chooseAlgorithm.setDisable(false);
+			}
+		}else{
+			for(int i = 0; i < clusteringAlgorithms.size(); i++){
+				clusteringAlgorithms.get(i).configButton.setDisable(false);
+				clusteringAlgorithms.get(i).chooseAlgorithm.setDisable(false);
+			}
+
+		}
+
+	}
+
 	/**
 	 * Hides the shown algorithms and resets the algorithms of each respective
 	 * type
