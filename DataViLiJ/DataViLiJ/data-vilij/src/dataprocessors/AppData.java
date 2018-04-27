@@ -261,9 +261,19 @@ public class AppData implements DataComponent {
 		Platform.runLater(() -> appUI.showAlgorithmRunWindow());
 	}
 
+	public void lineNotInChart(String direction){
+		String message;
+		if(direction.isEmpty()){
+			message = "";
+		}else{
+			message = "Line not in chart bounds - direction: " + direction;
+		}
+		appUI.appendAlgorithmRunWindow(message);
+	}
+
 	public void updateIteration(int iteration, String info){
 		double percent = ((double) iteration) / configuration.getMaxIterations();
-		Platform.runLater(() -> appUI.updateAlgorithmRunWindow(percent, info));
+		appUI.updateAlgorithmRunWindow(percent, info);
 	}
 
 	public void stopAlgorithm(){

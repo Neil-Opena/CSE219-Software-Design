@@ -85,6 +85,7 @@ public final class AppUI extends UITemplate {
 	private VBox algorithmRunContainer;
 	private ProgressIndicator algorithmProgress;
 	private Label algorithmRunInfo;
+	private Label messageAlgorithmRunInfo;
 
 
 	private String iconsPath;
@@ -515,8 +516,9 @@ public final class AppUI extends UITemplate {
 
 		algorithmProgress = new ProgressIndicator();
 		algorithmRunInfo = new Label("");
+		messageAlgorithmRunInfo = new Label("");
 
-		algorithmRunContainer.getChildren().addAll(algorithmProgress, algorithmRunInfo);
+		algorithmRunContainer.getChildren().addAll(algorithmProgress, algorithmRunInfo, messageAlgorithmRunInfo);
 		algorithmRunWindow.setScene(new Scene(algorithmRunContainer));
 		algorithmRunWindow.setMinHeight(250);
 		algorithmRunWindow.setMinWidth(300);
@@ -527,6 +529,10 @@ public final class AppUI extends UITemplate {
 		algorithmProgress.setProgress(0);
 		algorithmRunInfo.setText("");
 	};
+
+	public void appendAlgorithmRunWindow(String message){
+		messageAlgorithmRunInfo.setText(message);
+	}
 
 	public void showAlgorithmRunWindow(){
 		resetAlgorithmRunWindow();

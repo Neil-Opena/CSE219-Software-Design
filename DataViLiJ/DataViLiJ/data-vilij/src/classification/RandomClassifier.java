@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 
@@ -29,6 +30,9 @@ public class RandomClassifier extends Classifier {
 
 	private final int maxIterations;
 	private final int updateInterval;
+
+	private double tempMinY;
+	private double tempMaxY; //variables used to store temp y values
 
 	// currently, this value does not change after instantiation
 	private AtomicBoolean tocontinue;
@@ -93,10 +97,9 @@ public class RandomClassifier extends Classifier {
 			}catch(InterruptedException ex){
 				return;
 			}
-
 			// everything below is just for internal viewing of how the output is changing
 			// in the final project, such changes will be dynamically visible in the UI
-			appData.updateIteration(i, String.format("Iteration number %d: ", i) + output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0");
+			produceOutput(i);
 			if (i % updateInterval == 0) {
 				System.out.printf("Iteration number %d: ", i); //
 				flush();
@@ -129,12 +132,29 @@ public class RandomClassifier extends Classifier {
 		Platform.runLater(() -> appData.completeAlgorithm());
 	}
 
-	@Override
-	public void updateData() {
+	private void produceOutput(int i){
 		int a = output.get(0);
 		int b = output.get(1);
 		int c = output.get(2);
 
+		Platform.runLater(() -> {
+			XYChart.Series line = (chart.getData().get(chart.getData().size() - 1));
+			Data min = (Data) line.getData().get(0);
+			Data max = (Data) line.getData().get(1);
+			//ax + by + c = 0
+			// y = (-c -ax) / b
+			double minX = (double) min.getXValue();
+			tempMinY = (-c - (a * minX)) / b;
+
+			double maxX = (double) max.getXValue();
+			tempMaxY = (-c - (a * maxX)) / b;
+			//check if line is in chart
+			appData.updateIteration(i, String.format("Iteration number %d: ", i) + output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0");
+		});
+	}
+
+	@Override
+	public void updateData() {
 		/*
 		Note that if just *one* of the coefficients A and B is zero, 
 		the equation Ax + By + C = 0 still determines a line.  
@@ -158,27 +178,29 @@ public class RandomClassifier extends Classifier {
 			XYChart.Series line = (chart.getData().get(chart.getData().size() - 1));
 			Data min = (Data) line.getData().get(0);
 			Data max = (Data) line.getData().get(1);
-			double yVal;
+			min.setYValue(tempMinY);
+			max.setYValue(tempMaxY);
 
-			//ax + by + c = 0
-			// y = (-c -ax) / b
-
-			double minX = (double) min.getXValue();
-			yVal = (-c - (a * minX)) / b;
-			min.setYValue(yVal);
-
-			double maxX = (double) max.getXValue();
-			yVal = (-c - (a * maxX)) / b;
-			max.setYValue(yVal);
-
-			if(a == 0 && b == 0){
-				min.setYValue(dataset.getMinY());
-				max.setYValue(dataset.getMaxY());
-				System.out.println("generated numbers not a line");
-			}
-
-			//check if line is in chart
+			checkDisplayedLine((double) min.getXValue(), (double) max.getXValue(), (double) min.getYValue(), (double) max.getYValue());
 		});
+	}
+
+	private void checkDisplayedLine(double minX, double maxX, double minY, double maxY){
+		//double xLower = ((NumberAxis) chart.getXAxis()).getLowerBound();
+		//double xUpper = ((NumberAxis) chart.getXAxis()).getUpperBound();
+		double yLower = ((NumberAxis) chart.getYAxis()).getLowerBound();
+		double yUpper = ((NumberAxis) chart.getYAxis()).getUpperBound();
+
+		//technically for now no need to check x points because of how i designed the line
+		if(minY < yLower && maxY < yLower){
+			//line not in chart (S)
+			Platform.runLater(() -> appData.lineNotInChart("South"));
+		}else if(minY > yUpper && maxY > yUpper){
+			//line not in chart (N)
+			Platform.runLater(() -> appData.lineNotInChart("North"));
+		}else{
+			Platform.runLater(() -> appData.lineNotInChart(""));
+		}
 	}
 
 	/*
