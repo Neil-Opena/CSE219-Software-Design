@@ -170,19 +170,6 @@ public final class AppActions implements ActionComponent {
 
 		//ask if user can save while algorithm is running
 		//ask if user can edit configuration while algorithm is running
-
-		/*
-		ERROR --> what if user edits data --> algorithm should fail
-		ERROR --> back button functionality with algorithm
-		ERROR --> what if user edits configuration again
-		ERROR --> null pointer exception if algorithm running and file loaded
-
-		should probably not allow user to change algorithm chosen
-
-		TEST --> algorithm pause --> exit?
-		Should algorithm pause, when dialog is shown?
-		CAN USER SAVE WHILE RUNNING?
-		*/
 	}
 
 	private void loadFile(){
@@ -338,11 +325,11 @@ public final class AppActions implements ActionComponent {
 		(a) terminate the algorithm right away and close the application
 		(b) return to the application
 		*/
+		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		AlgorithmDialog algorithmDialog = ((DataVisualizer) applicationTemplate).getAlgorithmDialog();
 		algorithmDialog.show("Algorithm is running", manager.getPropertyValue(EXIT_WHILE_RUNNING_WARNING.name()));
-		//when this dialog is showing, the algorithm should be paused
 		AlgorithmDialog.Option option = algorithmDialog.getSelectedOption();
-		//what if algorithm has finished
+
 		return option == AlgorithmDialog.Option.YES;
 	}
 }

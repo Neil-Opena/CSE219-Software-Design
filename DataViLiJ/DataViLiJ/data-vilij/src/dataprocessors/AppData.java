@@ -243,26 +243,33 @@ public class AppData implements DataComponent {
 		displayData();
 		algorithmToRun.startAlgorithm();
 		appUI.disableRun();
+		appUI.disableBackButton();
 		isRunning = true;
 
 		if(!fromFile){
 			//user created data
 			appUI.disableEditToggle();
 		}
+
+		//should probably disable other controls --> can't select other algorithms
+		//probably disable configuration
 	}
 
 	public void stopAlgorithm(){
+		algorithmStopped();
 		algorithmToRun.stopAlgorithm();
-		isRunning = false;
-		appUI.enableEditToggle(); //algorithm has finished --> user can edit again
-		enableRun();
 	}
 
 	public void completeAlgorithm(){
+		algorithmStopped();
 		appActions.showErrorDialog("Algorithm completed", "ALgorithm has finished");
+	}
+
+	private void algorithmStopped(){
+		isRunning = false;
 		enableRun();
 		appUI.enableEditToggle();
-		isRunning = false;
+		appUI.enableBackButton();
 	}
 
 	public void enableRun(){
@@ -276,7 +283,7 @@ public class AppData implements DataComponent {
 	public boolean isRunning(){
 		return isRunning;
 	}
-
+	
 	/**
 	 * Continue the algorithm
 	 */

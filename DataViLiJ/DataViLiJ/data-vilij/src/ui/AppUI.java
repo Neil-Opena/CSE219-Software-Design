@@ -287,6 +287,14 @@ public final class AppUI extends UITemplate {
 		setReadOnly(false);
 	}
 
+	public void enableEditToggle(){
+		editToggleButton.setDisable(false);
+	}
+
+	public void disableEditToggle(){
+		editToggleButton.setDisable(true);
+	}
+
 	/**
 	 * Hides the algorithm types
 	 */
@@ -377,6 +385,14 @@ public final class AppUI extends UITemplate {
 			classificationButton.setDisable(false);
 		}
 		inputRegion.getChildren().add(typeContainer);
+	}
+
+	public void disableBackButton(){
+		backButton.setDisable(true);
+	}
+
+	public void enableBackButton(){
+		backButton.setDisable(false);
 	}
 
 	/**
