@@ -132,7 +132,7 @@ public class DataSet {
 	 * @return maximum y of data
 	 */
 	public double getMaxY() {
-		return sortedYValues[sortedXValues.length - 1].doubleValue();
+		return sortedYValues[sortedYValues.length - 1].doubleValue();
 	}
 
 	public static DataSet fromTSDFile(Path tsdFilePath) throws IOException {
