@@ -96,13 +96,7 @@ public class AppData implements DataComponent {
 	-figure out if tsd processor is even needed?
 	-what if display button not needed --> what if user displayed data first and then presses the algorithm
 		-that would cause 2 displays of the same data
-	-set the range of chart
 	-fix algorithm run window -- indicate when line is not displaying
-	-standard deviation formula in dataset
-
-
-	MOVE DISPLAY DATA SET HERE
-	--how about change get extrema method in random clasifier
 	*/
 
 	@Override

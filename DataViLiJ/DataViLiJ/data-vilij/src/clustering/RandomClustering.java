@@ -78,10 +78,6 @@ public class RandomClustering extends Classifier { //problem with CLuster
 	}
 
 	@Override
-	public void updateData() {
-	}
-
-	@Override
 	public String toString() {
 		return "[" + this.getClass() + ": maxIterations=" + maxIterations + ", updateInterval=" + updateInterval + ", tocontinue=" + tocontinue + "]";
 	}

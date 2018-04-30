@@ -164,8 +164,7 @@ public class RandomClassifier extends Classifier {
 		maxY = dataset.getMaxY();
 	}
 
-	@Override
-	public void updateData() {
+	private void updateData() {
 		/*
 		Note that if just *one* of the coefficients A and B is zero, 
 		the equation Ax + By + C = 0 still determines a line.  
