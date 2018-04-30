@@ -51,9 +51,6 @@ public final class TSDProcessor {
 
 	private Map<String, String> dataLabels;
 	private Map<String, Point2D> dataPoints;
-	private XYChart.Series line;
-	private double min;
-	private double max;
 
 	public TSDProcessor() {
 		dataLabels = new LinkedHashMap<>();
