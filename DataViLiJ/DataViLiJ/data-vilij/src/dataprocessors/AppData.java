@@ -3,6 +3,8 @@ package dataprocessors;
 import actions.AppActions;
 import algorithms.Algorithm;
 import algorithms.AlgorithmTypes;
+import algorithms.Classifier;
+import algorithms.Clusterer;
 import classification.RandomClassifier;
 import clustering.RandomClustering;
 import data.Config;
@@ -14,12 +16,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import javafx.application.Platform;
+import javafx.geometry.Point2D;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 
 import vilij.propertymanager.PropertyManager;
 import vilij.components.DataComponent;
@@ -54,6 +60,8 @@ public class AppData implements DataComponent {
 	private AlgorithmTypes algorithmType;
 	private int algorithmIndex;
 	private Algorithm algorithmToRun; //current algorithm queued up to run
+	private ArrayList<Classifier> classificationAlgorithms;
+	private ArrayList<Clusterer> clusteringAlgorithms;
 	private Config configuration;
 
 	/*
@@ -74,7 +82,28 @@ public class AppData implements DataComponent {
 
 		numClassificationAlgorithms = 1;
 		numClusteringAlgorithms = 1;
+		//FIXME should probably remove these
+		loadAlgorithms();
 	}
+
+	/*
+	TODO:
+	-use reflection to load all the algorithms
+	-remove the variables above
+	-change get___algorithms methods
+	-save the data that stark posted
+	-figure out a way to properly scale the data 
+	-figure out if tsd processor is even needed?
+	-what if display button not needed --> what if user displayed data first and then presses the algorithm
+		-that would cause 2 displays of the same data
+	-set the range of chart
+	-fix algorithm run window -- indicate when line is not displaying
+	-standard deviation formula in dataset
+
+
+	MOVE DISPLAY DATA SET HERE
+	--how about change get extrema method in random clasifier
+	*/
 
 	@Override
 	public void loadData(Path dataFilePath){
@@ -156,8 +185,31 @@ public class AppData implements DataComponent {
 	public void displayData() {
 		if(appUI.isDifferentFromDisplayed()){
 			appUI.setDisplayedText();
-			processor.toChartData(appUI.getChart());
+			displayDataSet();
 		}
+	}
+
+	private void displayDataSet(){
+		data.sortValues();
+
+		appUI.getChart().getData().clear();
+		appUI.getChart().getXAxis().setAutoRanging(false);
+		appUI.getChart().getYAxis().setAutoRanging(false);
+		Set<String> labels = new LinkedHashSet<>(data.getLabels().values());
+		for (String label : labels) {
+			XYChart.Series<Number, Number> series = new XYChart.Series<>();
+			series.setName(label);
+			data.getLabels().entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
+				Point2D point = data.getLocations().get(entry.getKey());
+				String name = entry.getKey();
+				series.getData().add(new XYChart.Data<>(point.getX(), point.getY(), name));
+			});
+			appUI.getChart().getData().add(series);
+		}
+		((NumberAxis) (appUI.getChart().getXAxis())).setLowerBound(data.getMinX());
+		((NumberAxis) (appUI.getChart().getXAxis())).setUpperBound(data.getMaxX());
+		((NumberAxis) (appUI.getChart().getYAxis())).setLowerBound(data.getMinY());
+		((NumberAxis) (appUI.getChart().getYAxis())).setUpperBound(data.getMaxY());
 	}
 
 	/**
@@ -284,6 +336,22 @@ public class AppData implements DataComponent {
 	public void completeAlgorithm(){
 		algorithmStopped();
 		appActions.showErrorDialog("Algorithm completed", "ALgorithm has finished");
+	}
+
+	private void loadAlgorithms(){
+		/*
+		One way to satisfy the requirement concerning the loading of algorithms 
+		would be to assume that any algorithms to be used by the application would 
+		have class files located in a particular resource directory. 
+		Upon application startup, this directory would be scanned to retrieve a list 
+		of names of the class files located there, and each class file would be loaded 
+		and instantiated using reflection. Once instantiated, the name of each algorithm 
+		would be obtained, either by just using the base name of the class file, or else 
+		by ensuring that each algorithm class supplies a "getName" or similar method that 
+		can be used to get the user-friendly name of the algorithm. These names can then 
+		be registered with the user interface so that the user will see a complete list 
+		of the available algorithms, without any having been hard-coded.
+		*/
 	}
 
 	private void algorithmStopped(){

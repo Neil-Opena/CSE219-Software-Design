@@ -5,12 +5,9 @@ import data.DataSet;
 import dataprocessors.AppData;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
-import javafx.geometry.Point2D;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -83,7 +80,6 @@ public class RandomClassifier extends Classifier {
 	@Override
 	public void run() {
 		getExtrema();
-		displayDataSet();
 		initLine();
 		try {
 			Thread.sleep(500); //display chart first 
@@ -161,34 +157,11 @@ public class RandomClassifier extends Classifier {
 	}
 
 	private void getExtrema() {
-		dataset.sortValues();
+		//dataset already sorted in appdata
 		minX = dataset.getMinX();
 		maxX = dataset.getMaxX();
 		minY = dataset.getMinY();
 		maxY = dataset.getMaxY();
-	}
-
-	private void displayDataSet() {
-		Platform.runLater(() -> {
-			chart.getData().clear();
-			chart.getXAxis().setAutoRanging(false);
-			chart.getYAxis().setAutoRanging(false);
-			Set<String> labels = new LinkedHashSet<>(dataset.getLabels().values());
-			for (String label : labels) {
-				XYChart.Series<Number, Number> series = new XYChart.Series<>();
-				series.setName(label);
-				dataset.getLabels().entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
-					Point2D point = dataset.getLocations().get(entry.getKey());
-					String name = entry.getKey();
-					series.getData().add(new XYChart.Data<>(point.getX(), point.getY(), name));
-				});
-				chart.getData().add(series);
-			}
-			((NumberAxis) (chart.getXAxis())).setLowerBound(minX);
-			((NumberAxis) (chart.getXAxis())).setUpperBound(maxX);
-			((NumberAxis) (chart.getYAxis())).setLowerBound(minY);
-			((NumberAxis) (chart.getYAxis())).setUpperBound(maxY);
-		});
 	}
 
 	@Override
