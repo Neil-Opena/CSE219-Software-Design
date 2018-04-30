@@ -172,15 +172,7 @@ public class RandomClassifier extends Classifier {
 		It is only if *both* A and B are zero that the equation is degenerate.  
 		 */
 
-
- /*
-		If the line does not intersect the display window, 
-		an appropriate action might be to provide some sort of 
-		visual indication as to the direction in which the line lies, 
-		relative to the displayed rectangle.
-		 */
-
- /*
+ 		/*
 		Your tool should be able to handle the situation in which the 
 		line intersects the display range, and it should be able to 
 		handle the situation in which the line does not intersect the display range.
@@ -212,6 +204,13 @@ public class RandomClassifier extends Classifier {
 		} else {
 			Platform.runLater(() -> appData.lineNotInChart(""));
 		}
+
+		/*
+		If the line does not intersect the display window, 
+		an appropriate action might be to provide some sort of 
+		visual indication as to the direction in which the line lies, 
+		relative to the displayed rectangle.
+		 */
 	}
 
 	/*

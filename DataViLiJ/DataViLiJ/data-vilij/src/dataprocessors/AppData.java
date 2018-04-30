@@ -192,9 +192,12 @@ public class AppData implements DataComponent {
 	private void displayDataSet(){
 		data.sortValues();
 
+		NumberAxis xAxis = (NumberAxis) appUI.getChart().getXAxis();
+		NumberAxis yAxis = (NumberAxis) appUI.getChart().getYAxis();
 		appUI.getChart().getData().clear();
-		appUI.getChart().getXAxis().setAutoRanging(false);
-		appUI.getChart().getYAxis().setAutoRanging(false);
+		xAxis.setAutoRanging(false);
+		yAxis.setAutoRanging(false);
+
 		Set<String> labels = new LinkedHashSet<>(data.getLabels().values());
 		for (String label : labels) {
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
@@ -206,10 +209,38 @@ public class AppData implements DataComponent {
 			});
 			appUI.getChart().getData().add(series);
 		}
-		((NumberAxis) (appUI.getChart().getXAxis())).setLowerBound(data.getMinX());
-		((NumberAxis) (appUI.getChart().getXAxis())).setUpperBound(data.getMaxX());
-		((NumberAxis) (appUI.getChart().getYAxis())).setLowerBound(data.getMinY());
-		((NumberAxis) (appUI.getChart().getYAxis())).setUpperBound(data.getMaxY());
+
+		double minX = data.getMinX();
+		double maxX = data.getMaxX();
+		double minY = data.getMinY();
+		double maxY = data.getMaxY();
+
+		double xTicks = getTickMarks(maxX, minX);
+		double yTicks = getTickMarks(maxY, minY);
+
+		xAxis.setLowerBound(minX - xTicks);
+		xAxis.setUpperBound(maxX + xTicks);
+		yAxis.setLowerBound(minY - yTicks);
+		yAxis.setUpperBound(maxY + yTicks);
+
+		xAxis.setTickUnit(xTicks);
+		yAxis.setTickUnit(yTicks);
+	}
+
+	/**
+	 * Determines the best possible tick marks according to range of data
+	 * @param max maximum value of axis data
+	 * @param min minimum value of axis data
+	 * @return best possible tick mark
+	 * 
+	 * StackOverflow was used to help determine this simple algorithm
+	 */
+	private double getTickMarks(double max, double min){
+		double range = max - min;
+		double power = Math.log10(range);
+		double orderOfMagnitude = Math.pow(10, power);
+
+		return orderOfMagnitude / 10;
 	}
 
 	/**
