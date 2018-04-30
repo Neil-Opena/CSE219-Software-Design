@@ -84,6 +84,7 @@ public final class AppUI extends UITemplate {
 	private Stage algorithmRunWindow;
 	private VBox algorithmRunContainer;
 	private ProgressIndicator algorithmProgress;
+	private Label algorithmRunTitle;
 	private Label algorithmRunInfo;
 	private Label messageAlgorithmRunInfo;
 
@@ -514,16 +515,21 @@ public final class AppUI extends UITemplate {
 		algorithmRunContainer.setAlignment(Pos.CENTER);
 		algorithmRunWindow = new Stage();
 
+		algorithmRunTitle = new Label("Algorithm Iterations");
+		algorithmRunTitle.getStyleClass().add(manager.getPropertyValue(CONFIG_TITLE_CSS.name()));
 		algorithmProgress = new ProgressIndicator();
+		algorithmProgress.getStyleClass().add("progress");
 		algorithmRunInfo = new Label("");
 		messageAlgorithmRunInfo = new Label("");
 
-		algorithmRunContainer.getChildren().addAll(algorithmProgress, algorithmRunInfo, messageAlgorithmRunInfo);
+		algorithmRunContainer.getChildren().addAll(algorithmRunTitle,algorithmProgress, algorithmRunInfo, messageAlgorithmRunInfo);
 		algorithmRunWindow.setScene(new Scene(algorithmRunContainer));
+		algorithmRunWindow.getScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
 		algorithmRunWindow.setMinHeight(250);
 		algorithmRunWindow.setMinWidth(300);
 		algorithmRunWindow.setResizable(false);
 		algorithmRunWindow.setAlwaysOnTop(true);
+		algorithmRunWindow.setTitle("Algorithm Iterations");
 	}
 
 	private void resetAlgorithmRunWindow(){

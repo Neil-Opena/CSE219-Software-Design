@@ -154,11 +154,11 @@ and open the template in the editor.
 	-fx-font-size: 1.1em;
 }
 
-.field-name{
-
-}
-
 .config-window-title{
 	-fx-font-weight: bold;
 	-fx-font-size: 1.3em;
+}
+
+.progress{
+	-fx-progress-color: #487eb0;
 }
