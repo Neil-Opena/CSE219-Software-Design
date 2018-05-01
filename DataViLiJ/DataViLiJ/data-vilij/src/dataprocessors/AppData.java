@@ -52,28 +52,27 @@ public class AppData implements DataComponent {
 	 * current data that the application has access to
 	 */
 	private DataSet data;
+	private Set labels;
 	private double minX;
 	private double maxX;
 	private double minY;
 	private double maxY;
+
+	//For classification algorithms
+	private ArrayList<Classifier> classificationAlgorithms;
+	private int numClassificationAlgorithms; //DELETE
 	private double lineMinY;
 	private double lineMaxY; //variables used to store temp y values 
 	private XYChart.Series<Number, Number> line;
-	private Set labels;
 
-	private int numClassificationAlgorithms;
+	//For clustering algorithms
+	private ArrayList<Clusterer> clusteringAlgorithms;
 	private int numClusteringAlgorithms;
 
 	private AlgorithmTypes algorithmType;
 	private int algorithmIndex;
 	private Algorithm algorithmToRun; //current algorithm queued up to run
-	private ArrayList<Classifier> classificationAlgorithms;
-	private ArrayList<Clusterer> clusteringAlgorithms;
 	private Config configuration;
-
-	/*
-	every algorithm has an index
-	*/
 
 	private boolean isRunning; //test if algorithm is running
 	private boolean fromFile;
@@ -98,9 +97,8 @@ public class AppData implements DataComponent {
 	-use reflection to load all the algorithms
 	-remove the variables above
 	-change get___algorithms methods
-	-what if display button not needed --> what if user displayed data first and then presses the algorithm
-		-that would cause 2 displays of the same data
 	-fix algorithm run window -- indicate when line is not displaying
+	-remove line not in chart method
 	*/
 
 	@Override
@@ -187,6 +185,10 @@ public class AppData implements DataComponent {
 		}
 	}
 
+	/**
+	 * Displays the data in the chart
+	 * Initializes the extrema of the data set used
+	 */
 	private void displayDataSet(){
 		data.sortValues();
 
@@ -208,10 +210,10 @@ public class AppData implements DataComponent {
 			appUI.getChart().getData().add(series);
 		}
 
-		double minX = data.getMinX();
-		double maxX = data.getMaxX();
-		double minY = data.getMinY();
-		double maxY = data.getMaxY();
+		minX = data.getMinX();
+		maxX = data.getMaxX();
+		minY = data.getMinY();
+		maxY = data.getMaxY();
 
 		double xTicks = getTickMarks(maxX, minX);
 		double yTicks = getTickMarks(maxY, minY);
@@ -223,9 +225,6 @@ public class AppData implements DataComponent {
 
 		xAxis.setTickUnit(xTicks);
 		yAxis.setTickUnit(yTicks);
-
-		getExtrema();
-		initLine();
 	}
 
 	/**
@@ -304,10 +303,9 @@ public class AppData implements DataComponent {
 		return algorithmType;
 	}
 
-	public String getAlgorithmName(int index){
-		return null;
-	}
-
+	/**
+	 * FIXME
+	 */
 	private void setUpAlgorithm(){
 		if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
 			switch(algorithmIndex){
@@ -326,11 +324,15 @@ public class AppData implements DataComponent {
 	}
 
 	/**
-	 * Starts the algorithm
+	 * Starts the algorithm and performs all necessary UI changes to 
+	 * indicate that the algorithm is running
 	 */
 	public void startAlgorithm(){
 		setUpAlgorithm();
 		displayData();
+		if(algorithmToRun instanceof Classifier){
+			initLine();
+		}
 
 		algorithmToRun.startAlgorithm();
 
@@ -347,17 +349,10 @@ public class AppData implements DataComponent {
 		Platform.runLater(() -> appUI.showAlgorithmRunWindow());
 	}
 
+	/**
+	 * Updates the current display of the line with the current output values
+	 */
 	public void updateChart(){
-		/*
-		Note that if just *one* of the coefficients A and B is zero, 
-		the equation Ax + By + C = 0 still determines a line.  
-		It is only if *both* A and B are zero that the equation is degenerate.  
-		 */
- 		/*
-		Your tool should be able to handle the situation in which the 
-		line intersects the display range, and it should be able to 
-		handle the situation in which the line does not intersect the display range.
-		 */
 		Platform.runLater(() -> {
 			XYChart.Series line = (appUI.getChart().getData().get(appUI.getChart().getData().size() - 1));
 			XYChart.Data min = (XYChart.Data) line.getData().get(0);
@@ -368,20 +363,22 @@ public class AppData implements DataComponent {
 		});
 	}
 
+	/**
+	 * Checks if the current displayed line lies in the bounds of the chart
+	 * The parameters are the endpoints of the chart
+	 * @param minY the minimum y value of the line
+	 * @param maxY the maximum y value of the line
+	 */
 	private void checkDisplayedLine(double minY, double maxY) {
 		double yLower = ((NumberAxis) appUI.getChart().getYAxis()).getLowerBound();
 		double yUpper = ((NumberAxis) appUI.getChart().getYAxis()).getUpperBound();
 
-		//technically for now no need to check x points because of how i designed the line
 		if (minY < yLower && maxY < yLower) {
-			//line not in chart (S)
-			Platform.runLater(() -> lineNotInChart("South"));
+			Platform.runLater(() -> appUI.appendAlgorithmRunWindow("Line not in chart bounds - direction: South"));
 		} else if (minY > yUpper && maxY > yUpper) {
-			//line not in chart (N)
-			Platform.runLater(() -> lineNotInChart("North"));
-		} else {
-			Platform.runLater(() -> lineNotInChart("")); //FIXME no need for this method
+			Platform.runLater(() -> appUI.appendAlgorithmRunWindow("Line not in chart bounds - direction: North"));
 		}
+
 		/*
 		If the line does not intersect the display window, 
 		an appropriate action might be to provide some sort of 
@@ -390,6 +387,11 @@ public class AppData implements DataComponent {
 		 */
 	}
 
+	/**
+	 * Shows the current iteration number to the user
+	 * Also modifies the values of the line to be displayed
+	 * @param iteration current iteration
+	 */
 	public void showCurrentIteration(int iteration){
 		List<Integer> output = ((Classifier) algorithmToRun).getOutput();
 		int a = output.get(0);
@@ -412,21 +414,10 @@ public class AppData implements DataComponent {
 		});
 	}
 
-	private void getExtrema() {
-		//dataset already sorted in appdata
-		minX = data.getMinX();
-		maxX = data.getMaxX();
-		minY = data.getMinY();
-		maxY = data.getMaxY();
-	}
-
+	/**
+	 * Initiates the line that will be displayed for classification algorithms
+	 */
 	private void initLine() {
-		/*
-		There will have to be some mechanism for querying the Dataset 
-		to determine the range of data values, so that suitable 
-		ranges can be set for the charts 
-		 */
-
  		/*
 		Modify chart after traversing data to avoid ConcurrentModificationException
 		 */
@@ -450,29 +441,32 @@ public class AppData implements DataComponent {
 		});
 	}
 
-	public void lineNotInChart(String direction){
-		String message;
-		if(direction.isEmpty()){
-			message = "";
-		}else{
-			message = "Line not in chart bounds - direction: " + direction;
-		}
-		appUI.appendAlgorithmRunWindow(message);
-	}
-
+	/**
+	 * Updates the display of the app UI algorithm run window based on the 
+	 * current iteration
+	 * @param iteration current iteration
+	 * @param info additional information to display
+	 */
 	private void updateIteration(int iteration, String info){
 		double percent = ((double) iteration) / configuration.getMaxIterations();
 		appUI.updateAlgorithmRunWindow(percent, info);
 	}
 
+	/**
+	 * Method used to indicate that the user wants to stop the algorithm 
+	 * before it has completed
+	 */
 	public void stopAlgorithm(){
 		algorithmStopped();
 		algorithmToRun.stopAlgorithm();
 	}
 
+	/**
+	 * Method used to indicate that the algorithm has successfully finished
+	 */
 	public void completeAlgorithm(){
 		algorithmStopped();
-		appActions.showErrorDialog("Algorithm completed", "ALgorithm has finished");
+		appActions.showErrorDialog("Completed", "ALgorithm has finished");
 	}
 
 	private void loadAlgorithms(){
@@ -491,6 +485,9 @@ public class AppData implements DataComponent {
 		*/
 	}
 
+	/**
+	 * Method used to reset the user interface that no algorithm is running
+	 */
 	private void algorithmStopped(){
 		isRunning = false;
 		enableRun();
@@ -503,14 +500,24 @@ public class AppData implements DataComponent {
 		});
 	}
 
+	/**
+	 * Enables the run button in the user interface
+	 */
 	public void enableRun(){
 		appUI.enableRun();
 	}
 
+	/**
+	 * Disables the run button in the user interface
+	 */
 	public void disableRun(){
 		appUI.disableRun();
 	}
 
+	/**
+	 * Indicates if an algorithm is currently running
+	 * @return true if algorithm is running, false otherwise
+	 */
 	public boolean isRunning(){
 		return isRunning;
 	}
