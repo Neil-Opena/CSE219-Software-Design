@@ -52,6 +52,13 @@ public class AppData implements DataComponent {
 	 * current data that the application has access to
 	 */
 	private DataSet data;
+	private double minX;
+	private double maxX;
+	private double minY;
+	private double maxY;
+	private double lineMinY;
+	private double lineMaxY; //variables used to store temp y values 
+	private XYChart.Series<Number, Number> line;
 	private Set labels;
 
 	private int numClassificationAlgorithms;
@@ -91,9 +98,6 @@ public class AppData implements DataComponent {
 	-use reflection to load all the algorithms
 	-remove the variables above
 	-change get___algorithms methods
-	-save the data that stark posted
-	-figure out a way to properly scale the data 
-	-figure out if tsd processor is even needed?
 	-what if display button not needed --> what if user displayed data first and then presses the algorithm
 		-that would cause 2 displays of the same data
 	-fix algorithm run window -- indicate when line is not displaying
@@ -219,6 +223,9 @@ public class AppData implements DataComponent {
 
 		xAxis.setTickUnit(xTicks);
 		yAxis.setTickUnit(yTicks);
+
+		getExtrema();
+		initLine();
 	}
 
 	/**
@@ -305,7 +312,7 @@ public class AppData implements DataComponent {
 		if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
 			switch(algorithmIndex){
 				case (0) :
-					algorithmToRun = new RandomClassifier(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), appUI.getChart(), this);
+					algorithmToRun = new RandomClassifier(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
 					break;
 			}
 		}else{
@@ -324,7 +331,9 @@ public class AppData implements DataComponent {
 	public void startAlgorithm(){
 		setUpAlgorithm();
 		displayData();
+
 		algorithmToRun.startAlgorithm();
+
 		appUI.disableRun();
 		appUI.disableBackButton();
 		appUI.disableAlgorithmChanges();
@@ -338,6 +347,109 @@ public class AppData implements DataComponent {
 		Platform.runLater(() -> appUI.showAlgorithmRunWindow());
 	}
 
+	public void updateChart(){
+		/*
+		Note that if just *one* of the coefficients A and B is zero, 
+		the equation Ax + By + C = 0 still determines a line.  
+		It is only if *both* A and B are zero that the equation is degenerate.  
+		 */
+ 		/*
+		Your tool should be able to handle the situation in which the 
+		line intersects the display range, and it should be able to 
+		handle the situation in which the line does not intersect the display range.
+		 */
+		Platform.runLater(() -> {
+			XYChart.Series line = (appUI.getChart().getData().get(appUI.getChart().getData().size() - 1));
+			XYChart.Data min = (XYChart.Data) line.getData().get(0);
+			XYChart.Data max = (XYChart.Data) line.getData().get(1);
+			min.setYValue(lineMinY);
+			max.setYValue(lineMaxY);
+			checkDisplayedLine((double) min.getYValue(), (double) max.getYValue());
+		});
+	}
+
+	private void checkDisplayedLine(double minY, double maxY) {
+		double yLower = ((NumberAxis) appUI.getChart().getYAxis()).getLowerBound();
+		double yUpper = ((NumberAxis) appUI.getChart().getYAxis()).getUpperBound();
+
+		//technically for now no need to check x points because of how i designed the line
+		if (minY < yLower && maxY < yLower) {
+			//line not in chart (S)
+			Platform.runLater(() -> lineNotInChart("South"));
+		} else if (minY > yUpper && maxY > yUpper) {
+			//line not in chart (N)
+			Platform.runLater(() -> lineNotInChart("North"));
+		} else {
+			Platform.runLater(() -> lineNotInChart("")); //FIXME no need for this method
+		}
+		/*
+		If the line does not intersect the display window, 
+		an appropriate action might be to provide some sort of 
+		visual indication as to the direction in which the line lies, 
+		relative to the displayed rectangle.
+		 */
+	}
+
+	public void showCurrentIteration(int iteration){
+		List<Integer> output = ((Classifier) algorithmToRun).getOutput();
+		int a = output.get(0);
+		int b = output.get(1);
+		int c = output.get(2);
+
+		Platform.runLater(() -> {
+			XYChart.Series line = (appUI.getChart().getData().get(appUI.getChart().getData().size() - 1));
+			XYChart.Data min = (XYChart.Data) line.getData().get(0);
+			XYChart.Data max = (XYChart.Data) line.getData().get(1);
+			//ax + by + c = 0
+			// y = (-c -ax) / b
+			double minX = (double) min.getXValue();
+			lineMinY = (-c - (a * minX)) / b;
+
+			double maxX = (double) max.getXValue();
+			lineMaxY = (-c - (a * maxX)) / b;
+			//check if line is in chart
+			updateIteration(iteration, String.format("Iteration number %d: ", iteration) + output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0");
+		});
+	}
+
+	private void getExtrema() {
+		//dataset already sorted in appdata
+		minX = data.getMinX();
+		maxX = data.getMaxX();
+		minY = data.getMinY();
+		maxY = data.getMaxY();
+	}
+
+	private void initLine() {
+		/*
+		There will have to be some mechanism for querying the Dataset 
+		to determine the range of data values, so that suitable 
+		ranges can be set for the charts 
+		 */
+
+ 		/*
+		Modify chart after traversing data to avoid ConcurrentModificationException
+		 */
+		Platform.runLater(() -> {
+			XYChart.Series potentialLine = (XYChart.Series) appUI.getChart().getData().get(appUI.getChart().getData().size() - 1);
+			if (potentialLine.getName().equals("classification")) {
+				appUI.getChart().getData().remove(potentialLine);
+			}
+		});
+		line = new XYChart.Series<>();
+		line.setName("classification");
+
+		line.getData().add(new XYChart.Data(minX, ((NumberAxis) appUI.getChart().getYAxis()).getLowerBound()));
+		line.getData().add(new XYChart.Data(maxX, ((NumberAxis) appUI.getChart().getYAxis()).getLowerBound()));
+
+		Platform.runLater(() -> {
+			appUI.getChart().getData().add(line);
+			line.getNode().getStyleClass().add("line");
+			((XYChart.Data) line.getData().get(0)).getNode().getStyleClass().add("hide-symbol");
+			((XYChart.Data) line.getData().get(1)).getNode().getStyleClass().add("hide-symbol");
+		});
+	}
+
 	public void lineNotInChart(String direction){
 		String message;
 		if(direction.isEmpty()){
@@ -348,7 +460,7 @@ public class AppData implements DataComponent {
 		appUI.appendAlgorithmRunWindow(message);
 	}
 
-	public void updateIteration(int iteration, String info){
+	private void updateIteration(int iteration, String info){
 		double percent = ((double) iteration) / configuration.getMaxIterations();
 		appUI.updateAlgorithmRunWindow(percent, info);
 	}

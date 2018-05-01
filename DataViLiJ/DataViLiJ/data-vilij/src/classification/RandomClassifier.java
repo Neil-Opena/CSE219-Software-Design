@@ -8,9 +8,6 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Data;
 
 /**
  * @author Ritwik Banerjee
@@ -22,21 +19,11 @@ public class RandomClassifier extends Classifier {
 	@SuppressWarnings("FieldCanBeLocal")
 	// this mock classifier doesn't actually use the data, but a real classifier will
 	private DataSet dataset;
-	private XYChart<Number, Number> chart;
-	private XYChart.Series line;
-
 	private final Thread algorithm;
 	private final AppData appData;
 
 	private final int maxIterations;
 	private final int updateInterval;
-
-	private double minX;
-	private double maxX;
-	private double minY;
-	private double maxY;
-	private double lineMinY;
-	private double lineMaxY; //variables used to store temp y values
 
 	// currently, this value does not change after instantiation
 	private AtomicBoolean tocontinue;
@@ -64,7 +51,7 @@ public class RandomClassifier extends Classifier {
 	public RandomClassifier(DataSet dataset,
 		int maxIterations,
 		int updateInterval,
-		boolean tocontinue, XYChart chart, AppData appData) {
+		boolean tocontinue, AppData appData) {
 		this.dataset = dataset;
 		this.maxIterations = maxIterations;
 		this.updateInterval = updateInterval;
@@ -73,14 +60,11 @@ public class RandomClassifier extends Classifier {
 
 		this.tocontinue = new AtomicBoolean(tocontinue);
 		this.initContinue = new AtomicBoolean(tocontinue);
-		this.chart = chart;
 		this.appData = appData;
 	}
 
 	@Override
 	public void run() {
-		getExtrema();
-		initLine();
 		try {
 			Thread.sleep(500); //display chart first 
 		} catch (InterruptedException ex) {
@@ -88,8 +72,7 @@ public class RandomClassifier extends Classifier {
 		}
 		int i;
 		for (i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
-			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 0) * 10)).intValue();
-			//change 0 to -1 for original implementation
+			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 0) * 10)).intValue(); //change 0 to 1 for original implementation
 			int yCoefficient = 10;
 			int constant = RAND.nextInt(11);
 
@@ -102,11 +85,11 @@ public class RandomClassifier extends Classifier {
 			}
 			// everything below is just for internal viewing of how the output is changing
 			// in the final project, such changes will be dynamically visible in the UI
-			produceOutput(i);
+			appData.showCurrentIteration(i);
 			if (i % updateInterval == 0) {
 				System.out.printf("Iteration number %d: ", i); //
 				flush();
-				updateData();
+				appData.updateChart();
 				if (!isInitContinue()) {
 					appData.enableRun();
 					tocontinue.set(false);
@@ -123,127 +106,12 @@ public class RandomClassifier extends Classifier {
 				flush();
 				break;
 			}
-			//do to --> fix this window thing
-			//fix clustering algorithm
-			//run a shit ton of tests
-			//check if line in chart
 		}
 		System.out.printf("Iteration number %d: ", i);
 		flush();
-		updateData(); //show last update
+		appData.updateChart(); //show last update
 		//algorithm has finished
 		Platform.runLater(() -> appData.completeAlgorithm());
-	}
-
-	private void produceOutput(int i) {
-		int a = output.get(0);
-		int b = output.get(1);
-		int c = output.get(2);
-
-		Platform.runLater(() -> {
-			XYChart.Series line = (chart.getData().get(chart.getData().size() - 1));
-			Data min = (Data) line.getData().get(0);
-			Data max = (Data) line.getData().get(1);
-			//ax + by + c = 0
-			// y = (-c -ax) / b
-			double minX = (double) min.getXValue();
-			lineMinY = (-c - (a * minX)) / b;
-
-			double maxX = (double) max.getXValue();
-			lineMaxY = (-c - (a * maxX)) / b;
-			//check if line is in chart
-			appData.updateIteration(i, String.format("Iteration number %d: ", i) + output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0");
-		});
-	}
-
-	private void getExtrema() {
-		//dataset already sorted in appdata
-		minX = dataset.getMinX();
-		maxX = dataset.getMaxX();
-		minY = dataset.getMinY();
-		maxY = dataset.getMaxY();
-	}
-
-	private void updateData() {
-		/*
-		Note that if just *one* of the coefficients A and B is zero, 
-		the equation Ax + By + C = 0 still determines a line.  
-		It is only if *both* A and B are zero that the equation is degenerate.  
-		 */
-
- 		/*
-		Your tool should be able to handle the situation in which the 
-		line intersects the display range, and it should be able to 
-		handle the situation in which the line does not intersect the display range.
-		 */
-		Platform.runLater(() -> {
-			XYChart.Series line = (chart.getData().get(chart.getData().size() - 1));
-			Data min = (Data) line.getData().get(0);
-			Data max = (Data) line.getData().get(1);
-			min.setYValue(lineMinY);
-			max.setYValue(lineMaxY);
-
-			checkDisplayedLine((double) min.getXValue(), (double) max.getXValue(), (double) min.getYValue(), (double) max.getYValue());
-		});
-	}
-
-	private void checkDisplayedLine(double minX, double maxX, double minY, double maxY) {
-		//double xLower = ((NumberAxis) chart.getXAxis()).getLowerBound();
-		//double xUpper = ((NumberAxis) chart.getXAxis()).getUpperBound();
-		double yLower = ((NumberAxis) chart.getYAxis()).getLowerBound();
-		double yUpper = ((NumberAxis) chart.getYAxis()).getUpperBound();
-
-		//technically for now no need to check x points because of how i designed the line
-		if (minY < yLower && maxY < yLower) {
-			//line not in chart (S)
-			Platform.runLater(() -> appData.lineNotInChart("South"));
-		} else if (minY > yUpper && maxY > yUpper) {
-			//line not in chart (N)
-			Platform.runLater(() -> appData.lineNotInChart("North"));
-		} else {
-			Platform.runLater(() -> appData.lineNotInChart(""));
-		}
-
-		/*
-		If the line does not intersect the display window, 
-		an appropriate action might be to provide some sort of 
-		visual indication as to the direction in which the line lies, 
-		relative to the displayed rectangle.
-		 */
-	}
-
-	/*
-	A better idea would be to have a label in the display that shows the current iteration number that corresponds to what is showing in the chart.
-	task idea!!
-	 */
-	private void initLine() {
-		/*
-		There will have to be some mechanism for querying the Dataset 
-		to determine the range of data values, so that suitable 
-		ranges can be set for the charts 
-		 */
-
- /*
-		Modify chart after traversing data to avoid ConcurrentModificationException
-		 */
-		Platform.runLater(() -> {
-			XYChart.Series potentialLine = chart.getData().get(chart.getData().size() - 1);
-			if (potentialLine.getName().equals("classification")) {
-				chart.getData().remove(potentialLine);
-			}
-		});
-		line = new XYChart.Series<>();
-		line.setName("classification");
-
-		line.getData().add(new XYChart.Data(minX, 0));
-		line.getData().add(new XYChart.Data(maxX, 0));
-
-		Platform.runLater(() -> {
-			chart.getData().add(line);
-			line.getNode().getStyleClass().add("line");
-			((XYChart.Data) line.getData().get(0)).getNode().getStyleClass().add("hide-symbol");
-			((XYChart.Data) line.getData().get(1)).getNode().getStyleClass().add("hide-symbol");
-		});
 	}
 
 	@Override
