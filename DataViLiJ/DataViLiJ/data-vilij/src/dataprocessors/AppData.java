@@ -5,6 +5,7 @@ import algorithms.Algorithm;
 import algorithms.AlgorithmTypes;
 import algorithms.Classifier;
 import classification.RandomClassifier;
+import clustering.KMeansClusterer;
 import clustering.RandomClustering;
 import data.Config;
 import data.DataSet;
@@ -91,7 +92,7 @@ public class AppData implements DataComponent {
 		manager = applicationTemplate.manager;
 
 		numClassificationAlgorithms = 1;
-		numClusteringAlgorithms = 1;
+		numClusteringAlgorithms = 2;
 		//FIXME should probably remove these
 		//loadAlgorithms(); //may need to move
 	}
@@ -103,6 +104,19 @@ public class AppData implements DataComponent {
 	-change get___algorithms methods
 	-fix algorithm run window -- indicate when line is not displaying
 	-add labels tooltip shit
+	-fix selecting algorithm --> each configuration button should correspond to a different window
+	=duplicated children added can occur
+	-should probably fix case when user inputs a 1 as num labels
+	-add changes to config window --> use can't put update greater than iteration
+	-
+	-when switched to new algorithm, clear the chart
+	-clear the algorithm run window as well
+
+	-maybe instead of clearing chart, we can just reset to original display
+	-when data is loaded, perhaps display it?
+
+	-app data not showing display data when second algorithm is selected
+
 	*/
 
 	@Override
@@ -380,8 +394,11 @@ public class AppData implements DataComponent {
 		}else{
 			switch(algorithmIndex){
 				case (0) : 
-					//need to change constructor and pass in labels
-					algorithmToRun = new RandomClustering(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), appUI.getChart(), this);
+					//HARD CODED FOR NOT
+					algorithmToRun = new RandomClustering(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getNumLabels(), configuration.getToContinue(), this);
+					break;
+				case (1) :
+					algorithmToRun = new KMeansClusterer(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getNumLabels(), configuration.getToContinue(), this);
 					break;
 			}
 		}
@@ -453,10 +470,19 @@ public class AppData implements DataComponent {
 
 	/**
 	 * Shows the current iteration number to the user
-	 * Also modifies the values of the line to be displayed
 	 * @param iteration current iteration
 	 */
 	public void showCurrentIteration(int iteration){
+		StringBuilder infoBuilder = new StringBuilder();
+		infoBuilder.append(String.format("Iteration number %d: ", iteration));
+		if(algorithmToRun instanceof Classifier){
+			infoBuilder.append(produceLineEquation());
+		}
+		
+		Platform.runLater(() -> updateIteration(iteration, infoBuilder.toString()));
+	}
+
+	private String produceLineEquation(){
 		List<Integer> output = ((Classifier) algorithmToRun).getOutput();
 		int a = output.get(0);
 		int b = output.get(1);
@@ -473,9 +499,8 @@ public class AppData implements DataComponent {
 
 			double maxX = (double) max.getXValue();
 			lineMaxY = (-c - (a * maxX)) / b;
-			//check if line is in chart
-			updateIteration(iteration, String.format("Iteration number %d: ", iteration) + output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0");
 		});
+		return output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0 ";
 	}
 
 	/**
@@ -530,7 +555,7 @@ public class AppData implements DataComponent {
 	 */
 	public void completeAlgorithm(){
 		algorithmStopped();
-		appActions.showErrorDialog("Completed", "ALgorithm has finished");
+		Platform.runLater(() -> appActions.showErrorDialog("Completed", "Algorithm has successfully finished"));
 	}
 
 	/**
