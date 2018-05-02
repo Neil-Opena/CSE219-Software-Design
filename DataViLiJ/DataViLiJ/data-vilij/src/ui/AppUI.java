@@ -832,7 +832,6 @@ public final class AppUI extends UITemplate {
 				if(appData.getAlgorithmIndex() == index){
 					appData.setConfiguration(index);
 				}
-				//FIXME -- Test for doing this but with different types
 			});
 
 			chooseAlgorithm.setOnAction(event -> {

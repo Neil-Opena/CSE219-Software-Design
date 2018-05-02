@@ -79,14 +79,10 @@ public class RandomClassifier extends Classifier {
 
 			// this is the real output of the classifier
 			output = Arrays.asList(xCoefficient, yCoefficient, constant);
-			try {
-				Thread.sleep(750);
-			} catch (InterruptedException ex) {
-				return;
-			}
+			appData.showCurrentIteration(i);
+			
 			// everything below is just for internal viewing of how the output is changing
 			// in the final project, such changes will be dynamically visible in the UI
-			appData.showCurrentIteration(i);
 			if (i % updateInterval == 0) {
 				//System.out.printf("Iteration number %d: ", i); //
 				//flush();
@@ -106,6 +102,11 @@ public class RandomClassifier extends Classifier {
 				//System.out.printf("Iteration number %d: ", i);
 				//flush();
 				break;
+			}
+			try {
+				Thread.sleep(750);
+			} catch (InterruptedException ex) {
+				return;
 			}
 		}
 		//System.out.printf("Iteration number %d: ", i);

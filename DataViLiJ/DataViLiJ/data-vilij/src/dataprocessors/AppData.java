@@ -107,17 +107,16 @@ public class AppData implements DataComponent {
 	-change get___algorithms methods
 	-fix algorithm run window -- indicate when line is not displaying
 	-add labels tooltip shit
-	-fix selecting algorithm --> each configuration button should correspond to a different window
-	=duplicated children added can occur
 	-add changes to config window --> use can't put update greater than iteration
 
 	-LMAO what if it is only one data point (chart looks shitty)
 
 	-put title of algorithm in config window
+	-k means algorithm max labels is only 4
 
-	NEED to fix error when there's no configuration, so run button should be disabled bruh
+	-bug in algorithm run window --> sometimes "line not showing" message is still there even though it is actually showing
 
-	change time for display data sleep thing .. to slow
+	-ERROR - test_valid.tsd --> array value is 8 k --> k means cluster, error
 	*/
 
 	@Override
@@ -370,7 +369,7 @@ public class AppData implements DataComponent {
 				//how about put temp values? but they're final though
 				//Essentially, how does one instantiate an algorithm, if by reflection there's no data yet, there's no configuration yet
 
-				//other question: should the algorithm operated on the updated data? or the original data?
+				//other question: the data shoulld reset to original data when a new algorithm is selcted right?
 				*/
 				//Object instance = constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
 				Object instance = constructor.newInstance(null, -1, -1, false, this);
@@ -487,6 +486,8 @@ public class AppData implements DataComponent {
 			Platform.runLater(() -> appUI.appendAlgorithmRunWindow("Line not in chart bounds - direction: South"));
 		} else if (minY > yUpper && maxY > yUpper) {
 			Platform.runLater(() -> appUI.appendAlgorithmRunWindow("Line not in chart bounds - direction: North"));
+		}else{
+			Platform.runLater(() -> appUI.appendAlgorithmRunWindow(""));
 		}
 
 		/*
