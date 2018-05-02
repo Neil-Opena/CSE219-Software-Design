@@ -5,26 +5,22 @@
  */
 package clustering;
 
-import algorithms.Classifier;
+import algorithms.Clusterer;
 import data.DataSet;
 import dataprocessors.AppData;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javafx.application.Platform;
-import javafx.scene.chart.XYChart;
 
 /**
  *
  * @author Neil Opena
  */
-public class RandomClustering extends Classifier { //problem with CLuster
+public class RandomClustering extends Clusterer { //problem with CLuster
 
 	private static final Random RAND = new Random();
 
 	@SuppressWarnings("FieldCanBeLocal")
 	private DataSet dataset;
-	private XYChart<Number, Number> chart;
-	private XYChart.Series line;
 
 	private final Thread algorithm;
 	private final AppData appData;
@@ -55,31 +51,37 @@ public class RandomClustering extends Classifier { //problem with CLuster
 		return initContinue.get();
 	}
 
-	public RandomClustering(DataSet dataset,
-		int maxIterations,
-		int updateInterval,
-		boolean tocontinue, XYChart chart, AppData appData) {
+	public RandomClustering(DataSet dataset, int maxIterations, int updateInterval, int numberOfClusters, boolean tocontinue, AppData appData) {
+		super(numberOfClusters);
 		this.dataset = dataset;
 		this.maxIterations = maxIterations;
 		this.updateInterval = updateInterval;
+
 		algorithm = new Thread(this);
-		algorithm.setName(this.getClass().toString());
+		algorithm.setName(getName());
 
 		this.tocontinue = new AtomicBoolean(tocontinue);
 		this.initContinue = new AtomicBoolean(tocontinue);
-		this.chart = chart;
 		this.appData = appData;
 	}
 
 	@Override
 	public void run() {
-		System.out.println("does nothing so far");
-		Platform.runLater(() -> appData.completeAlgorithm());
-	}
-
-	@Override
-	public String toString() {
-		return "[" + this.getClass() + ": maxIterations=" + maxIterations + ", updateInterval=" + updateInterval + ", tocontinue=" + tocontinue + "]";
+		try {
+			Thread.sleep(500); //display chart first 
+		} catch (InterruptedException ex) {
+			return;
+		}
+		int iteration = 0;
+		while (iteration++ < maxIterations & tocontinue.get()) {
+			appData.showCurrentIteration(iteration);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException ex) {
+				return;
+			}
+		}
+		appData.completeAlgorithm();
 	}
 
 	@Override

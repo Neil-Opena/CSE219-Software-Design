@@ -7,7 +7,6 @@ import dataprocessors.AppData;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javafx.application.Platform;
 
 /**
  * @author Ritwik Banerjee
@@ -111,7 +110,7 @@ public class RandomClassifier extends Classifier {
 		flush();
 		appData.updateChart(); //show last update
 		//algorithm has finished
-		Platform.runLater(() -> appData.completeAlgorithm());
+		appData.completeAlgorithm();
 	}
 
 	@Override

@@ -7,6 +7,7 @@ package clustering;
 
 import algorithms.Clusterer;
 import data.DataSet;
+import dataprocessors.AppData;
 import javafx.geometry.Point2D;
 
 import java.util.*;
@@ -19,20 +20,30 @@ import java.util.stream.IntStream;
  * @author Ritwik Banerjee
  */
 public class KMeansClusterer extends Clusterer {
+	private final Thread algorithm;
+	private final AppData appData;
 
 	private DataSet dataset;
 	private List<Point2D> centroids;
 
 	private final int maxIterations;
 	private final int updateInterval;
+
+	private AtomicBoolean initContinue; //value that does not change
 	private final AtomicBoolean tocontinue;
 
-	public KMeansClusterer(DataSet dataset, int maxIterations, int updateInterval, int numberOfClusters) {
+	public KMeansClusterer(DataSet dataset, int maxIterations, int updateInterval, int numberOfClusters, boolean tocontinue, AppData appData) {
 		super(numberOfClusters);
 		this.dataset = dataset;
 		this.maxIterations = maxIterations;
 		this.updateInterval = updateInterval;
 		this.tocontinue = new AtomicBoolean(false);
+
+		algorithm = new Thread(this);
+		algorithm.setName(getName());
+
+		this.initContinue = new AtomicBoolean(tocontinue);
+		this.appData = appData;
 	}
 
 	@Override
@@ -53,11 +64,23 @@ public class KMeansClusterer extends Clusterer {
 	@Override
 	public void run() {
 		initializeCentroids();
+		try {
+			Thread.sleep(500); //display chart first 
+		} catch (InterruptedException ex) {
+			return;
+		}
 		int iteration = 0;
 		while (iteration++ < maxIterations & tocontinue.get()) {
 			assignLabels();
 			recomputeCentroids();
+			appData.showCurrentIteration(iteration);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException ex) {
+				return;
+			}
 		}
+		appData.completeAlgorithm();
 	}
 
 	private void initializeCentroids() {
@@ -117,22 +140,22 @@ public class KMeansClusterer extends Clusterer {
 
 	@Override
 	public void startAlgorithm() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		algorithm.start();
 	}
 
 	@Override
 	public void continueAlgorithm() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		tocontinue.set(true);
 	}
 
 	@Override
 	public void stopAlgorithm() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		algorithm.interrupt();
 	}
 
 	@Override
 	public String getName() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return "KMeansClusterer";
 	}
 
 }
