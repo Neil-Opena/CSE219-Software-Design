@@ -77,7 +77,19 @@ public class KMeansClusterer extends Clusterer {
 			assignLabels();
 			recomputeCentroids();
 			appData.showCurrentIteration(iteration);
-			appData.updateChart();
+			if(iteration % updateInterval == 0){
+				appData.updateChart();
+				if (!initContinue.get()) {
+					appData.enableRun();
+					tocontinue.set(false);
+					while (!tocontinue()) { //wait until play is clicked
+						if (Thread.interrupted()) {
+							return;
+						}
+					}
+					appData.disableRun();
+				}
+			}
 			try {
 				Thread.sleep(750);
 			} catch (InterruptedException ex) {

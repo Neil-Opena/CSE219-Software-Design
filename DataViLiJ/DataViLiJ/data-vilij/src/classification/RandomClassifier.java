@@ -43,10 +43,6 @@ public class RandomClassifier extends Classifier {
 		return tocontinue.get();
 	}
 
-	public final boolean isInitContinue() {
-		return initContinue.get();
-	}
-
 	public RandomClassifier(DataSet dataset,
 		int maxIterations,
 		int updateInterval,
@@ -87,7 +83,7 @@ public class RandomClassifier extends Classifier {
 				//System.out.printf("Iteration number %d: ", i); //
 				//flush();
 				appData.updateChart();
-				if (!isInitContinue()) {
+				if (!initContinue.get()) {
 					appData.enableRun();
 					tocontinue.set(false);
 					while (!tocontinue()) { //wait until play is clicked

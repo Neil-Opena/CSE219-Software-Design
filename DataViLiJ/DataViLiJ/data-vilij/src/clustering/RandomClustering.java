@@ -47,10 +47,6 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 		return tocontinue.get();
 	}
 
-	public final boolean isInitContinue() {
-		return initContinue.get();
-	}
-
 	public RandomClustering(DataSet dataset, int maxIterations, int updateInterval, int numberOfClusters, boolean tocontinue, AppData appData) {
 		super(numberOfClusters);
 		this.dataset = dataset;
@@ -77,6 +73,19 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 		int iteration = 0;
 		while (iteration++ < maxIterations & tocontinue.get()) {
 			appData.showCurrentIteration(iteration);
+			if(iteration % updateInterval == 0){
+				appData.updateChart();
+				if (!initContinue.get()) {
+					appData.enableRun();
+					tocontinue.set(false);
+					while (!tocontinue()) { //wait until play is clicked
+						if (Thread.interrupted()) {
+							return;
+						}
+					}
+					appData.disableRun();
+				}
+			}
 			try {
 				Thread.sleep(750);
 			} catch (InterruptedException ex) {

@@ -117,6 +117,7 @@ public class AppData implements DataComponent {
 	-bug in algorithm run window --> sometimes "line not showing" message is still there even though it is actually showing
 
 	-ERROR - test_valid.tsd --> array value is 8 k --> k means cluster, error
+	-ERROR - running KMeansClusterer multiple times --> SHOULD RESET
 	*/
 
 	@Override
@@ -370,6 +371,7 @@ public class AppData implements DataComponent {
 				//Essentially, how does one instantiate an algorithm, if by reflection there's no data yet, there's no configuration yet
 
 				//other question: the data shoulld reset to original data when a new algorithm is selcted right?
+				//other question: should the label names stay the same (male, female rather than 0, 1)?
 				*/
 				//Object instance = constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
 				Object instance = constructor.newInstance(null, -1, -1, false, this);

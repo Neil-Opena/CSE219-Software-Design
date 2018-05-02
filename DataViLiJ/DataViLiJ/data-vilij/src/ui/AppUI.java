@@ -1017,15 +1017,16 @@ public final class AppUI extends UITemplate {
 			int maxIterations = Integer.parseInt(iterationField.getText());
 			int updateInterval = Integer.parseInt(intervalField.getText());
 			boolean toContinue = continuousCheck.isSelected();
-			int numLabels = 0;
 			if(type.equals(AlgorithmTypes.CLUSTERING)){
-				numLabels = Integer.parseInt(numLabelsField.getText());
-				config = new Config(maxIterations, updateInterval, toContinue, numLabels);
+				int numLabels = Integer.parseInt(numLabelsField.getText());
 				if(numLabels < 2){
 					numLabelsField.setText("" + 2);
+				}else if(numLabels > 4){
+					numLabelsField.setText("" + 4);
 				}else{
 					numLabelsField.setText("" + numLabels);
 				}
+				config = new Config(maxIterations, updateInterval, toContinue, numLabels);
 			}else{
 				config = new Config(maxIterations, updateInterval, toContinue);
 			}
