@@ -831,18 +831,17 @@ public final class AppUI extends UITemplate {
 					window.showLabelField();
 				}
 				window.showAndWait();
-				//appData.setConfiguration(window.config);
 				chooseAlgorithm.setUserData(true);
 				testForConfiguration();
 			});
 
 			chooseAlgorithm.setOnAction(event -> {
 				appData.setAlgorithmToRun(index);
-				appData.setConfiguration(window.config);
 				if(chooseAlgorithm.isSelected()){
 					showRun();
 					testForConfiguration();
 					appData.displayData();
+					appData.setConfiguration(window.config);
 					resetAlgorithmRunWindow(); //reset for when additional information from other algorithm is shown
 				}else{
 					hideRun();
