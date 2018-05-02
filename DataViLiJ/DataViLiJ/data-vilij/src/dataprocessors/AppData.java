@@ -106,17 +106,11 @@ public class AppData implements DataComponent {
 	-add labels tooltip shit
 	-fix selecting algorithm --> each configuration button should correspond to a different window
 	=duplicated children added can occur
-	-should probably fix case when user inputs a 1 as num labels
 	-add changes to config window --> use can't put update greater than iteration
-	-
-	-when switched to new algorithm, clear the chart
-	-clear the algorithm run window as well
 
-	-maybe instead of clearing chart, we can just reset to original display
-	-when data is loaded, perhaps display it?
-
-	-app data not showing display data when second algorithm is selected
 	-LMAO what if it is only one data point (chart looks shitty)
+
+	-put title of algorithm in config window
 	*/
 
 	@Override
@@ -402,7 +396,6 @@ public class AppData implements DataComponent {
 	 */
 	public void startAlgorithm(){
 		setUpAlgorithm();
-		displayData();
 		if(algorithmToRun instanceof Classifier){
 			initLine();
 		}

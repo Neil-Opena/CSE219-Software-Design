@@ -372,9 +372,13 @@ public final class AppUI extends UITemplate {
 	 */
 	public void showRun(){
 		if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
-			classificationContainer.getChildren().add(runButton);
+			if(!classificationContainer.getChildren().contains(runButton)){
+				classificationContainer.getChildren().add(runButton);
+			}
 		}else{
-			clusteringContainer.getChildren().add(runButton);
+			if(!clusteringContainer.getChildren().contains(runButton)){
+				clusteringContainer.getChildren().add(runButton);
+			}
 		}
 	}
 
@@ -649,6 +653,7 @@ public final class AppUI extends UITemplate {
 				}else{
 					selected = clusteringRadios.getSelectedToggle();
 				}
+				//should also show configuration related to it
 				appData.startAlgorithm();
 			}else{
 				appData.continueAlgorithm();
@@ -662,10 +667,6 @@ public final class AppUI extends UITemplate {
 			runButton.setDisable(true);
 			showBackButton();
 			classificationRadios.selectToggle(null);
-			// other toggle group --> deselect buttons
-			/*
-			bug -->run button automatically disablee
-			*/
 		});
 
 		classificationButton.setOnAction(event ->{
@@ -830,13 +831,14 @@ public final class AppUI extends UITemplate {
 					window.showLabelField();
 				}
 				window.showAndWait();
-				appData.setConfiguration(window.config);
+				//appData.setConfiguration(window.config);
 				chooseAlgorithm.setUserData(true);
 				testForConfiguration();
 			});
 
 			chooseAlgorithm.setOnAction(event -> {
 				appData.setAlgorithmToRun(index);
+				appData.setConfiguration(window.config);
 				if(chooseAlgorithm.isSelected()){
 					showRun();
 					testForConfiguration();
@@ -845,7 +847,6 @@ public final class AppUI extends UITemplate {
 				}else{
 					hideRun();
 				}
-				//might have to fix for more algorithms
 				/*
 				when an algorithm is selected, get the created config and pass to app data
 				*/
@@ -994,9 +995,14 @@ public final class AppUI extends UITemplate {
 			try{
 				int maxIterations = Integer.parseInt(iterationField.getText());
 				int updateInterval = Integer.parseInt(intervalField.getText());
-				int numLabels = Integer.parseInt(numLabelsField.getText());
-				if(maxIterations < 0 || updateInterval < 0 || numLabels < 0){
+				if(maxIterations < 0 || updateInterval < 0){
 					return false;
+				}
+				if(type.equals(AlgorithmTypes.CLUSTERING)){
+					int numLabels = Integer.parseInt(numLabelsField.getText());
+					if(numLabels < 1){
+						return false;
+					}
 				}
 			}catch(NumberFormatException e){
 				return false;
@@ -1020,16 +1026,16 @@ public final class AppUI extends UITemplate {
 			if(type.equals(AlgorithmTypes.CLUSTERING)){
 				numLabels = Integer.parseInt(numLabelsField.getText());
 				config = new Config(maxIterations, updateInterval, toContinue, numLabels);
-				numLabelsField.setText("" + numLabels);
+				if(numLabels < 2){
+					numLabelsField.setText("" + 2);
+				}else{
+					numLabelsField.setText("" + numLabels);
+				}
 			}else{
 				config = new Config(maxIterations, updateInterval, toContinue);
 			}
 			iterationField.setText("" + maxIterations);
-			if(updateInterval < 2){
-				intervalField.setText("" + 2);
-			}else{
-				intervalField.setText("" + updateInterval);
-			}
+			intervalField.setText("" + updateInterval);
 			continuousCheck.setSelected(toContinue);
 		}
 

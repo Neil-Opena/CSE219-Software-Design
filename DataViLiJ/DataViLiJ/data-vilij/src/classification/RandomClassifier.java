@@ -64,11 +64,6 @@ public class RandomClassifier extends Classifier {
 
 	@Override
 	public void run() {
-		try {
-			Thread.sleep(500); //display chart first 
-		} catch (InterruptedException ex) {
-			return;
-		}
 		int i;
 		for (i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
 			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 0) * 10)).intValue(); //change 0 to 1 for original implementation
@@ -86,8 +81,8 @@ public class RandomClassifier extends Classifier {
 			// in the final project, such changes will be dynamically visible in the UI
 			appData.showCurrentIteration(i);
 			if (i % updateInterval == 0) {
-				System.out.printf("Iteration number %d: ", i); //
-				flush();
+				//System.out.printf("Iteration number %d: ", i); //
+				//flush();
 				appData.updateChart();
 				if (!isInitContinue()) {
 					appData.enableRun();
@@ -101,13 +96,13 @@ public class RandomClassifier extends Classifier {
 				}
 			}
 			if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
-				System.out.printf("Iteration number %d: ", i);
-				flush();
+				//System.out.printf("Iteration number %d: ", i);
+				//flush();
 				break;
 			}
 		}
-		System.out.printf("Iteration number %d: ", i);
-		flush();
+		//System.out.printf("Iteration number %d: ", i);
+		//flush();
 		appData.updateChart(); //show last update
 		//algorithm has finished
 		appData.completeAlgorithm();

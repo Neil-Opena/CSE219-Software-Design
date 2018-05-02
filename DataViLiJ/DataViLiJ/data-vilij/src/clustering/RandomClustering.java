@@ -67,11 +67,6 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 
 	@Override
 	public void run() {
-		try {
-			Thread.sleep(500); //display chart first 
-		} catch (InterruptedException ex) {
-			return;
-		}
 		int iteration = 0;
 		while (iteration++ < maxIterations & tocontinue.get()) {
 			appData.showCurrentIteration(iteration);
