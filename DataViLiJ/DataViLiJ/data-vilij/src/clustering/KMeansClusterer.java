@@ -63,14 +63,23 @@ public class KMeansClusterer extends Clusterer {
 
 	@Override
 	public void run() {
+		// time for original chart to show
+		try {
+			Thread.sleep(750);
+		} catch (InterruptedException ex) {
+			return;
+		}
+
 		initializeCentroids();
 		int iteration = 0;
+		//insert sleep to display original chart
 		while (iteration++ < maxIterations & tocontinue.get()) {
 			assignLabels();
 			recomputeCentroids();
 			appData.showCurrentIteration(iteration);
+			appData.updateChart();
 			try {
-				Thread.sleep(500);
+				Thread.sleep(750);
 			} catch (InterruptedException ex) {
 				return;
 			}

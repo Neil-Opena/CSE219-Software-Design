@@ -64,6 +64,13 @@ public class RandomClassifier extends Classifier {
 
 	@Override
 	public void run() {
+		// time for original chart to show
+		try {
+			Thread.sleep(750);
+		} catch (InterruptedException ex) {
+			return;
+		}
+
 		int i;
 		for (i = 1; i <= maxIterations && !Thread.interrupted(); i++) {
 			int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 0) * 10)).intValue(); //change 0 to 1 for original implementation
@@ -73,7 +80,7 @@ public class RandomClassifier extends Classifier {
 			// this is the real output of the classifier
 			output = Arrays.asList(xCoefficient, yCoefficient, constant);
 			try {
-				Thread.sleep(500);
+				Thread.sleep(750);
 			} catch (InterruptedException ex) {
 				return;
 			}
