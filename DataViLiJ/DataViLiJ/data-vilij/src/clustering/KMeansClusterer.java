@@ -29,8 +29,9 @@ public class KMeansClusterer extends Clusterer {
 	private final int maxIterations;
 	private final int updateInterval;
 
-	private AtomicBoolean initContinue; //value that does not change
+	private final boolean isContinuous; //value that does not change
 	private final AtomicBoolean tocontinue;
+	private final AtomicBoolean continueIterations; //variable to hanlde non continuous requirement
 
 	public KMeansClusterer(DataSet dataset, int maxIterations, int updateInterval, int numberOfClusters, boolean tocontinue, AppData appData) {
 		super(numberOfClusters);
@@ -42,7 +43,8 @@ public class KMeansClusterer extends Clusterer {
 		algorithm = new Thread(this);
 		algorithm.setName(getName());
 
-		this.initContinue = new AtomicBoolean(tocontinue);
+		this.isContinuous = tocontinue;
+		this.continueIterations = new AtomicBoolean(tocontinue);
 		this.appData = appData;
 	}
 
@@ -74,15 +76,15 @@ public class KMeansClusterer extends Clusterer {
 		int iteration = 0;
 		//insert sleep to display original chart
 		while (iteration++ < maxIterations & tocontinue.get()) {
+			appData.showCurrentIteration(iteration);
 			assignLabels();
 			recomputeCentroids();
-			appData.showCurrentIteration(iteration);
 			if(iteration % updateInterval == 0){
-				appData.updateChart();
-				if (!initContinue.get()) {
+				appData.updateChart(); //should probably add a new variable, because initializeCentroids is using it
+				if (!isContinuous) {
 					appData.enableRun();
-					tocontinue.set(false);
-					while (!tocontinue()) { //wait until play is clicked
+					continueIterations.set(false);
+					while (!continueIterations.get()) { //wait until play is clicked
 						if (Thread.interrupted()) {
 							return;
 						}
@@ -101,7 +103,7 @@ public class KMeansClusterer extends Clusterer {
 
 	private void initializeCentroids() {
 		Set<String> chosen = new HashSet<>();
-		List<String> instanceNames = new ArrayList<>(dataset.getLabels().keySet());
+		List<String> instanceNames = new ArrayList<>(dataset.getOriginalLabels().keySet()); //modified so that it gets original labels instead
 		Random r = new Random();
 		while (chosen.size() < numberOfClusters) {
 			int i = r.nextInt(instanceNames.size());
@@ -133,7 +135,7 @@ public class KMeansClusterer extends Clusterer {
 		tocontinue.set(false);
 		IntStream.range(0, numberOfClusters).forEach(i -> {
 			AtomicInteger clusterSize = new AtomicInteger();
-			Point2D sum = dataset.getLabels()
+			Point2D sum = dataset.getLabels() //this is the modied labels
 				.entrySet()
 				.stream()
 				.filter(entry -> i == Integer.parseInt(entry.getValue()))
@@ -161,7 +163,7 @@ public class KMeansClusterer extends Clusterer {
 
 	@Override
 	public void continueAlgorithm() {
-		tocontinue.set(true);
+		continueIterations.set(true);
 	}
 
 	@Override

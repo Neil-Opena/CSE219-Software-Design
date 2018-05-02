@@ -371,7 +371,7 @@ public class AppData implements DataComponent {
 				//Essentially, how does one instantiate an algorithm, if by reflection there's no data yet, there's no configuration yet
 
 				//other question: the data shoulld reset to original data when a new algorithm is selcted right?
-				//other question: should the label names stay the same (male, female rather than 0, 1)?
+				//other question: should the label names stay the same (male, female rather than 0, 1)? but what if original data has 2 labels, yet 4 clusters
 				*/
 				//Object instance = constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
 				Object instance = constructor.newInstance(null, -1, -1, false, this);
