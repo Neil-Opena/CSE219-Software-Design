@@ -70,7 +70,6 @@ public final class AppUI extends UITemplate {
 	private Button runButton; // button for running alogrithm
 	private Button classificationButton;
 	private Button clusteringButton;
-	private Button displayButton;
 	private Button backButton;
 	private Label typesTitle;
 	private String algorithmType;
@@ -91,7 +90,6 @@ public final class AppUI extends UITemplate {
 
 	private String iconsPath;
 
-	private String displayedText; // text to check if current text matches saved text
 	private String savedText;
 
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
@@ -155,7 +153,6 @@ public final class AppUI extends UITemplate {
 		resetRadioUserData();
 		textArea.clear();
 		scrnshotButton.setDisable(true);
-		displayedText = null;
 		savedText = null;
 		disableSaveButton();
 	}
@@ -200,20 +197,6 @@ public final class AppUI extends UITemplate {
 			return false;
 		}
 		return !textArea.getText().trim().equals(savedText);
-	}
-
-	/**
-	 * Tests to see if the displayed text is different from the current text
-	 * Displayed text is the data that is currently being displayed by the
-	 * plot
-	 * @return true if different from displayed text
-	 */
-	public boolean isDifferentFromDisplayed(){
-		return !textArea.getText().trim().equals(displayedText);
-	}
-
-	public void setDisplayedText(){
-		this.displayedText = textArea.getText().trim();
 	}
 
 	/**
@@ -588,10 +571,6 @@ public final class AppUI extends UITemplate {
 		typeContainer.setMaxWidth(200);
 		VBox.setMargin(typeContainer, new Insets(10));
 
-		displayButton = new Button(manager.getPropertyValue(DISPLAY_BUTTON.name()));
-		displayButton.setPrefWidth(200);
-		displayButton.getStyleClass().add(manager.getPropertyValue(TYPES_BUTTON.name()));
-		
 		backButton = setToolbarButton(iconsPath + separator + manager.getPropertyValue(BACK_ICON.name()), manager.getPropertyValue(BACK_TOOLTIP.name()), false);
 		backButton.setPrefWidth(50);
 		backButton.getStyleClass().add(manager.getPropertyValue(ALGORITHM_UI.name()));
@@ -608,7 +587,7 @@ public final class AppUI extends UITemplate {
 		clusteringButton.setTooltip(new Tooltip(manager.getPropertyValue(CLUSTERING_TOOLTIP.name())));
 		clusteringButton.setPrefWidth(200);
 		typesTitle.setText(manager.getPropertyValue(ALGORITHM_TYPE.name()));
-		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton, displayButton);
+		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton);
 
 
 		classificationContainer = new VBox();
@@ -651,17 +630,6 @@ public final class AppUI extends UITemplate {
 	 * Sets up the listeners of the controls that the user interacts with
 	 */
 	private void setWorkspaceActions() {
-
-		displayButton.setOnAction(event -> {
-			AppData appData = ((AppData) applicationTemplate.getDataComponent());
-			appData.displayData();
-			
-			if(chart.getData().isEmpty()){
-				scrnshotButton.setDisable(true);
-			}else{
-				scrnshotButton.setDisable(false);
-			}
-		});
 
 		backButton.setOnAction(event -> {
 			hideBackButton();
@@ -718,6 +686,12 @@ public final class AppUI extends UITemplate {
 					editToggleButton.setText(manager.getPropertyValue(EDIT.name()));
 					setReadOnly(true);
 					appData.loadData(textArea.getText());
+					appData.displayData();
+					if(chart.getData().isEmpty()){
+						scrnshotButton.setDisable(true);
+					}else{
+						scrnshotButton.setDisable(false);
+					}
 					setUpAlgorithmTypes(appData.getLabels().size());
 				}else{
 					appActions.showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), result);

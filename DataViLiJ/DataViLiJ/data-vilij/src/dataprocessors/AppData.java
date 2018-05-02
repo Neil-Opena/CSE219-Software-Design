@@ -116,7 +116,7 @@ public class AppData implements DataComponent {
 	-when data is loaded, perhaps display it?
 
 	-app data not showing display data when second algorithm is selected
-
+	-LMAO what if it is only one data point (chart looks shitty)
 	*/
 
 	@Override
@@ -143,6 +143,7 @@ public class AppData implements DataComponent {
 				appUI.displayInfo(numInstances, path);
 				appUI.setUpAlgorithmTypes(labels.size());
 				fromFile = true;
+				displayData();
 			}catch(Exception e){
 				//FILE NOT VALID
 			}
@@ -162,6 +163,7 @@ public class AppData implements DataComponent {
 		labels = new LinkedHashSet(data.getLabels().values());
 		checkLabels();
 		appUI.displayInfo(data.getLocations().size(), null);
+		displayData();
 	}
 
 	@Override
@@ -194,20 +196,10 @@ public class AppData implements DataComponent {
 	}
 
 	/**
-	 * Display the current data stored in the chart
-	 */
-	public void displayData() {
-		if(appUI.isDifferentFromDisplayed()){
-			appUI.setDisplayedText();
-			displayDataSet();
-		}
-	}
-
-	/**
 	 * Displays the data in the chart
 	 * Initializes the extrema of the data set used
 	 */
-	private void displayDataSet(){
+	public void displayData(){
 		data.sortValues();
 
 		NumberAxis xAxis = (NumberAxis) appUI.getChart().getXAxis();
