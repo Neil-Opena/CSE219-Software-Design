@@ -801,20 +801,14 @@ public final class AppUI extends UITemplate {
 		}
 
 		/**
-		 * Returns whether the algorithm chosen has been configured
-		 * @return 
-		 */
-		private boolean isConfigured(){
-			return (boolean) chooseAlgorithm.getUserData();
-		}
-
-		/**
 		 * Tests to see if the current algorithm has been configured.
 		 * Affects the display of the run button
 		 */
-		private void testForConfiguration(){
-			if(isConfigured()){
+		private void testIfConfigured(){
+			if((boolean) chooseAlgorithm.getUserData()){
 				runButton.setDisable(false);
+			}else{
+				runButton.setDisable(true);
 			}
 		}
 
@@ -831,7 +825,7 @@ public final class AppUI extends UITemplate {
 				}
 				window.showAndWait();
 				chooseAlgorithm.setUserData(true);
-				testForConfiguration();
+				testIfConfigured();
 				appData.modifyConfiguration(index, window.config);
 
 				//if current algorithm configuration is modified, then the appdata must set it 
@@ -847,7 +841,7 @@ public final class AppUI extends UITemplate {
 
 				if(chooseAlgorithm.isSelected()){
 					showRun();
-					testForConfiguration();
+					testIfConfigured();
 					resetAlgorithmRunWindow(); //reset for when additional information from other algorithm is shown
 				}else{
 					hideRun();
