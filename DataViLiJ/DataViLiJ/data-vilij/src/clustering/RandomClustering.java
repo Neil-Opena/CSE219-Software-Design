@@ -30,7 +30,7 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 
 	// currently, this value does not change after instantiation
 	private AtomicBoolean tocontinue;
-	private AtomicBoolean initContinue; //value that does not change
+	private boolean isContinuous; //value that does not change
 
 	@Override
 	public int getMaxIterations() {
@@ -57,7 +57,7 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 		algorithm.setName(getName());
 
 		this.tocontinue = new AtomicBoolean(tocontinue);
-		this.initContinue = new AtomicBoolean(tocontinue);
+		this.isContinuous = tocontinue;
 		this.appData = appData;
 	}
 
@@ -71,11 +71,11 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 		}
 
 		int iteration = 0;
-		while (iteration++ < maxIterations & tocontinue.get()) {
+		while (iteration++ < maxIterations && !Thread.interrupted()) {
 			appData.showCurrentIteration(iteration);
 			if(iteration % updateInterval == 0){
 				appData.updateChart();
-				if (!initContinue.get()) {
+				if (!isContinuous) {
 					appData.enableRun();
 					tocontinue.set(false);
 					while (!tocontinue()) { //wait until play is clicked

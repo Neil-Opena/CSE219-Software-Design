@@ -75,12 +75,12 @@ public class KMeansClusterer extends Clusterer {
 		initializeCentroids();
 		int iteration = 0;
 		//insert sleep to display original chart
-		while (iteration++ < maxIterations & tocontinue.get()) {
+		while (!Thread.interrupted() && iteration++ < maxIterations & tocontinue.get()) {
 			appData.showCurrentIteration(iteration);
 			assignLabels();
 			recomputeCentroids();
 			if(iteration % updateInterval == 0){
-				appData.updateChart(); //should probably add a new variable, because initializeCentroids is using it
+				appData.updateChart();
 				if (!isContinuous) {
 					appData.enableRun();
 					continueIterations.set(false);
