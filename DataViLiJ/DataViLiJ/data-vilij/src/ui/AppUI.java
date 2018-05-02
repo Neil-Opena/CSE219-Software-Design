@@ -687,7 +687,6 @@ public final class AppUI extends UITemplate {
 					editToggleButton.setText(manager.getPropertyValue(EDIT.name()));
 					setReadOnly(true);
 					appData.loadData(textArea.getText());
-					appData.displayData();
 					if(chart.getData().isEmpty()){
 						scrnshotButton.setDisable(true);
 					}else{
@@ -833,22 +832,26 @@ public final class AppUI extends UITemplate {
 				window.showAndWait();
 				chooseAlgorithm.setUserData(true);
 				testForConfiguration();
+				appData.modifyConfiguration(index, window.config);
+
+				//if current algorithm configuration is modified, then the appdata must set it 
+				if(appData.getAlgorithmIndex() == index){
+					appData.setConfiguration(index);
+				}
+				//FIXME -- Test for doing this but with different types
 			});
 
 			chooseAlgorithm.setOnAction(event -> {
 				appData.setAlgorithmToRun(index);
+				appData.setConfiguration(index);
+
 				if(chooseAlgorithm.isSelected()){
 					showRun();
 					testForConfiguration();
-					appData.displayData();
-					appData.setConfiguration(window.config);
 					resetAlgorithmRunWindow(); //reset for when additional information from other algorithm is shown
 				}else{
 					hideRun();
 				}
-				/*
-				when an algorithm is selected, get the created config and pass to app data
-				*/
 			});
 
 			RotateTransition rot = new RotateTransition(Duration.seconds(2), configButton);

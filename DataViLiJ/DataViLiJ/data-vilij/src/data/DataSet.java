@@ -47,6 +47,7 @@ public class DataSet {
 	}
 
 	private Map<String, String> labels;
+	private Map<String, String> originalLabels;
 	private Map<String, Point2D> locations;
 
 	private Double[] sortedXValues;
@@ -56,11 +57,16 @@ public class DataSet {
 	 */
 	public DataSet() {
 		labels = new LinkedHashMap<>();
+		originalLabels = new LinkedHashMap<>();
 		locations = new LinkedHashMap<>();
 	}
 
 	public Map<String, String> getLabels() {
 		return labels;
+	}
+
+	public Map<String, String> getOriginalLabels(){
+		return originalLabels;
 	}
 
 	public Map<String, Point2D> getLocations() {
@@ -77,6 +83,7 @@ public class DataSet {
 	private void addInstance(String tsdLine) throws InvalidDataNameException {
 		String[] arr = tsdLine.split("\t");
 		labels.put(nameFormatCheck(arr[0]), arr[1]);
+		originalLabels.put(nameFormatCheck(arr[0]), arr[1]);
 		locations.put(arr[0], locationOf(arr[2]));
 	}
 

@@ -18,6 +18,10 @@ public class Config {
 
     	private final AtomicBoolean tocontinue;
 
+	public Config(){
+		this(-1, -1, false, -1);
+	}
+
 	public Config(int maxIterations, int updateInterval, boolean toContinue){
 		this(maxIterations, updateInterval, toContinue, -1);
 	}

@@ -4,6 +4,7 @@ import actions.AppActions;
 import algorithms.Algorithm;
 import algorithms.AlgorithmTypes;
 import algorithms.Classifier;
+import algorithms.Clusterer;
 import classification.RandomClassifier;
 import clustering.KMeansClusterer;
 import clustering.RandomClustering;
@@ -64,15 +65,17 @@ public class AppData implements DataComponent {
 	private double maxY;
 
 	//For classification algorithms
-	private ArrayList<Class> classificationAlgorithms;
+	private ArrayList<Classifier> classificationAlgorithms;
+	private ArrayList<Config> classificationConfigurations;
 	private int numClassificationAlgorithms; //DELETE
 	private double lineMinY;
 	private double lineMaxY; //variables used to store temp y values 
 	private XYChart.Series<Number, Number> line;
 
 	//For clustering algorithms
-	private ArrayList<Class> clusteringAlgorithms;
+	private ArrayList<Clusterer> clusteringAlgorithms;
 	private int numClusteringAlgorithms;
+	private ArrayList<Config> clusteringConfigurations;
 
 	private AlgorithmTypes algorithmType;
 	private int algorithmIndex;
@@ -94,7 +97,7 @@ public class AppData implements DataComponent {
 		numClassificationAlgorithms = 1;
 		numClusteringAlgorithms = 2;
 		//FIXME should probably remove these
-		//loadAlgorithms(); //may need to move
+		loadAlgorithms(); 
 	}
 
 	/*
@@ -111,6 +114,10 @@ public class AppData implements DataComponent {
 	-LMAO what if it is only one data point (chart looks shitty)
 
 	-put title of algorithm in config window
+
+	NEED to fix error when there's no configuration, so run button should be disabled bruh
+
+	change time for display data sleep thing .. to slow
 	*/
 
 	@Override
@@ -137,7 +144,7 @@ public class AppData implements DataComponent {
 				appUI.displayInfo(numInstances, path);
 				appUI.setUpAlgorithmTypes(labels.size());
 				fromFile = true;
-				displayData();
+				displayOriginalData();
 			}catch(Exception e){
 				//FILE NOT VALID
 			}
@@ -157,7 +164,7 @@ public class AppData implements DataComponent {
 		labels = new LinkedHashSet(data.getLabels().values());
 		checkLabels();
 		appUI.displayInfo(data.getLocations().size(), null);
-		displayData();
+		displayOriginalData();
 	}
 
 	@Override
@@ -189,11 +196,7 @@ public class AppData implements DataComponent {
 		fromFile = false;
 	}
 
-	/**
-	 * Displays the data in the chart
-	 * Initializes the extrema of the data set used
-	 */
-	public void displayData(){
+	private void displayOriginalData(){
 		data.sortValues();
 
 		NumberAxis xAxis = (NumberAxis) appUI.getChart().getXAxis();
@@ -202,11 +205,11 @@ public class AppData implements DataComponent {
 		xAxis.setAutoRanging(false);
 		yAxis.setAutoRanging(false);
 
-		Set<String> labels = new LinkedHashSet<>(data.getLabels().values());
+		Set<String> labels = new LinkedHashSet<>(data.getOriginalLabels().values());
 		for (String label : labels) {
 			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName(label);
-			data.getLabels().entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
+			data.getOriginalLabels().entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
 				Point2D point = data.getLocations().get(entry.getKey());
 				String name = entry.getKey();
 				series.getData().add(new XYChart.Data<>(point.getX(), point.getY(), name));
@@ -229,6 +232,25 @@ public class AppData implements DataComponent {
 
 		xAxis.setTickUnit(xTicks);
 		yAxis.setTickUnit(yTicks);
+	}
+
+	/**
+	 * Displays the updated data in the chart
+	 */
+	private void displayData(){
+		//FIXME everytime algorithm is run --> display original data
+		appUI.getChart().getData().clear();
+		Set<String> labels = new LinkedHashSet<>(data.getLabels().values());
+		for (String label : labels) {
+			XYChart.Series<Number, Number> series = new XYChart.Series<>();
+			series.setName(label);
+			data.getLabels().entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
+				Point2D point = data.getLocations().get(entry.getKey());
+				String name = entry.getKey();
+				series.getData().add(new XYChart.Data<>(point.getX(), point.getY(), name));
+			});
+			appUI.getChart().getData().add(series);
+		}
 	}
 
 	/**
@@ -307,6 +329,10 @@ public class AppData implements DataComponent {
 		return algorithmType;
 	}
 
+	public int getAlgorithmIndex(){
+		return algorithmIndex;
+	}
+
 	
 	private void loadAlgorithms(){
 		/*
@@ -332,6 +358,8 @@ public class AppData implements DataComponent {
 			Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
+		classificationAlgorithms = new ArrayList<>();
+		classificationConfigurations = new ArrayList<>();
 		Arrays.asList(classificationDirectory.list()).forEach(algorithm -> {
 			String className = "classification." + algorithm.split("\\.")[0];
 			try {
@@ -341,8 +369,14 @@ public class AppData implements DataComponent {
 				CONFIGURATION IS NULL
 				//how about put temp values? but they're final though
 				//Essentially, how does one instantiate an algorithm, if by reflection there's no data yet, there's no configuration yet
+
+				//other question: should the algorithm operated on the updated data? or the original data?
 				*/
-				Object instance = constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
+				//Object instance = constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
+				Object instance = constructor.newInstance(null, -1, -1, false, this);
+
+				//For configuration
+				classificationConfigurations.add(new Config());
 			} catch (ClassNotFoundException ex) {
 				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
 			} catch (InstantiationException ex) {
@@ -356,11 +390,16 @@ public class AppData implements DataComponent {
 			}
 		});
 
+		clusteringAlgorithms = new ArrayList<>();
+		clusteringConfigurations = new ArrayList<>();
 		Arrays.asList(clusteringDirectory.list()).forEach(algorithm -> {
 			String className = "clustering." + algorithm.split("\\.")[0];
 			try {
 				Class algorithmClass = Class.forName(className);
 				Constructor constructor = algorithmClass.getConstructors()[0];
+
+				//For configuration
+				clusteringConfigurations.add(new Config());
 			} catch (ClassNotFoundException ex) {
 				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
 			}
@@ -395,6 +434,7 @@ public class AppData implements DataComponent {
 	 * indicate that the algorithm is running
 	 */
 	public void startAlgorithm(){
+		displayOriginalData();
 		setUpAlgorithm();
 		if(algorithmToRun instanceof Classifier){
 			initLine();
@@ -420,12 +460,16 @@ public class AppData implements DataComponent {
 	 */
 	public void updateChart(){
 		Platform.runLater(() -> {
-			XYChart.Series line = (appUI.getChart().getData().get(appUI.getChart().getData().size() - 1));
-			XYChart.Data min = (XYChart.Data) line.getData().get(0);
-			XYChart.Data max = (XYChart.Data) line.getData().get(1);
-			min.setYValue(lineMinY);
-			max.setYValue(lineMaxY);
-			checkDisplayedLine((double) min.getYValue(), (double) max.getYValue());
+			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
+				XYChart.Series line = (appUI.getChart().getData().get(appUI.getChart().getData().size() - 1));
+				XYChart.Data min = (XYChart.Data) line.getData().get(0);
+				XYChart.Data max = (XYChart.Data) line.getData().get(1);
+				min.setYValue(lineMinY);
+				max.setYValue(lineMaxY);
+				checkDisplayedLine((double) min.getYValue(), (double) max.getYValue());
+			}else{
+				displayData();
+			}
 		});
 	}
 
@@ -623,8 +667,20 @@ public class AppData implements DataComponent {
 	 * Sets the configuration of the current selected algorithm
 	 * @param config configuration to be set
 	 */
-	public void setConfiguration(Config config){
-		configuration = config;
+	public void setConfiguration(int index){
+		if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
+			configuration = classificationConfigurations.get(index);
+		}else{
+			configuration = clusteringConfigurations.get(index);
+		}
+	}
+
+	public void modifyConfiguration(int index, Config config){
+		if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION)){
+			classificationConfigurations.set(index, config);
+		}else{
+			clusteringConfigurations.set(index, config);
+		}
 	}
 
 	/*
