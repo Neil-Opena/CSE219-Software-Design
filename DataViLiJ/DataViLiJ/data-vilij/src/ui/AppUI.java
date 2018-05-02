@@ -840,7 +840,7 @@ public final class AppUI extends UITemplate {
 				if(chooseAlgorithm.isSelected()){
 					showRun();
 					testForConfiguration();
-					chart.getData().clear(); //clear the chart
+					appData.displayData();
 					resetAlgorithmRunWindow(); //reset for when additional information from other algorithm is shown
 				}else{
 					hideRun();
@@ -994,18 +994,8 @@ public final class AppUI extends UITemplate {
 			try{
 				int maxIterations = Integer.parseInt(iterationField.getText());
 				int updateInterval = Integer.parseInt(intervalField.getText());
-				int numLabels = 0;
-				if(type.equals(AlgorithmTypes.CLUSTERING)){
-					numLabels = Integer.parseInt(numLabelsField.getText());
-					int dataLabels = ((AppData) applicationTemplate.getDataComponent()).getLabels().size();
-					if(numLabels < 0 || numLabels > dataLabels){
-						return false;
-					}
-				}
-				if(maxIterations < 0){
-					return false;
-				}
-				if(updateInterval < 0){
+				int numLabels = Integer.parseInt(numLabelsField.getText());
+				if(maxIterations < 0 || updateInterval < 0 || numLabels < 0){
 					return false;
 				}
 			}catch(NumberFormatException e){
@@ -1035,7 +1025,11 @@ public final class AppUI extends UITemplate {
 				config = new Config(maxIterations, updateInterval, toContinue);
 			}
 			iterationField.setText("" + maxIterations);
-			intervalField.setText("" + updateInterval);
+			if(updateInterval < 2){
+				intervalField.setText("" + 2);
+			}else{
+				intervalField.setText("" + updateInterval);
+			}
 			continuousCheck.setSelected(toContinue);
 		}
 
@@ -1054,7 +1048,7 @@ public final class AppUI extends UITemplate {
 		private void handleInvalidConfig(AlgorithmTypes type){
 			AppActions appActions = (AppActions) applicationTemplate.getActionComponent();
 			appActions.showErrorDialog(manager.getPropertyValue(INVALID_CONFIG_TITLE.name()), manager.getPropertyValue(INVALID_CONFIG_MESSAGE.name()));
-			int tempIteration = 1;
+			int tempIteration = 15;
 			int tempInterval = 1;
 			boolean tempContinuous = true;
 			int tempLabels = 2;

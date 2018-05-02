@@ -466,7 +466,7 @@ public class AppData implements DataComponent {
 	 */
 	public void showCurrentIteration(int iteration){
 		StringBuilder infoBuilder = new StringBuilder();
-		infoBuilder.append(String.format("Iteration number %d: ", iteration));
+		infoBuilder.append(String.format("Iteration number %d", iteration));
 		if(algorithmToRun instanceof Classifier){
 			infoBuilder.append(produceLineEquation());
 		}
@@ -492,7 +492,7 @@ public class AppData implements DataComponent {
 			double maxX = (double) max.getXValue();
 			lineMaxY = (-c - (a * maxX)) / b;
 		});
-		return output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0 ";
+		return ": " + output.get(0) + "x + " + output.get(1) + "y + " + output.get(2) + " = 0 ";
 	}
 
 	/**
