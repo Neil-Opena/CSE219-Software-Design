@@ -8,6 +8,8 @@ package clustering;
 import algorithms.Clusterer;
 import data.DataSet;
 import dataprocessors.AppData;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,6 +23,7 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 
 	@SuppressWarnings("FieldCanBeLocal")
 	private DataSet dataset;
+	private List<String> labels;
 
 	private final Thread algorithm;
 	private final AppData appData;
@@ -69,10 +72,11 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 		} catch (InterruptedException ex) {
 			return;
 		}
-
+		initializeLabels();
 		int iteration = 0;
 		while (iteration++ < maxIterations && !Thread.interrupted()) {
 			appData.showCurrentIteration(iteration);
+			assignLabels();
 			if(iteration % updateInterval == 0){
 				appData.updateChart();
 				if (!isContinuous) {
@@ -93,6 +97,21 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 			}
 		}
 		appData.completeAlgorithm();
+	}
+
+	private void initializeLabels(){
+		labels = new ArrayList<>();
+		for(int i = 0; i < numberOfClusters; i++){
+			labels.add("" + i);
+		}
+	}
+
+	private void assignLabels() {
+		Random random = new Random();
+		dataset.getLocations().forEach((instanceName, location) -> {
+			int labelIndex = random.nextInt(labels.size());
+			dataset.getLabels().put(instanceName, labels.get(labelIndex));
+		});
 	}
 
 	@Override
