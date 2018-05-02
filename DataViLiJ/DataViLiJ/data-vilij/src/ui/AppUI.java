@@ -31,7 +31,11 @@ import java.util.List;
 import java.util.Set;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -87,7 +91,6 @@ public final class AppUI extends UITemplate {
 	private Label algorithmRunInfo;
 	private Label messageAlgorithmRunInfo;
 
-
 	private String iconsPath;
 
 	private String savedText;
@@ -96,9 +99,9 @@ public final class AppUI extends UITemplate {
 		super(primaryStage, applicationTemplate);
 		this.applicationTemplate = applicationTemplate;
 		cssPath = "/" + String.join(separator,
-                                    manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
-                                    manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
-                                    manager.getPropertyValue(CSS_FILE.name()));
+			manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+			manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
+			manager.getPropertyValue(CSS_FILE.name()));
 		this.getPrimaryScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
 
 		primaryStage.setTitle(manager.getPropertyValue(APPLICATION_TITLE.name()));
@@ -159,41 +162,45 @@ public final class AppUI extends UITemplate {
 
 	/**
 	 * Returns the text within the text area
+	 *
 	 * @return the text area text
 	 */
-	public String getTextAreaText(){
+	public String getTextAreaText() {
 		return textArea.getText();
 	}
 
 	/**
-	 * Sets the text area with the given parameter
-	 * Only called when data is loaded
+	 * Sets the text area with the given parameter Only called when data is
+	 * loaded
+	 *
 	 * @param text text to set the text area
 	 */
-	public void setTextAreaText(String text){
+	public void setTextAreaText(String text) {
 		showTextArea();
 		setReadOnly(true);
 		textArea.setText(text);
-	} 
+	}
 
 	/**
 	 * Returns if the input region is currently showing the text area
+	 *
 	 * @return true if text area showing
 	 */
-	public boolean textAreaShown(){
+	public boolean textAreaShown() {
 		return inputRegion.getChildren().contains(textArea);
 	}
 
 	/**
-	 * Tests to see if the current text is different from the text
-	 * that was most recently saved
+	 * Tests to see if the current text is different from the text that was
+	 * most recently saved
+	 *
 	 * @return true if different from saved text
 	 */
-	public boolean isDifferentFromSaved(){
+	public boolean isDifferentFromSaved() {
 		/*
 		text area is empty, and file has not been saved yet
-		*/
-		if(textArea.getText().trim().isEmpty() && savedText == null){
+		 */
+		if (textArea.getText().trim().isEmpty() && savedText == null) {
 			return false;
 		}
 		return !textArea.getText().trim().equals(savedText);
@@ -202,20 +209,22 @@ public final class AppUI extends UITemplate {
 	/**
 	 * Sets the current text as the most recent saved text
 	 */
-	public void setSavedText(){
+	public void setSavedText() {
 		this.savedText = textArea.getText().trim();
 	}
 
 	/**
 	 * Returns the text that was most recently saved
+	 *
 	 * @return String of most recently saved text
 	 */
-	public String getSavedText(){
+	public String getSavedText() {
 		return this.savedText;
 	}
-	
+
 	/**
 	 * Returns the chart inside the UI
+	 *
 	 * @return chart
 	 */
 	public LineChart<Number, Number> getChart() {
@@ -225,29 +234,31 @@ public final class AppUI extends UITemplate {
 	/**
 	 * Disables the save button in the UI
 	 */
-	public void disableSaveButton(){
+	public void disableSaveButton() {
 		saveButton.setDisable(true);
 	}
 
 	/**
 	 * Sets the display information when a data file is loaded
-	 * @param numInstances the number of instances or data points to be plotted
+	 *
+	 * @param numInstances the number of instances or data points to be
+	 * plotted
 	 * @param source the source of the file (fileName)
 	 */
-	public void displayInfo(int numInstances, String source){
+	public void displayInfo(int numInstances, String source) {
 		inputRegion.getChildren().remove(displayInfo);
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		StringBuilder builder = new StringBuilder();
 		Set labels = appData.getLabels();
 
 		builder.append(numInstances + manager.getPropertyValue(INFO_1.name()) + labels.size());
-		if(source != null){
-			builder.append(manager.getPropertyValue(INFO_2.name()) + source +".\n");
-		}else{
+		if (source != null) {
+			builder.append(manager.getPropertyValue(INFO_2.name()) + source + ".\n");
+		} else {
 			builder.append(manager.getPropertyValue(INFO_3.name()));
 		}
-		
-		if(labels.size() > 0){
+
+		if (labels.size() > 0) {
 			builder.append(manager.getPropertyValue(INFO_4.name()));
 			labels.forEach(label -> {
 				builder.append("\t- " + label.toString() + "\n");
@@ -259,50 +270,65 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(displayInfo);
 	}
 
+	public void displayInstanceNames() {
+		Platform.runLater(() -> {
+			for (XYChart.Series series : chart.getData()) {
+				for (XYChart.Data point : (ObservableList<XYChart.Data>) series.getData()) {
+					Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
+
+					point.getNode().setOnMouseEntered(e -> {
+						getPrimaryScene().setCursor(Cursor.CROSSHAIR);
+					});
+					point.getNode().setOnMouseExited(e -> {
+						getPrimaryScene().setCursor(Cursor.DEFAULT);
+					});
+				}
+			}
+		});
+	}
+
 	/**
-	 * Displays the text area to the user
-	 * Mainly used when initiating the application
-	 * Input region is reset prior to displaying the text area
+	 * Displays the text area to the user Mainly used when initiating the
+	 * application Input region is reset prior to displaying the text area
 	 */
-	public void showTextArea(){
+	public void showTextArea() {
 		inputRegion.getChildren().addAll(inputTitle, textArea);
 	}
 
-
 	/**
-	 * Displays the edit toggle button to the user
-	 * Default shows the toggle being set to DONE
+	 * Displays the edit toggle button to the user Default shows the toggle
+	 * being set to DONE
 	 */
-	public void showEditToggle(){
+	public void showEditToggle() {
 		inputRegion.getChildren().add(editToggleButton);
 		editToggleButton.setText(manager.getPropertyValue(DONE.name()));
 		setReadOnly(false);
 	}
 
-	public void enableEditToggle(){
+	public void enableEditToggle() {
 		editToggleButton.setDisable(false);
 	}
 
-	public void disableEditToggle(){
+	public void disableEditToggle() {
 		editToggleButton.setDisable(true);
 	}
 
 	/**
 	 * Hides the algorithm types
 	 */
-	private void hideAlgorithmTypes(){
+	private void hideAlgorithmTypes() {
 		inputRegion.getChildren().remove(typeContainer);
 	}
 
 	/**
 	 * Shows the possible clustering algorithms
 	 */
-	public void showClusteringAlgorithms(){
+	public void showClusteringAlgorithms() {
 		algorithmType = AlgorithmTypes.CLUSTERING.toString();
 		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLUSTERING);
-		if(clusteringContainer.getChildren().isEmpty()){
+		if (clusteringContainer.getChildren().isEmpty()) {
 			clusteringContainer.getChildren().add(clusteringType);
-			for(int i = 0; i < clusteringAlgorithms.size(); i++){
+			for (int i = 0; i < clusteringAlgorithms.size(); i++) {
 				clusteringContainer.getChildren().add(clusteringAlgorithms.get(i));
 			}
 		}
@@ -312,28 +338,28 @@ public final class AppUI extends UITemplate {
 	/**
 	 * Shows the possible classification algorithms
 	 */
-	public void showClassificationAlgorithms(){
+	public void showClassificationAlgorithms() {
 		algorithmType = AlgorithmTypes.CLASSIFICATION.toString();
 		((AppData) applicationTemplate.getDataComponent()).setAlgorithmType(AlgorithmTypes.CLASSIFICATION);
-		if(classificationContainer.getChildren().isEmpty()){
+		if (classificationContainer.getChildren().isEmpty()) {
 			classificationContainer.getChildren().add(classificationType);
-			for(int i = 0; i < classificationAlgorithms.size(); i++){
+			for (int i = 0; i < classificationAlgorithms.size(); i++) {
 				classificationContainer.getChildren().add(classificationAlgorithms.get(i));
 			}
 		}
 		inputRegion.getChildren().add(classificationContainer);
 	}
 
-	public void disableAlgorithmChanges(){
+	public void disableAlgorithmChanges() {
 		//disable choosing another algorithm
 		//disable configuring algorithm
-		if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
-			for(int i = 0; i < classificationAlgorithms.size(); i++){
+		if (((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)) {
+			for (int i = 0; i < classificationAlgorithms.size(); i++) {
 				classificationAlgorithms.get(i).configButton.setDisable(true);
 				classificationAlgorithms.get(i).chooseAlgorithm.setDisable(true);
 			}
-		}else{
-			for(int i = 0; i < clusteringAlgorithms.size(); i++){
+		} else {
+			for (int i = 0; i < clusteringAlgorithms.size(); i++) {
 				clusteringAlgorithms.get(i).configButton.setDisable(true);
 				clusteringAlgorithms.get(i).chooseAlgorithm.setDisable(true);
 			}
@@ -341,14 +367,14 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
-	public void enableAlgorithmChanges(){
-		if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
-			for(int i = 0; i < classificationAlgorithms.size(); i++){
+	public void enableAlgorithmChanges() {
+		if (((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)) {
+			for (int i = 0; i < classificationAlgorithms.size(); i++) {
 				classificationAlgorithms.get(i).configButton.setDisable(false);
 				classificationAlgorithms.get(i).chooseAlgorithm.setDisable(false);
 			}
-		}else{
-			for(int i = 0; i < clusteringAlgorithms.size(); i++){
+		} else {
+			for (int i = 0; i < clusteringAlgorithms.size(); i++) {
 				clusteringAlgorithms.get(i).configButton.setDisable(false);
 				clusteringAlgorithms.get(i).chooseAlgorithm.setDisable(false);
 			}
@@ -358,10 +384,10 @@ public final class AppUI extends UITemplate {
 	}
 
 	/**
-	 * Hides the shown algorithms and resets the algorithms of each respective
-	 * type
+	 * Hides the shown algorithms and resets the algorithms of each
+	 * respective type
 	 */
-	private void resetAlgorithms(){
+	private void resetAlgorithms() {
 		inputRegion.getChildren().removeAll(classificationContainer, clusteringContainer);
 		classificationContainer.getChildren().clear();
 		clusteringContainer.getChildren().clear();
@@ -370,25 +396,25 @@ public final class AppUI extends UITemplate {
 	/**
 	 * Shows the run button
 	 */
-	public void showRun(){
-		if(((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
-			if(!classificationContainer.getChildren().contains(runButton)){
+	public void showRun() {
+		if (((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)) {
+			if (!classificationContainer.getChildren().contains(runButton)) {
 				classificationContainer.getChildren().add(runButton);
 			}
-		}else{
-			if(!clusteringContainer.getChildren().contains(runButton)){
+		} else {
+			if (!clusteringContainer.getChildren().contains(runButton)) {
 				clusteringContainer.getChildren().add(runButton);
 			}
 		}
 	}
 
-	public void disableRun(){
+	public void disableRun() {
 		scrnshotButton.setDisable(true); //also disables screen shot button
 		runButton.setDisable(true);
 	}
 
-	public void enableRun(){
-		if(!chart.getData().isEmpty()){
+	public void enableRun() {
+		if (!chart.getData().isEmpty()) {
 			scrnshotButton.setDisable(false); //enables screen shot button if chart is not empty
 		}
 		runButton.setDisable(false);
@@ -397,7 +423,7 @@ public final class AppUI extends UITemplate {
 	/**
 	 * Hides the run button
 	 */
-	public void hideRun(){
+	public void hideRun() {
 		classificationContainer.getChildren().remove(runButton);
 		clusteringContainer.getChildren().remove(runButton);
 	}
@@ -405,55 +431,56 @@ public final class AppUI extends UITemplate {
 	/**
 	 * Tests to see if user can select certain type based on labels of data
 	 * Disables classification type if the number of labels < 2
+	 *
 	 * @param numLabels the number of labels of the data
 	 */
-	public void setUpAlgorithmTypes(int numLabels){
-		if(numLabels < 2){
+	public void setUpAlgorithmTypes(int numLabels) {
+		if (numLabels < 2) {
 			classificationButton.setDisable(true);
-		}else{
+		} else {
 			classificationButton.setDisable(false);
 		}
 		inputRegion.getChildren().add(typeContainer);
 	}
 
-	public void disableBackButton(){
+	public void disableBackButton() {
 		backButton.setDisable(true);
 	}
 
-	public void enableBackButton(){
+	public void enableBackButton() {
 		backButton.setDisable(false);
 	}
 
 	/**
 	 * Shows the back button to the user
 	 */
-	private void showBackButton(){
+	private void showBackButton() {
 		inputRegion.getChildren().add(backButton);
 	}
 
 	/**
 	 * Hides the back button
 	 */
-	private void hideBackButton(){
+	private void hideBackButton() {
 		inputRegion.getChildren().remove(backButton);
 	}
 
 	/**
-	 * Reset the toggle groups by un-selecting the selected toggles. 
-	 * In this case, the radio buttons
+	 * Reset the toggle groups by un-selecting the selected toggles. In this
+	 * case, the radio buttons
 	 */
-	private void resetToggles(){
+	private void resetToggles() {
 		Toggle selected = classificationRadios.getSelectedToggle();
-		if(selected != null){
+		if (selected != null) {
 			selected.setSelected(false);
 		}
 		selected = clusteringRadios.getSelectedToggle();
-		if(selected != null){
+		if (selected != null) {
 			selected.setSelected(false);
 		}
 	}
 
-	private void resetRadioUserData(){
+	private void resetRadioUserData() {
 		classificationRadios.getToggles().forEach(action -> {
 			action.setUserData(false);
 		});
@@ -462,14 +489,14 @@ public final class AppUI extends UITemplate {
 		});
 		/*
 		user data is used to check if the current radio button = algorithm has been configured
-		*/
-		
+		 */
+
 	}
 
 	/**
 	 * Resets the whole input region, including the text area
 	 */
-	private void resetInputRegion(){
+	private void resetInputRegion() {
 		resetAlgorithms();
 		resetToggles();
 		//run button should be disabled or some shit
@@ -485,18 +512,20 @@ public final class AppUI extends UITemplate {
 
 	/**
 	 * Sets the text area to be read only depending on the parameter
-	 * @param readOnly true to set the text area to be read only, false otherwise
+	 *
+	 * @param readOnly true to set the text area to be read only, false
+	 * otherwise
 	 */
-	private void setReadOnly(boolean readOnly){
+	private void setReadOnly(boolean readOnly) {
 		textArea.setEditable(!readOnly);
 		//when two files are loaded after one another, text is gray bruh
 		textArea.getStyleClass().remove(manager.getPropertyValue(GRAY_TEXT.name()));
-		if(readOnly){
+		if (readOnly) {
 			textArea.getStyleClass().add(manager.getPropertyValue(GRAY_TEXT.name()));
 		}
 	}
 
-	private void setAlgorithmWindow(){
+	private void setAlgorithmWindow() {
 		algorithmRunContainer = new VBox();
 		algorithmRunContainer.setSpacing(20);
 		algorithmRunContainer.setAlignment(Pos.CENTER);
@@ -509,7 +538,7 @@ public final class AppUI extends UITemplate {
 		algorithmRunInfo = new Label("");
 		messageAlgorithmRunInfo = new Label("");
 
-		algorithmRunContainer.getChildren().addAll(algorithmRunTitle,algorithmProgress, algorithmRunInfo, messageAlgorithmRunInfo);
+		algorithmRunContainer.getChildren().addAll(algorithmRunTitle, algorithmProgress, algorithmRunInfo, messageAlgorithmRunInfo);
 		algorithmRunWindow.setScene(new Scene(algorithmRunContainer));
 		algorithmRunWindow.getScene().getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
 		algorithmRunWindow.setMinHeight(250);
@@ -519,33 +548,35 @@ public final class AppUI extends UITemplate {
 		algorithmRunWindow.setTitle("Running");
 	}
 
-	private void resetAlgorithmRunWindow(){
+	private void resetAlgorithmRunWindow() {
 		algorithmProgress.setProgress(0);
 		algorithmRunInfo.setText("");
 		messageAlgorithmRunInfo.setText("");
-	};
+	}
 
-	public void appendAlgorithmRunWindow(String message){
+	;
+
+	public void appendAlgorithmRunWindow(String message) {
 		messageAlgorithmRunInfo.setText(message);
 	}
 
-	public void showAlgorithmRunWindow(){
+	public void showAlgorithmRunWindow() {
 		resetAlgorithmRunWindow();
 		algorithmRunWindow.show();
 	}
 
-	public void closeAlgorithmRunWindow(){
+	public void closeAlgorithmRunWindow() {
 		algorithmRunWindow.close();
 	}
 
-	public void updateAlgorithmRunWindow(double percent, String info){
+	public void updateAlgorithmRunWindow(double percent, String info) {
 		algorithmProgress.setProgress(percent);
 		algorithmRunInfo.setText(info);
 	}
 
 	/**
-	 * Lays out the arrangement of the user interface
-	 * Instantiates the graphical user interface objects for use  
+	 * Lays out the arrangement of the user interface Instantiates the
+	 * graphical user interface objects for use
 	 */
 	private void layout() {
 
@@ -592,7 +623,6 @@ public final class AppUI extends UITemplate {
 		clusteringButton.setPrefWidth(200);
 		typesTitle.setText(manager.getPropertyValue(ALGORITHM_TYPE.name()));
 		typeContainer.getChildren().addAll(typesTitle, classificationButton, clusteringButton);
-
 
 		classificationContainer = new VBox();
 		classificationContainer.setAlignment(Pos.CENTER);
@@ -646,22 +676,22 @@ public final class AppUI extends UITemplate {
 
 		runButton.setOnAction(event -> {
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
-			if(!appData.isRunning()){
+			if (!appData.isRunning()) {
 				Toggle selected;
-				if(appData.getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
+				if (appData.getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)) {
 					selected = classificationRadios.getSelectedToggle();
-				}else{
+				} else {
 					selected = clusteringRadios.getSelectedToggle();
 				}
 				//should also show configuration related to it
 				appData.startAlgorithm();
-			}else{
+			} else {
 				appData.continueAlgorithm();
 			}
 
 		});
 
-		clusteringButton.setOnAction(event ->{
+		clusteringButton.setOnAction(event -> {
 			hideAlgorithmTypes();
 			showClusteringAlgorithms();
 			runButton.setDisable(true);
@@ -669,7 +699,7 @@ public final class AppUI extends UITemplate {
 			classificationRadios.selectToggle(null);
 		});
 
-		classificationButton.setOnAction(event ->{
+		classificationButton.setOnAction(event -> {
 			hideAlgorithmTypes();
 			showClassificationAlgorithms();
 			runButton.setDisable(true);
@@ -681,22 +711,22 @@ public final class AppUI extends UITemplate {
 			String curr = editToggleButton.getText();
 			AppData appData = ((AppData) applicationTemplate.getDataComponent());
 			AppActions appActions = ((AppActions) applicationTemplate.getActionComponent());
-			if(curr.equals(manager.getPropertyValue(DONE.name()))){
+			if (curr.equals(manager.getPropertyValue(DONE.name()))) {
 				String result = checkTextAreaText();
-				if(result == null){
+				if (result == null) {
 					editToggleButton.setText(manager.getPropertyValue(EDIT.name()));
 					setReadOnly(true);
 					appData.loadData(textArea.getText());
-					if(chart.getData().isEmpty()){
+					if (chart.getData().isEmpty()) {
 						scrnshotButton.setDisable(true);
-					}else{
+					} else {
 						scrnshotButton.setDisable(false);
 					}
 					setUpAlgorithmTypes(appData.getLabels().size());
-				}else{
+				} else {
 					appActions.showErrorDialog(manager.getPropertyValue(INVALID_DATA_TITLE.name()), result);
 				}
-			}else{
+			} else {
 				hideAlgorithmTypes();
 				resetAlgorithms();
 				hideBackButton();
@@ -706,21 +736,21 @@ public final class AppUI extends UITemplate {
 		});
 
 		textArea.textProperty().addListener(event -> {
-			if((savedText == null && textArea.getText().isEmpty()) || (!isDifferentFromSaved())){
+			if ((savedText == null && textArea.getText().isEmpty()) || (!isDifferentFromSaved())) {
 				disableSaveButton();
-			}else if(isDifferentFromSaved()){
+			} else if (isDifferentFromSaved()) {
 				saveButton.setDisable(false);
 			}
 		});
 	}
 
-
 	/**
 	 * Validates the current text in the text area if it satisfies the
 	 * specified tsd format
-	 * @return 
+	 *
+	 * @return
 	 */
-	private String checkTextAreaText(){
+	private String checkTextAreaText() {
 		AppData appData = ((AppData) applicationTemplate.getDataComponent());
 		String toTest = textArea.getText().trim();
 		return appData.validateText(toTest);
@@ -729,28 +759,27 @@ public final class AppUI extends UITemplate {
 	/**
 	 * Initiates the algorithms by forming a ui component for each one
 	 */
-	private void initAlgorithms(){
+	private void initAlgorithms() {
 		AppData appData = ((AppData) applicationTemplate.getDataComponent());
-		
+
 		/*
 		we want each algorithm type to have a list of components
 		each component comprising of a radio button, label, and regular button
-		*/
+		 */
 		int clusteringSize = appData.getNumClusteringAlgorithms();
 		clusteringAlgorithms = new ArrayList<>();
 		clusteringRadios = new ToggleGroup();
-		for(int i = 0; i < clusteringSize; i++){
+		for (int i = 0; i < clusteringSize; i++) {
 			AlgorithmUI temp = new AlgorithmUI(i);
 			clusteringAlgorithms.add(temp);
 			temp.chooseAlgorithm.setToggleGroup(clusteringRadios);
 		}
 
 		// each configure button corresponds to a window
-		
 		int classificationSize = appData.getNumClassificationAlgorithms();
 		classificationAlgorithms = new ArrayList<>();
 		classificationRadios = new ToggleGroup();
-		for(int i = 0; i < classificationSize; i++){
+		for (int i = 0; i < classificationSize; i++) {
 			AlgorithmUI temp = new AlgorithmUI(i);
 			classificationAlgorithms.add(temp);
 			temp.chooseAlgorithm.setToggleGroup(classificationRadios);
@@ -758,17 +787,18 @@ public final class AppUI extends UITemplate {
 	}
 
 	/**
-	 * This objects of this class represents an algorithm that the user can 
+	 * This objects of this class represents an algorithm that the user can
 	 * select from. Each object can be selected or configured.
 	 */
-	private class AlgorithmUI extends HBox{
+	private class AlgorithmUI extends HBox {
+
 		private Label algorithmName;
 		private Button configButton;
 		private RadioButton chooseAlgorithm;
 		private ConfigWindow window;
 		private int index;
 
-		public AlgorithmUI(int index){
+		public AlgorithmUI(int index) {
 			this.index = index;
 			layoutAlgorithm();
 			setUpActions();
@@ -777,7 +807,7 @@ public final class AppUI extends UITemplate {
 		/**
 		 * Lays out the UI display of the algorithm choice
 		 */
-		private void layoutAlgorithm(){
+		private void layoutAlgorithm() {
 			//AppData appData = (AppData) applicationTemplate.getDataComponent();
 			//appData.getAlgorithmName(index);
 			algorithmName = new Label(manager.getPropertyValue(ALGORITHM.name()) + (index + 1));
@@ -788,9 +818,9 @@ public final class AppUI extends UITemplate {
 			chooseAlgorithm.setUserData(false);
 			window = new ConfigWindow();
 
-			if(algorithmType.equals(AlgorithmTypes.CLASSIFICATION.toString())){
+			if (algorithmType.equals(AlgorithmTypes.CLASSIFICATION.toString())) {
 				chooseAlgorithm.setToggleGroup(classificationRadios);
-			}else if(algorithmType.equals(AlgorithmTypes.CLUSTERING.toString())){
+			} else if (algorithmType.equals(AlgorithmTypes.CLUSTERING.toString())) {
 				chooseAlgorithm.setToggleGroup(clusteringRadios);
 			}
 
@@ -804,10 +834,10 @@ public final class AppUI extends UITemplate {
 		 * Tests to see if the current algorithm has been configured.
 		 * Affects the display of the run button
 		 */
-		private void testIfConfigured(){
-			if((boolean) chooseAlgorithm.getUserData()){
+		private void testIfConfigured() {
+			if ((boolean) chooseAlgorithm.getUserData()) {
 				runButton.setDisable(false);
-			}else{
+			} else {
 				runButton.setDisable(true);
 			}
 		}
@@ -815,12 +845,12 @@ public final class AppUI extends UITemplate {
 		/**
 		 * Sets up the event handlers of the algorithm UI display
 		 */
-		private void setUpActions(){
+		private void setUpActions() {
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
 			configButton.setOnAction(event -> {
-				if(appData.getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)){
+				if (appData.getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)) {
 					window.hideLabelField();
-				}else{
+				} else {
 					window.showLabelField();
 				}
 				window.showAndWait();
@@ -829,7 +859,7 @@ public final class AppUI extends UITemplate {
 				appData.modifyConfiguration(index, window.config);
 
 				//if current algorithm configuration is modified, then the appdata must set it 
-				if(appData.getAlgorithmIndex() == index){
+				if (appData.getAlgorithmIndex() == index) {
 					appData.setConfiguration(index);
 				}
 			});
@@ -838,11 +868,11 @@ public final class AppUI extends UITemplate {
 				appData.setAlgorithmToRun(index);
 				appData.setConfiguration(index);
 
-				if(chooseAlgorithm.isSelected()){
+				if (chooseAlgorithm.isSelected()) {
 					showRun();
 					testIfConfigured();
 					resetAlgorithmRunWindow(); //reset for when additional information from other algorithm is shown
-				}else{
+				} else {
 					hideRun();
 				}
 			});
@@ -860,10 +890,10 @@ public final class AppUI extends UITemplate {
 	}
 
 	/**
-	 * This class is responsible for showing a window to the user
-	 * The values inputted inside the window is extracted to create a Config object
+	 * This class is responsible for showing a window to the user The values
+	 * inputted inside the window is extracted to create a Config object
 	 */
-	private class ConfigWindow extends Stage{
+	private class ConfigWindow extends Stage {
 
 		private Label sceneHeader;
 		private TextField iterationField; // TextField for entering the number of iterations
@@ -887,9 +917,9 @@ public final class AppUI extends UITemplate {
 
 		private Config config;
 
-		public ConfigWindow(){
+		public ConfigWindow() {
 			initModality(Modality.WINDOW_MODAL); // modal => messages are blocked from reaching other windows
-        		initOwner(getPrimaryWindow());
+			initOwner(getPrimaryWindow());
 			layout();
 			setUpActions();
 			this.setTitle(manager.getPropertyValue(CONFIG_TITLE.name()));
@@ -898,9 +928,9 @@ public final class AppUI extends UITemplate {
 		}
 
 		/**
-		 *  Lays out the UI display of the Configuration Window
+		 * Lays out the UI display of the Configuration Window
 		 */
-		private void layout(){
+		private void layout() {
 			container = new VBox();
 			Insets insets = new Insets(20);
 			container.setPadding(insets);
@@ -948,7 +978,7 @@ public final class AppUI extends UITemplate {
 		/**
 		 * Sets up the event handlers corresponding to the window
 		 */
-		private void setUpActions(){
+		private void setUpActions() {
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
 			this.setOnCloseRequest(event -> {
 				createConfig(appData.getAlgorithmType());
@@ -960,46 +990,45 @@ public final class AppUI extends UITemplate {
 		Each algorithm has a configuration window that can produce a config
 		When the window is closed --> it produces a config object
 		everytime that the window is closed --> it should set the config for the alogrithm in the data itself
-		*/
-
-		/**
-		 * Hides the number of labels field in the window. 
 		 */
-		private void hideLabelField(){
+		/**
+		 * Hides the number of labels field in the window.
+		 */
+		private void hideLabelField() {
 			container.getChildren().remove(numLabelsContainer);
 		}
 
 		/**
 		 * Shows the number of labels field in the window.
 		 */
-		private void showLabelField(){
-			if(!container.getChildren().contains(numLabelsContainer)){
+		private void showLabelField() {
+			if (!container.getChildren().contains(numLabelsContainer)) {
 				container.getChildren().clear();
 				container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
 			}
 		}
 
-
 		/**
-		 * Returns true if the input the user entered is valid
-		 * Returns false otherwise
+		 * Returns true if the input the user entered is valid Returns
+		 * false otherwise
+		 *
 		 * @return if input is valid
 		 */
-		private boolean checkInput(AlgorithmTypes type){
+		private boolean checkInput(AlgorithmTypes type) {
 			// no negative values or some shit
-			try{
+			try {
 				int maxIterations = Integer.parseInt(iterationField.getText());
 				int updateInterval = Integer.parseInt(intervalField.getText());
-				if(maxIterations < 0 || updateInterval < 0){
+				if (maxIterations < 0 || updateInterval < 0) {
 					return false;
 				}
-				if(type.equals(AlgorithmTypes.CLUSTERING)){
+				if (type.equals(AlgorithmTypes.CLUSTERING)) {
 					int numLabels = Integer.parseInt(numLabelsField.getText());
-					if(numLabels < 1){
+					if (numLabels < 1) {
 						return false;
 					}
 				}
-			}catch(NumberFormatException e){
+			} catch (NumberFormatException e) {
 				return false;
 			}
 			return true;
@@ -1007,27 +1036,28 @@ public final class AppUI extends UITemplate {
 
 		/**
 		 * Creates a configuration object based on the given type
+		 *
 		 * @param type of the algorithm
 		 */
-		private void createConfig(AlgorithmTypes type){
-			if(!checkInput(type)){
+		private void createConfig(AlgorithmTypes type) {
+			if (!checkInput(type)) {
 				handleInvalidConfig(type);
 				return;
 			}
 			int maxIterations = Integer.parseInt(iterationField.getText());
 			int updateInterval = Integer.parseInt(intervalField.getText());
 			boolean toContinue = continuousCheck.isSelected();
-			if(type.equals(AlgorithmTypes.CLUSTERING)){
+			if (type.equals(AlgorithmTypes.CLUSTERING)) {
 				int numLabels = Integer.parseInt(numLabelsField.getText());
-				if(numLabels < 2){
+				if (numLabels < 2) {
 					numLabelsField.setText("" + 2);
-				}else if(numLabels > 4){
+				} else if (numLabels > 4) {
 					numLabelsField.setText("" + 4);
-				}else{
+				} else {
 					numLabelsField.setText("" + numLabels);
 				}
 				config = new Config(maxIterations, updateInterval, toContinue, numLabels);
-			}else{
+			} else {
 				config = new Config(maxIterations, updateInterval, toContinue);
 			}
 			iterationField.setText("" + maxIterations);
@@ -1035,7 +1065,7 @@ public final class AppUI extends UITemplate {
 			continuousCheck.setSelected(toContinue);
 		}
 
-		private void resetConfigWindow(){
+		private void resetConfigWindow() {
 			iterationField.setText("");
 			intervalField.setText("");
 			continuousCheck.setSelected(false);
@@ -1045,19 +1075,20 @@ public final class AppUI extends UITemplate {
 		/**
 		 * Displays an error dialog to the user and uses default values
 		 * for the algorithm configuration
-		 * @param type 
+		 *
+		 * @param type
 		 */
-		private void handleInvalidConfig(AlgorithmTypes type){
+		private void handleInvalidConfig(AlgorithmTypes type) {
 			AppActions appActions = (AppActions) applicationTemplate.getActionComponent();
 			appActions.showErrorDialog(manager.getPropertyValue(INVALID_CONFIG_TITLE.name()), manager.getPropertyValue(INVALID_CONFIG_MESSAGE.name()));
 			int tempIteration = 15;
 			int tempInterval = 1;
 			boolean tempContinuous = true;
 			int tempLabels = 2;
-			if(type.equals(AlgorithmTypes.CLUSTERING)){
+			if (type.equals(AlgorithmTypes.CLUSTERING)) {
 				config = new Config(tempIteration, tempInterval, tempContinuous, tempLabels);
 				numLabelsField.setText("" + tempLabels);
-			}else{
+			} else {
 				config = new Config(tempIteration, tempInterval, tempContinuous);
 			}
 			iterationField.setText("" + tempIteration);
@@ -1065,5 +1096,5 @@ public final class AppUI extends UITemplate {
 			continuousCheck.setSelected(tempContinuous);
 		}
 	}
-	
+
 }

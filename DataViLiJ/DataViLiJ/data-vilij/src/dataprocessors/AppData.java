@@ -112,12 +112,10 @@ public class AppData implements DataComponent {
 	-LMAO what if it is only one data point (chart looks shitty)
 
 	-put title of algorithm in config window
-	-k means algorithm max labels is only 4
+	-for all clustering max is 4 --> should fix config window
 
-	-bug in algorithm run window --> sometimes "line not showing" message is still there even though it is actually showing
-
-	-ERROR - test_valid.tsd --> array value is 8 k --> k means cluster, error
-	-ERROR - running KMeansClusterer multiple times --> SHOULD RESET
+	//other question: the data shoulld reset to original data when a new algorithm is selcted right?
+	//other question: should the label names stay the same (male, female rather than 0, 1)? but what if original data has 2 labels, yet 4 clusters
 	*/
 
 	@Override
@@ -232,13 +230,14 @@ public class AppData implements DataComponent {
 
 		xAxis.setTickUnit(xTicks);
 		yAxis.setTickUnit(yTicks);
+
+		appUI.displayInstanceNames();
 	}
 
 	/**
 	 * Displays the updated data in the chart
 	 */
 	private void displayData(){
-		//FIXME everytime algorithm is run --> display original data
 		appUI.getChart().getData().clear();
 		Set<String> labels = new LinkedHashSet<>(data.getLabels().values());
 		for (String label : labels) {
@@ -370,8 +369,6 @@ public class AppData implements DataComponent {
 				//how about put temp values? but they're final though
 				//Essentially, how does one instantiate an algorithm, if by reflection there's no data yet, there's no configuration yet
 
-				//other question: the data shoulld reset to original data when a new algorithm is selcted right?
-				//other question: should the label names stay the same (male, female rather than 0, 1)? but what if original data has 2 labels, yet 4 clusters
 				*/
 				//Object instance = constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
 				Object instance = constructor.newInstance(null, -1, -1, false, this);
@@ -607,9 +604,11 @@ public class AppData implements DataComponent {
 
 	/**
 	 * Enables the run button in the user interface
+	 * Also displays the instances names to the user
 	 */
 	public void enableRun(){
 		appUI.enableRun();
+		appUI.displayInstanceNames();
 	}
 
 	/**
