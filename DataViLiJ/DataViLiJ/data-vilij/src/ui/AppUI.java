@@ -535,6 +535,7 @@ public final class AppUI extends UITemplate {
 	private void resetAlgorithmRunWindow(){
 		algorithmProgress.setProgress(0);
 		algorithmRunInfo.setText("");
+		messageAlgorithmRunInfo.setText("");
 	};
 
 	public void appendAlgorithmRunWindow(String message){
@@ -865,6 +866,8 @@ public final class AppUI extends UITemplate {
 				if(chooseAlgorithm.isSelected()){
 					showRun();
 					testForConfiguration();
+					chart.getData().clear(); //clear the chart
+					resetAlgorithmRunWindow(); //reset for when additional information from other algorithm is shown
 				}else{
 					hideRun();
 				}
