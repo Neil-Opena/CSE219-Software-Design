@@ -4,7 +4,6 @@ import actions.AppActions;
 import algorithms.Algorithm;
 import algorithms.AlgorithmTypes;
 import algorithms.Classifier;
-import algorithms.Clusterer;
 import classification.RandomClassifier;
 import clustering.RandomClustering;
 import data.Config;
@@ -15,12 +14,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -59,14 +63,14 @@ public class AppData implements DataComponent {
 	private double maxY;
 
 	//For classification algorithms
-	private ArrayList<Classifier> classificationAlgorithms;
+	private ArrayList<Class> classificationAlgorithms;
 	private int numClassificationAlgorithms; //DELETE
 	private double lineMinY;
 	private double lineMaxY; //variables used to store temp y values 
 	private XYChart.Series<Number, Number> line;
 
 	//For clustering algorithms
-	private ArrayList<Clusterer> clusteringAlgorithms;
+	private ArrayList<Class> clusteringAlgorithms;
 	private int numClusteringAlgorithms;
 
 	private AlgorithmTypes algorithmType;
@@ -89,7 +93,7 @@ public class AppData implements DataComponent {
 		numClassificationAlgorithms = 1;
 		numClusteringAlgorithms = 1;
 		//FIXME should probably remove these
-		loadAlgorithms();
+		//loadAlgorithms(); //may need to move
 	}
 
 	/*
@@ -98,7 +102,7 @@ public class AppData implements DataComponent {
 	-remove the variables above
 	-change get___algorithms methods
 	-fix algorithm run window -- indicate when line is not displaying
-	-remove line not in chart method
+	-add labels tooltip shit
 	*/
 
 	@Override
@@ -303,6 +307,66 @@ public class AppData implements DataComponent {
 		return algorithmType;
 	}
 
+	
+	private void loadAlgorithms(){
+		/*
+		One way to satisfy the requirement concerning the loading of algorithms 
+		would be to assume that any algorithms to be used by the application would 
+		have class files located in a particular resource directory. 
+		Upon application startup, this directory would be scanned to retrieve a list 
+		of names of the class files located there, and each class file would be loaded 
+		and instantiated using reflection. Once instantiated, the name of each algorithm 
+		would be obtained, either by just using the base name of the class file, or else 
+		by ensuring that each algorithm class supplies a "getName" or similar method that 
+		can be used to get the user-friendly name of the algorithm. These names can then 
+		be registered with the user interface so that the user will see a complete list 
+		of the available algorithms, without any having been hard-coded.
+		*/
+		Path current = Paths.get(".").toAbsolutePath();
+		File classificationDirectory = current.resolve("data-vilij/src/classification").toFile();
+		File clusteringDirectory = current.resolve("data-vilij/src/clustering").toFile();
+
+		try {
+			this.getClass().getClassLoader().loadClass("classification.RandomClassifier");
+		} catch (ClassNotFoundException ex) {
+			Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		Arrays.asList(classificationDirectory.list()).forEach(algorithm -> {
+			String className = "classification." + algorithm.split("\\.")[0];
+			try {
+				Class algorithmClass = Class.forName(className);
+				Constructor constructor = algorithmClass.getConstructors()[0];
+				/*
+				CONFIGURATION IS NULL
+				//how about put temp values? but they're final though
+				//Essentially, how does one instantiate an algorithm, if by reflection there's no data yet, there's no configuration yet
+				*/
+				Object instance = constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
+			} catch (ClassNotFoundException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InstantiationException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalAccessException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalArgumentException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InvocationTargetException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		});
+
+		Arrays.asList(clusteringDirectory.list()).forEach(algorithm -> {
+			String className = "clustering." + algorithm.split("\\.")[0];
+			try {
+				Class algorithmClass = Class.forName(className);
+				Constructor constructor = algorithmClass.getConstructors()[0];
+			} catch (ClassNotFoundException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		});
+	}
+
 	/**
 	 * FIXME
 	 */
@@ -467,22 +531,6 @@ public class AppData implements DataComponent {
 	public void completeAlgorithm(){
 		algorithmStopped();
 		appActions.showErrorDialog("Completed", "ALgorithm has finished");
-	}
-
-	private void loadAlgorithms(){
-		/*
-		One way to satisfy the requirement concerning the loading of algorithms 
-		would be to assume that any algorithms to be used by the application would 
-		have class files located in a particular resource directory. 
-		Upon application startup, this directory would be scanned to retrieve a list 
-		of names of the class files located there, and each class file would be loaded 
-		and instantiated using reflection. Once instantiated, the name of each algorithm 
-		would be obtained, either by just using the base name of the class file, or else 
-		by ensuring that each algorithm class supplies a "getName" or similar method that 
-		can be used to get the user-friendly name of the algorithm. These names can then 
-		be registered with the user interface so that the user will see a complete list 
-		of the available algorithms, without any having been hard-coded.
-		*/
 	}
 
 	/**
