@@ -96,6 +96,8 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 				return;
 			}
 		}
+		appData.updateChart(); //show last update
+		//algorithm has finished
 		appData.completeAlgorithm();
 	}
 

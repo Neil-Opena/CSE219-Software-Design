@@ -74,7 +74,6 @@ public class KMeansClusterer extends Clusterer {
 
 		initializeCentroids();
 		int iteration = 0;
-		//insert sleep to display original chart
 		while (!Thread.interrupted() && iteration++ < maxIterations & tocontinue.get()) {
 			appData.showCurrentIteration(iteration);
 			assignLabels();
@@ -98,6 +97,8 @@ public class KMeansClusterer extends Clusterer {
 				return;
 			}
 		}
+		appData.updateChart(); //show last update
+		//algorithm has finished
 		appData.completeAlgorithm();
 	}
 

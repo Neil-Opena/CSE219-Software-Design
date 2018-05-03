@@ -67,14 +67,12 @@ public class AppData implements DataComponent {
 	//For classification algorithms
 	private ArrayList<Classifier> classificationAlgorithms;
 	private ArrayList<Config> classificationConfigurations;
-	private int numClassificationAlgorithms; //DELETE
 	private double lineMinY;
 	private double lineMaxY; //variables used to store temp y values 
 	private XYChart.Series<Number, Number> line;
 
 	//For clustering algorithms
 	private ArrayList<Clusterer> clusteringAlgorithms;
-	private int numClusteringAlgorithms;
 	private ArrayList<Config> clusteringConfigurations;
 
 	private AlgorithmTypes algorithmType;
@@ -94,28 +92,37 @@ public class AppData implements DataComponent {
 		appActions = (AppActions) applicationTemplate.getActionComponent();
 		manager = applicationTemplate.manager;
 
-		numClassificationAlgorithms = 1;
-		numClusteringAlgorithms = 2;
 		//FIXME should probably remove these
 		loadAlgorithms(); 
 	}
 
 	/*
 	TODO:
+	TEST EVERYTHING WITH DATA FROM STRING
+	error --> classification, when finished - nullpointerexception when displaying instance names
+
+	-odd behavior: corner test with 4 - 4 clusters : error in kmeans clustering
+
+	-clustering doesn't display tooltips while algorithm is running because the points are being removed
+
 	-use reflection to load all the algorithms
-	-remove the variables above
-	-change get___algorithms methods
 	-fix algorithm run window -- indicate when line is not displaying
-	-add labels tooltip shit
+	=or add current iteration that is displayed
+
 	-add changes to config window --> use can't put update greater than iteration
 
 	-LMAO what if it is only one data point (chart looks shitty)
+
+	-bug when other algorithm's configuration window is closed (and current one is not configured yet), run button is activated
 
 	-put title of algorithm in config window
 	-for all clustering max is 4 --> should fix config window
 
 	//other question: the data shoulld reset to original data when a new algorithm is selcted right?
-	//other question: should the label names stay the same (male, female rather than 0, 1)? but what if original data has 2 labels, yet 4 clusters
+	//other question: is the ui for displaying iterations ok? (line not in chart: south)
+	//other question: is the exam cumulative?
+
+	So your code is ready to handle the two situations (i) the maximum number of iterations are exhausted, and the algorithm is terminated, or (ii) the algorithm terminates by itself even though the maximum number of iterations has not been reached. ADD DIALOGS FOR THIS
 	*/
 
 	@Override
@@ -370,11 +377,14 @@ public class AppData implements DataComponent {
 				//Essentially, how does one instantiate an algorithm, if by reflection there's no data yet, there's no configuration yet
 
 				*/
-				//Object instance = constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
-				Object instance = constructor.newInstance(null, -1, -1, false, this);
+				//Classifier algorithmInstance = (Classifier) constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
+				Classifier algorithmInstance = (Classifier) constructor.newInstance(null, -1, -1, false, this);
 
-				//For configuration
+				classificationAlgorithms.add(algorithmInstance);
+
+				//Add temporary configurations
 				classificationConfigurations.add(new Config());
+
 			} catch (ClassNotFoundException ex) {
 				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
 			} catch (InstantiationException ex) {
@@ -396,9 +406,21 @@ public class AppData implements DataComponent {
 				Class algorithmClass = Class.forName(className);
 				Constructor constructor = algorithmClass.getConstructors()[0];
 
-				//For configuration
+				Clusterer algorithmInstance = (Clusterer) constructor.newInstance(null, -1, -1, -1, false, this);
+				clusteringAlgorithms.add(algorithmInstance);
+
+				//Add temporary configurations
 				clusteringConfigurations.add(new Config());
+
 			} catch (ClassNotFoundException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InstantiationException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalAccessException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalArgumentException ex) {
+				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InvocationTargetException ex) {
 				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		});
@@ -417,7 +439,7 @@ public class AppData implements DataComponent {
 		}else{
 			switch(algorithmIndex){
 				case (0) : 
-					//HARD CODED FOR NOT
+					//HARD CODED FOR NOW
 					algorithmToRun = new RandomClustering(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getNumLabels(), configuration.getToContinue(), this);
 					break;
 				case (1) :
@@ -638,7 +660,7 @@ public class AppData implements DataComponent {
 	 * @return number of classification algorithms
 	 */
 	public int getNumClassificationAlgorithms(){
-		return numClassificationAlgorithms;
+		return classificationAlgorithms.size();
 	}
 
 	/**
@@ -646,7 +668,7 @@ public class AppData implements DataComponent {
 	 * @return number of clustering algorithms
 	 */
 	public int getNumClusteringAlgorithms(){
-		return numClusteringAlgorithms;
+		return clusteringAlgorithms.size();
 	}
 
 	/**

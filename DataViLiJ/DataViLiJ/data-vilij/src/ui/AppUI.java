@@ -273,6 +273,10 @@ public final class AppUI extends UITemplate {
 	public void displayInstanceNames() {
 		Platform.runLater(() -> {
 			for (XYChart.Series series : chart.getData()) {
+				if(series.getName().equals("classification")){
+					//maybe add equation?
+					continue;
+				}
 				for (XYChart.Data point : (ObservableList<XYChart.Data>) series.getData()) {
 					Tooltip.install(point.getNode(), new Tooltip(point.getExtraValue().toString()));
 
