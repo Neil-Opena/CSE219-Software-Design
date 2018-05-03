@@ -536,7 +536,7 @@ public final class AppUI extends UITemplate {
 		algorithmRunWindow = new Stage();
 
 		algorithmRunTitle = new Label("Algorithm Iterations");
-		algorithmRunTitle.getStyleClass().add(manager.getPropertyValue(CONFIG_TITLE_CSS.name()));
+		algorithmRunTitle.getStyleClass().add("config-window-algorithm-name");
 		algorithmProgress = new ProgressIndicator();
 		algorithmProgress.getStyleClass().add("progress");
 		algorithmRunInfo = new Label("");
@@ -819,13 +819,15 @@ public final class AppUI extends UITemplate {
 		 */
 		private void layoutAlgorithm() {
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
-			algorithmName = new Label(appData.getAlgorithmName(type, index));
+			String algorithmString = appData.getAlgorithmName(type, index);
+
+			algorithmName = new Label(algorithmString);
 			algorithmName.getStyleClass().add(manager.getPropertyValue(ALGORITHM_NAME_CSS.name()));
 			configButton = setToolbarButton(iconsPath + separator + manager.getPropertyValue(GEAR_ICON.name()), manager.getPropertyValue(CONFIG_TOOLTIP.name()), false);
 			configButton.getStyleClass().add(manager.getPropertyValue(CONFIG_BUTTON.name()));
 			chooseAlgorithm = new RadioButton();
 			chooseAlgorithm.setUserData(false);
-			window = new ConfigWindow();
+			window = new ConfigWindow(algorithmString);
 
 			if (algorithmType.equals(AlgorithmTypes.CLASSIFICATION.toString())) {
 				chooseAlgorithm.setToggleGroup(classificationRadios);
@@ -925,11 +927,15 @@ public final class AppUI extends UITemplate {
 		private Scene currentScene;
 		private VBox container;
 
+		private Label algorithmName;
+		private String algorithmString;
+
 		private Config config;
 
-		public ConfigWindow() {
+		public ConfigWindow(String algorithmString) {
 			initModality(Modality.WINDOW_MODAL); // modal => messages are blocked from reaching other windows
 			initOwner(getPrimaryWindow());
+			this.algorithmString = algorithmString;
 			layout();
 			setUpActions();
 			this.setTitle(manager.getPropertyValue(CONFIG_TITLE.name()));
@@ -982,7 +988,10 @@ public final class AppUI extends UITemplate {
 			checkBoxContainer.setLeft(checkBoxLabel);
 			checkBoxContainer.setRight(continuousCheck);
 
-			container.getChildren().addAll(sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
+			algorithmName = new Label(algorithmString);
+			algorithmName.getStyleClass().add("config-window-algorithm-name");
+
+			container.getChildren().addAll(algorithmName, sceneHeader, iterationContainer, intervalContainer, numLabelsContainer, checkBoxContainer);
 		}
 
 		/**

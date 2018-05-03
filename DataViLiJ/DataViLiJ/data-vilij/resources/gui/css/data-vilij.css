@@ -156,6 +156,12 @@ and open the template in the editor.
 
 .config-window-title{
 	-fx-font-weight: bold;
+	-fx-font-size: 1.1em;
+	-fx-underline: true;
+}
+
+.config-window-algorithm-name{
+	-fx-font-weight: bold;
 	-fx-font-size: 1.3em;
 }
 

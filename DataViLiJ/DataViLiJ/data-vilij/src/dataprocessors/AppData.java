@@ -101,17 +101,11 @@ public class AppData implements DataComponent {
 
 	-odd behavior: corner test with 4 - 4 clusters : error in kmeans clustering
 
-	-clustering doesn't display tooltips while algorithm is running because the points are being removed
-
-	-use reflection to load all the algorithms
 	-fix algorithm run window -- indicate when line is not displaying
 	=or add current iteration that is displayed
-
 	-add changes to config window --> use can't put update greater than iteration
 
 	-LMAO what if it is only one data point (chart looks shitty)
-
-	-bug when other algorithm's configuration window is closed (and current one is not configured yet), run button is activated
 
 	-put title of algorithm in config window
 	-for all clustering max is 4 --> should fix config window
