@@ -770,23 +770,27 @@ public final class AppUI extends UITemplate {
 		we want each algorithm type to have a list of components
 		each component comprising of a radio button, label, and regular button
 		 */
-		int clusteringSize = appData.getNumClusteringAlgorithms();
-		clusteringAlgorithms = new ArrayList<>();
-		clusteringRadios = new ToggleGroup();
-		for (int i = 0; i < clusteringSize; i++) {
-			AlgorithmUI temp = new AlgorithmUI(i);
-			clusteringAlgorithms.add(temp);
-			temp.chooseAlgorithm.setToggleGroup(clusteringRadios);
-		}
 
 		// each configure button corresponds to a window
+
+		//for classification
 		int classificationSize = appData.getNumClassificationAlgorithms();
 		classificationAlgorithms = new ArrayList<>();
 		classificationRadios = new ToggleGroup();
 		for (int i = 0; i < classificationSize; i++) {
-			AlgorithmUI temp = new AlgorithmUI(i);
+			AlgorithmUI temp = new AlgorithmUI(AlgorithmTypes.CLASSIFICATION, i);
 			classificationAlgorithms.add(temp);
 			temp.chooseAlgorithm.setToggleGroup(classificationRadios);
+		}
+		
+		//for clustering
+		int clusteringSize = appData.getNumClusteringAlgorithms();
+		clusteringAlgorithms = new ArrayList<>();
+		clusteringRadios = new ToggleGroup();
+		for (int i = 0; i < clusteringSize; i++) {
+			AlgorithmUI temp = new AlgorithmUI(AlgorithmTypes.CLUSTERING, i);
+			clusteringAlgorithms.add(temp);
+			temp.chooseAlgorithm.setToggleGroup(clusteringRadios);
 		}
 	}
 
@@ -801,9 +805,11 @@ public final class AppUI extends UITemplate {
 		private RadioButton chooseAlgorithm;
 		private ConfigWindow window;
 		private int index;
+		private AlgorithmTypes type;
 
-		public AlgorithmUI(int index) {
+		public AlgorithmUI(AlgorithmTypes type, int index) {
 			this.index = index;
+			this.type = type;
 			layoutAlgorithm();
 			setUpActions();
 		}
@@ -812,9 +818,8 @@ public final class AppUI extends UITemplate {
 		 * Lays out the UI display of the algorithm choice
 		 */
 		private void layoutAlgorithm() {
-			//AppData appData = (AppData) applicationTemplate.getDataComponent();
-			//appData.getAlgorithmName(index);
-			algorithmName = new Label(manager.getPropertyValue(ALGORITHM.name()) + (index + 1));
+			AppData appData = (AppData) applicationTemplate.getDataComponent();
+			algorithmName = new Label(appData.getAlgorithmName(type, index));
 			algorithmName.getStyleClass().add(manager.getPropertyValue(ALGORITHM_NAME_CSS.name()));
 			configButton = setToolbarButton(iconsPath + separator + manager.getPropertyValue(GEAR_ICON.name()), manager.getPropertyValue(CONFIG_TOOLTIP.name()), false);
 			configButton.getStyleClass().add(manager.getPropertyValue(CONFIG_BUTTON.name()));
@@ -859,7 +864,7 @@ public final class AppUI extends UITemplate {
 				}
 				window.showAndWait();
 				chooseAlgorithm.setUserData(true);
-				testIfConfigured();
+				testIfConfigured(); //maybe insert index here
 				appData.modifyConfiguration(index, window.config);
 
 				//if current algorithm configuration is modified, then the appdata must set it 
