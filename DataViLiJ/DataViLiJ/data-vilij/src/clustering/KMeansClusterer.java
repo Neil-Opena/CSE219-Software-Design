@@ -174,7 +174,7 @@ public class KMeansClusterer extends Clusterer {
 
 	@Override
 	public String getName() {
-		return "KMeansClusterer";
+		return "KMeans Clusterer";
 	}
 
 }

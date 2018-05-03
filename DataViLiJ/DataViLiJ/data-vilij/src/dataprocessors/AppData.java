@@ -115,9 +115,8 @@ public class AppData implements DataComponent {
 
 	-put title of algorithm in config window
 	-for all clustering max is 4 --> should fix config window
+	-indicateion to chart where line is displaying
 
-	//other question: the data shoulld reset to original data when a new algorithm is selcted right?
-	//other question: is the ui for displaying iterations ok? (line not in chart: south)
 	//other question: is the exam cumulative?
 
 	So your code is ready to handle the two situations (i) the maximum number of iterations are exhausted, and the algorithm is terminated, or (ii) the algorithm terminates by itself even though the maximum number of iterations has not been reached. ADD DIALOGS FOR THIS
@@ -376,15 +375,8 @@ public class AppData implements DataComponent {
 			try {
 				Class algorithmClass = Class.forName(className);
 				Constructor constructor = algorithmClass.getConstructors()[0];
-				/*
-				CONFIGURATION IS NULL
-				//how about put temp values? but they're final though
-				//Essentially, how does one instantiate an algorithm, if by reflection there's no data yet, there's no configuration yet
 
-				 */
-				//Classifier algorithmInstance = (Classifier) constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
 				Classifier algorithmInstance = (Classifier) constructor.newInstance(null, -1, -1, false, this);
-
 				classificationAlgorithms.add(algorithmInstance);
 
 				//Add temporary configurations

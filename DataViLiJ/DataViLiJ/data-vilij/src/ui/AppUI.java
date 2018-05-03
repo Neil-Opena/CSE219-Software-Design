@@ -844,7 +844,7 @@ public final class AppUI extends UITemplate {
 		 * Affects the display of the run button
 		 */
 		private void testIfConfigured() {
-			if ((boolean) chooseAlgorithm.getUserData()) {
+			if ((boolean) chooseAlgorithm.getUserData() && chooseAlgorithm.isSelected()) {
 				runButton.setDisable(false);
 			} else {
 				runButton.setDisable(true);
@@ -864,7 +864,8 @@ public final class AppUI extends UITemplate {
 				}
 				window.showAndWait();
 				chooseAlgorithm.setUserData(true);
-				testIfConfigured(); //maybe insert index here
+				testIfConfigured();
+
 				appData.modifyConfiguration(index, window.config);
 
 				//if current algorithm configuration is modified, then the appdata must set it 

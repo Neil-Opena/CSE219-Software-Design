@@ -133,6 +133,6 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 
 	@Override
 	public String getName() {
-		return "RandomClustering";
+		return "Random Clustering";
 	}
 }
