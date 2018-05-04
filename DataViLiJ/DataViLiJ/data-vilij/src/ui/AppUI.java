@@ -94,6 +94,7 @@ public final class AppUI extends UITemplate {
 	private String iconsPath;
 
 	private String savedText;
+	private int numInstances;
 
 	public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
 		super(primaryStage, applicationTemplate);
@@ -158,6 +159,7 @@ public final class AppUI extends UITemplate {
 		scrnshotButton.setDisable(true);
 		savedText = null;
 		disableSaveButton();
+		numInstances = 0;
 	}
 
 	/**
@@ -246,6 +248,8 @@ public final class AppUI extends UITemplate {
 	 * @param source the source of the file (fileName)
 	 */
 	public void displayInfo(int numInstances, String source) {
+		this.numInstances = numInstances;
+
 		inputRegion.getChildren().remove(displayInfo);
 		AppData appData = (AppData) applicationTemplate.getDataComponent();
 		StringBuilder builder = new StringBuilder();
@@ -1001,7 +1005,6 @@ public final class AppUI extends UITemplate {
 			AppData appData = (AppData) applicationTemplate.getDataComponent();
 			this.setOnCloseRequest(event -> {
 				createConfig(appData.getAlgorithmType());
-				//appData.setConfiguration(config);
 			});
 		}
 
@@ -1033,24 +1036,30 @@ public final class AppUI extends UITemplate {
 		 *
 		 * @return if input is valid
 		 */
-		private boolean checkInput(AlgorithmTypes type) {
-			// no negative values or some shit
+		private String checkInput(AlgorithmTypes type) {
+			// no negative values or letters
+			String message = "";
 			try {
 				int maxIterations = Integer.parseInt(iterationField.getText());
 				int updateInterval = Integer.parseInt(intervalField.getText());
-				if (maxIterations < 0 || updateInterval < 0) {
-					return false;
-				}
-				if (type.equals(AlgorithmTypes.CLUSTERING)) {
+				if(maxIterations < 0){
+					message = "Number of max iterations cannot be negative"; 
+				}else if(updateInterval < 0){
+					message = "Update interval cannot be negative";
+				}else if(updateInterval > maxIterations){
+					message = "Update interval cannot be greater than the number of max iterations";
+				}else if (type.equals(AlgorithmTypes.CLUSTERING)) {
 					int numLabels = Integer.parseInt(numLabelsField.getText());
 					if (numLabels < 1) {
-						return false;
+						message = "The number of labels cannot be negative";
+					}else if(numLabels > numInstances){
+						message = "The number of labels cannot exceed the number of data points";
 					}
 				}
 			} catch (NumberFormatException e) {
-				return false;
+				message = "One or more inputs have invalid data.\nPlease input integers";
 			}
-			return true;
+			return message;
 		}
 
 		/**
@@ -1059,20 +1068,29 @@ public final class AppUI extends UITemplate {
 		 * @param type of the algorithm
 		 */
 		private void createConfig(AlgorithmTypes type) {
-			if (!checkInput(type)) {
+			AppActions appActions = (AppActions) applicationTemplate.getActionComponent();
+			String result = checkInput(type);
+			if(!result.isEmpty()){ //configuration contains invalid input (negative, non numbers)
+				appActions.showErrorDialog(manager.getPropertyValue(INVALID_CONFIG_TITLE.name()), result +  ". " + manager.getPropertyValue(INVALID_CONFIG_MESSAGE.name()));
 				handleInvalidConfig(type);
 				return;
 			}
+
 			int maxIterations = Integer.parseInt(iterationField.getText());
 			int updateInterval = Integer.parseInt(intervalField.getText());
 			boolean toContinue = continuousCheck.isSelected();
+
+			String message = "";
+
 			if (type.equals(AlgorithmTypes.CLUSTERING)) {
 				int numLabels = Integer.parseInt(numLabelsField.getText());
 				if (numLabels < 2) {
 					numLabelsField.setText("" + 2);
+					message = "The minimum number of labels is 2";
 				} else if (numLabels > 4) {
 					numLabelsField.setText("" + 4);
-				} else {
+					message = "The maximum number of labels is 4";
+				}else {
 					numLabelsField.setText("" + numLabels);
 				}
 				config = new Config(maxIterations, updateInterval, toContinue, numLabels);
@@ -1082,6 +1100,10 @@ public final class AppUI extends UITemplate {
 			iterationField.setText("" + maxIterations);
 			intervalField.setText("" + updateInterval);
 			continuousCheck.setSelected(toContinue);
+
+			if(!message.isEmpty()){
+				appActions.showErrorDialog(manager.getPropertyValue(INVALID_CONFIG_TITLE.name()), message);
+			}
 		}
 
 		private void resetConfigWindow() {
@@ -1092,14 +1114,10 @@ public final class AppUI extends UITemplate {
 		}
 
 		/**
-		 * Displays an error dialog to the user and uses default values
-		 * for the algorithm configuration
-		 *
-		 * @param type
+		 * Uses default values
+		 * @param type of the algorithm
 		 */
 		private void handleInvalidConfig(AlgorithmTypes type) {
-			AppActions appActions = (AppActions) applicationTemplate.getActionComponent();
-			appActions.showErrorDialog(manager.getPropertyValue(INVALID_CONFIG_TITLE.name()), manager.getPropertyValue(INVALID_CONFIG_MESSAGE.name()));
 			int tempIteration = 15;
 			int tempInterval = 1;
 			boolean tempContinuous = true;

@@ -86,7 +86,6 @@ public class AppData implements DataComponent {
 		appActions = (AppActions) applicationTemplate.getActionComponent();
 		manager = applicationTemplate.manager;
 
-		//FIXME should probably remove these
 		loadAlgorithms();
 	}
 
@@ -95,16 +94,8 @@ public class AppData implements DataComponent {
 	TEST EVERYTHING WITH DATA FROM STRING
 
 	-odd behavior: corner test with 4 - 4 clusters : error in kmeans clustering
-
-	-fix algorithm run window -- indicate when line is not displaying
-	=or add current iteration that is displayed
-	-add changes to config window --> use can't put update greater than iteration
-
-	-LMAO what if it is only one data point (chart looks shitty)
-
-	-for all clustering max is 4 --> should fix config window
-	-indicateion to chart where line is displaying
-
+	test when user put in 1 label for kmeans
+	TEST when inputted number of labels is less than number of data points, ex: 3 points, but user put 4 data points
 	 */
 	@Override
 	public void loadData(Path dataFilePath) {

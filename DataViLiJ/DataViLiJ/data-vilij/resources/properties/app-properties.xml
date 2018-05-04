@@ -38,7 +38,7 @@ functionality within the main workspace. -->
 	<property name="LARGE_DATA_MESSAGE_2" value=" lines.&#xD;Showing only the first 10 in the text area."/>
 	<property name="FILE_NOT_FOUND_MESSAGE" value="Specified File was not found."/>
 	<property name="LINE" value="Line "/>
-	<property name="INVALID_CONFIG_MESSAGE" value="Values for configuration are invalid. Default values have been inserted."/>
+	<property name="INVALID_CONFIG_MESSAGE" value="Default values have been inserted."/>
 
         <!-- APPLICATION-SPECIFIC MESSAGE TITLES -->
         <property name="SAVE_UNSAVED_WORK_TITLE" value="Save Current Work"/>
