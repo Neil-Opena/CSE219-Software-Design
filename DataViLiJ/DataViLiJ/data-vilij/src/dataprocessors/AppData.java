@@ -14,7 +14,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -22,8 +21,6 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -97,7 +94,6 @@ public class AppData implements DataComponent {
 	TODO:
 	TEST EVERYTHING WITH DATA FROM STRING
 	TEST: remove algorithms (check if index is in the array)
-	-change logger to display dialog -- wrong constructor
 
 	-odd behavior: corner test with 4 - 4 clusters : error in kmeans clustering
 
@@ -107,11 +103,8 @@ public class AppData implements DataComponent {
 
 	-LMAO what if it is only one data point (chart looks shitty)
 
-	-put title of algorithm in config window
 	-for all clustering max is 4 --> should fix config window
 	-indicateion to chart where line is displaying
-
-	//other question: is the exam cumulative?
 
 	So your code is ready to handle the two situations (i) the maximum number of iterations are exhausted, and the algorithm is terminated, or (ii) the algorithm terminates by itself even though the maximum number of iterations has not been reached. ADD DIALOGS FOR THIS
 	 */
@@ -356,12 +349,6 @@ public class AppData implements DataComponent {
 		File classificationDirectory = current.resolve("data-vilij/src/classification").toFile();
 		File clusteringDirectory = current.resolve("data-vilij/src/clustering").toFile();
 
-		try {
-			this.getClass().getClassLoader().loadClass("classification.RandomClassifier");
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
 		classificationAlgorithms = new ArrayList<>();
 		classificationConfigurations = new ArrayList<>();
 		Arrays.asList(classificationDirectory.list()).forEach(algorithm -> {
@@ -376,16 +363,8 @@ public class AppData implements DataComponent {
 				//Add temporary configurations
 				classificationConfigurations.add(new Config());
 
-			} catch (ClassNotFoundException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InstantiationException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalAccessException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalArgumentException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InvocationTargetException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (Exception ex) { 
+				appActions.showErrorDialog("Algorithm Loading Error", "Something went wrong with loading the algorithm");
 			}
 		});
 
@@ -403,16 +382,8 @@ public class AppData implements DataComponent {
 				//Add temporary configurations
 				clusteringConfigurations.add(new Config());
 
-			} catch (ClassNotFoundException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InstantiationException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalAccessException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalArgumentException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InvocationTargetException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (Exception ex) { 
+				appActions.showErrorDialog("Algorithm Loading Error", "Something went wrong with loading the algorithm");
 			}
 		});
 	}
@@ -427,15 +398,9 @@ public class AppData implements DataComponent {
 			Constructor constructor = toReplace.getClass().getConstructors()[0];
 			try {
 				algorithmToRun = (Algorithm) constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getToContinue(), this);
-			} catch (InstantiationException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalAccessException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalArgumentException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InvocationTargetException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			} catch (Exception ex) { 
+				appActions.showErrorDialog("Algorithm Loading Error", "Something went wrong with loading the algorithm");
+			} 
 
 			classificationAlgorithms.set(algorithmIndex, (Classifier) algorithmToRun);
 		} else {
@@ -445,15 +410,9 @@ public class AppData implements DataComponent {
 
 			try {
 				algorithmToRun = (Algorithm) constructor.newInstance(data, configuration.getMaxIterations(), configuration.getUpdateInterval(), configuration.getNumLabels(), configuration.getToContinue(), this);
-			} catch (InstantiationException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalAccessException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalArgumentException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InvocationTargetException ex) {
-				Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			} catch (Exception ex) { 
+				appActions.showErrorDialog("Algorithm Loading Error", "Something went wrong with loading the algorithm");
+			} 
 		}
 	}
 
