@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
  * @author Ritwik Banerjee
  */
 public class KMeansClusterer extends Clusterer {
+
 	private final Thread algorithm;
 	private final AppData appData;
 
@@ -72,13 +73,19 @@ public class KMeansClusterer extends Clusterer {
 			return;
 		}
 
-		initializeCentroids();
+		try{
+			initializeCentroids();
+		}catch(IndexOutOfBoundsException ex){
+			//this occurs when the variable i is out of bounds
+			//do nothing
+		}
+
 		int iteration = 0;
 		while (!Thread.interrupted() && iteration++ < maxIterations & tocontinue.get()) {
 			appData.showCurrentIteration(iteration);
 			assignLabels();
 			recomputeCentroids();
-			if(iteration % updateInterval == 0){
+			if (iteration % updateInterval == 0) {
 				appData.updateChart(iteration);
 				if (!isContinuous) {
 					appData.enableRun();
@@ -98,17 +105,17 @@ public class KMeansClusterer extends Clusterer {
 			}
 		}
 
-		if(iteration-1 == maxIterations){
+		if (iteration - 1 == maxIterations) {
 			appData.completeAlgorithm(); //algorithm exhausted all iterations
 			appData.updateChart(maxIterations); //show the last update
-		}else{
+		} else {
 			appData.autocompleteAlgorithm(); //algorithm terminated by itself
 			appData.updateChart(iteration);
 		}
 
 	}
 
-	private void initializeCentroids() {
+	private void initializeCentroids() throws IndexOutOfBoundsException{
 		Set<String> chosen = new HashSet<>();
 		List<String> instanceNames = new ArrayList<>(dataset.getOriginalLabels().keySet()); //modified so that it gets original labels instead
 		Random r = new Random();
