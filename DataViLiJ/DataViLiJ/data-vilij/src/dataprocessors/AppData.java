@@ -93,7 +93,6 @@ public class AppData implements DataComponent {
 	/*
 	TODO:
 	TEST EVERYTHING WITH DATA FROM STRING
-	TEST: remove algorithms (check if index is in the array)
 
 	-odd behavior: corner test with 4 - 4 clusters : error in kmeans clustering
 
@@ -446,7 +445,7 @@ public class AppData implements DataComponent {
 	 * Updates the current display of the line with the current output
 	 * values
 	 */
-	public void updateChart() {
+	public void updateChart(int iteration) {
 		Platform.runLater(() -> {
 			if (algorithmType.equals(AlgorithmTypes.CLASSIFICATION)) {
 				XYChart.Series line = (appUI.getChart().getData().get(appUI.getChart().getData().size() - 1));
@@ -454,11 +453,21 @@ public class AppData implements DataComponent {
 				XYChart.Data max = (XYChart.Data) line.getData().get(1);
 				min.setYValue(lineMinY);
 				max.setYValue(lineMaxY);
+				showDisplayedIteration(iteration, produceLineEquation());
 				checkDisplayedLine((double) min.getYValue(), (double) max.getYValue());
 			} else {
 				displayData();
+				showDisplayedIteration(iteration);
 			}
 		});
+	}
+
+	private void showDisplayedIteration(int iteration){
+		Platform.runLater(() -> appUI.appendAlgorithmRunWindow("Displayed iteration " + iteration));
+	}
+
+	private void showDisplayedIteration(int iteration, String equation){
+		Platform.runLater(() -> appUI.appendAlgorithmRunWindow("Displayed iteration " + iteration + equation));
 	}
 
 	/**
@@ -476,8 +485,6 @@ public class AppData implements DataComponent {
 			Platform.runLater(() -> appUI.appendAlgorithmRunWindow("Line not in chart bounds - direction: South"));
 		} else if (minY > yUpper && maxY > yUpper) {
 			Platform.runLater(() -> appUI.appendAlgorithmRunWindow("Line not in chart bounds - direction: North"));
-		} else {
-			Platform.runLater(() -> appUI.appendAlgorithmRunWindow(""));
 		}
 
 		/*

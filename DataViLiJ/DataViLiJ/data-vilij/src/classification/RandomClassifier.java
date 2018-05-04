@@ -82,7 +82,7 @@ public class RandomClassifier extends Classifier {
 			if (i % updateInterval == 0) {
 				//System.out.printf("Iteration number %d: ", i); //
 				//flush();
-				appData.updateChart();
+				appData.updateChart(i);
 				if (!isContinuous) {
 					appData.enableRun();
 					tocontinue.set(false);
@@ -107,7 +107,7 @@ public class RandomClassifier extends Classifier {
 		}
 		//System.out.printf("Iteration number %d: ", i);
 		//flush();
-		appData.updateChart(); //show last update
+		appData.updateChart(i); //show last update
 		//algorithm has finished
 		appData.completeAlgorithm();
 	}

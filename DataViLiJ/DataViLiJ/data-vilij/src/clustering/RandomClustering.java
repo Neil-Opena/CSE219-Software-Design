@@ -78,7 +78,7 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 			appData.showCurrentIteration(iteration);
 			assignLabels();
 			if(iteration % updateInterval == 0){
-				appData.updateChart();
+				appData.updateChart(iteration);
 				if (!isContinuous) {
 					appData.enableRun();
 					tocontinue.set(false);
@@ -96,7 +96,7 @@ public class RandomClustering extends Clusterer { //problem with CLuster
 				return;
 			}
 		}
-		appData.updateChart(); //show last update
+		appData.updateChart(iteration); //show last update
 		//algorithm has finished
 		appData.completeAlgorithm();
 	}

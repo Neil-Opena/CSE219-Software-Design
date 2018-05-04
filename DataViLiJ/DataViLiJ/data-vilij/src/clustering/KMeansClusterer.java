@@ -79,7 +79,7 @@ public class KMeansClusterer extends Clusterer {
 			assignLabels();
 			recomputeCentroids();
 			if(iteration % updateInterval == 0){
-				appData.updateChart();
+				appData.updateChart(iteration);
 				if (!isContinuous) {
 					appData.enableRun();
 					continueIterations.set(false);
@@ -97,7 +97,7 @@ public class KMeansClusterer extends Clusterer {
 				return;
 			}
 		}
-		appData.updateChart(); //show last update
+		appData.updateChart(iteration); //show last update
 		//algorithm has finished
 		appData.completeAlgorithm();
 	}
