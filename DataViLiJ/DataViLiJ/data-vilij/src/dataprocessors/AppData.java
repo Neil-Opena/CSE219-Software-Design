@@ -105,7 +105,6 @@ public class AppData implements DataComponent {
 	-for all clustering max is 4 --> should fix config window
 	-indicateion to chart where line is displaying
 
-	So your code is ready to handle the two situations (i) the maximum number of iterations are exhausted, and the algorithm is terminated, or (ii) the algorithm terminates by itself even though the maximum number of iterations has not been reached. ADD DIALOGS FOR THIS
 	 */
 	@Override
 	public void loadData(Path dataFilePath) {
@@ -580,12 +579,20 @@ public class AppData implements DataComponent {
 		algorithmToRun.stopAlgorithm();
 	}
 
+	/*So your code is ready to handle the two situations (i) the maximum number of iterations are exhausted, and the algorithm is terminated, or (ii) the algorithm terminates by itself even though the maximum number of iterations has not been reached.
+	*/
+
+	public void autocompleteAlgorithm(){
+		algorithmStopped();
+		Platform.runLater(() -> appActions.showErrorDialog("Completed", "Algorithm has successfully completed and terminated itself"));
+	}
+
 	/**
-	 * Method used to indicate that the algorithm has successfully finished
+	 * Method used to indicate that the algorithm has successfully finished (the maximum number of iterations are exhausted)
 	 */
 	public void completeAlgorithm() {
 		algorithmStopped();
-		Platform.runLater(() -> appActions.showErrorDialog("Completed", "Algorithm has successfully finished"));
+		Platform.runLater(() -> appActions.showErrorDialog("Completed", "Algorithm has successfully exhausted the maximum number of iterations"));
 	}
 
 	/**

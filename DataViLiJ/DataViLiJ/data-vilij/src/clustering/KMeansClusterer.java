@@ -97,9 +97,15 @@ public class KMeansClusterer extends Clusterer {
 				return;
 			}
 		}
-		appData.updateChart(iteration); //show last update
-		//algorithm has finished
-		appData.completeAlgorithm();
+
+		if(iteration-1 == maxIterations){
+			appData.completeAlgorithm(); //algorithm exhausted all iterations
+			appData.updateChart(maxIterations); //show the last update
+		}else{
+			appData.autocompleteAlgorithm(); //algorithm terminated by itself
+			appData.updateChart(iteration);
+		}
+
 	}
 
 	private void initializeCentroids() {

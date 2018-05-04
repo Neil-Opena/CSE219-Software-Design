@@ -107,9 +107,14 @@ public class RandomClassifier extends Classifier {
 		}
 		//System.out.printf("Iteration number %d: ", i);
 		//flush();
-		appData.updateChart(i); //show last update
-		//algorithm has finished
-		appData.completeAlgorithm();
+
+		if(i-1 == maxIterations){
+			appData.completeAlgorithm(); //algorithm exhausted all iterations
+			appData.updateChart(maxIterations); //show last update
+		}else{
+			appData.autocompleteAlgorithm(); //algorithm terminated by itself
+			appData.updateChart(i);
+		}
 	}
 
 	@Override
