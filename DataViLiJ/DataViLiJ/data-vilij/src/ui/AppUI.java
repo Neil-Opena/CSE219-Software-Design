@@ -417,15 +417,23 @@ public final class AppUI extends UITemplate {
 	}
 
 	public void disableRun() {
-		scrnshotButton.setDisable(true); //also disables screen shot button
+		disableScreenShotButton(); //also disables screen shot button
 		runButton.setDisable(true);
 	}
 
 	public void enableRun() {
 		if (!chart.getData().isEmpty()) {
-			scrnshotButton.setDisable(false); //enables screen shot button if chart is not empty
+			enableScreenShotButton(); //enables screen shot button if chart is not empty
 		}
 		runButton.setDisable(false);
+	}
+
+	public void disableScreenShotButton(){
+		scrnshotButton.setDisable(true);
+	}
+
+	public void enableScreenShotButton(){
+		scrnshotButton.setDisable(false);
 	}
 
 	/**
@@ -726,9 +734,9 @@ public final class AppUI extends UITemplate {
 					setReadOnly(true);
 					appData.loadData(textArea.getText());
 					if (chart.getData().isEmpty()) {
-						scrnshotButton.setDisable(true);
+						disableScreenShotButton();
 					} else {
-						scrnshotButton.setDisable(false);
+						enableScreenShotButton();
 					}
 					setUpAlgorithmTypes(appData.getLabels().size());
 				} else {

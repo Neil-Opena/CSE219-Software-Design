@@ -114,6 +114,7 @@ public class AppData implements DataComponent {
 				appUI.setUpAlgorithmTypes(labels.size());
 				fromFile = true;
 				displayOriginalData();
+				appUI.enableScreenShotButton();
 			} catch (Exception e) {
 				//FILE NOT VALID
 			}
@@ -135,6 +136,7 @@ public class AppData implements DataComponent {
 		checkLabels();
 		appUI.displayInfo(data.getLocations().size(), null);
 		displayOriginalData();
+		appUI.enableScreenShotButton();
 	}
 
 	@Override
