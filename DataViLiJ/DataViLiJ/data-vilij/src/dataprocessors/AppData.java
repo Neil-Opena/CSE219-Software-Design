@@ -89,14 +89,6 @@ public class AppData implements DataComponent {
 		loadAlgorithms();
 	}
 
-	/*
-	TODO:
-	TEST EVERYTHING WITH DATA FROM STRING
-
-	-odd behavior: corner test with 4 - 4 clusters : error in kmeans clustering
-	test when user put in 1 label for kmeans
-	TEST when inputted number of labels is less than number of data points, ex: 3 points, but user put 4 data points
-	 */
 	@Override
 	public void loadData(Path dataFilePath) {
 		clear();

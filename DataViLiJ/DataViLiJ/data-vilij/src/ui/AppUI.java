@@ -740,6 +740,7 @@ public final class AppUI extends UITemplate {
 				hideBackButton();
 				editToggleButton.setText(manager.getPropertyValue(DONE.name()));
 				setReadOnly(false);
+				resetToggles();
 			}
 		});
 
