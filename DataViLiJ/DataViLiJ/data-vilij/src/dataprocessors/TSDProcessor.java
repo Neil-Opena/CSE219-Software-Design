@@ -40,14 +40,6 @@ public final class TSDProcessor {
 		}
 	}
 
-	public static class DecimalPlaceException extends Exception{
-		private static final String MSG = "The values must be no more specific than 2 decimal places";
-
-		public DecimalPlaceException(){
-			super(MSG);
-		}
-	}
-
 	public static class DuplicateNameException extends Exception {
 
 		private static final String MSG = "Duplicate name = ";
@@ -84,17 +76,6 @@ public final class TSDProcessor {
 					String name = checkedname(list.get(0));
 					String label = list.get(1);
 					String[] pair = list.get(2).split(",");
-					for(int i = 0; i < pair.length; i++){
-						int point = pair[i].indexOf(".");
-						if(point == -1){
-							continue;
-						}
-						String decimal = pair[i].substring(point);
-						int numDecimalPlaces = decimal.length() - 1;
-						if(numDecimalPlaces > 2){
-							throw new DecimalPlaceException();
-						}
-					}
 					Point2D point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
 					if (dataPoints.containsKey(name)) {
 						throw new DuplicateNameException(name);
@@ -104,7 +85,7 @@ public final class TSDProcessor {
 				} catch (Exception e) {
 					errorMessage.setLength(0);
 					errorMessage.append(manager.getPropertyValue(LINE.name()) + (dataPoints.size() + 1) + ": ");
-					if (e instanceof InvalidDataNameException || e instanceof DuplicateNameException || e instanceof DecimalPlaceException) {
+					if (e instanceof InvalidDataNameException || e instanceof DuplicateNameException) {
 						errorMessage.append(e.getMessage());
 					}
 					hadAnError.set(true);
