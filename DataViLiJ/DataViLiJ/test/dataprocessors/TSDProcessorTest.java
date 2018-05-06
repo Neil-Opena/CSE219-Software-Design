@@ -42,9 +42,7 @@ public class TSDProcessorTest {
 	 * 4. tsdString = "@a	label1	2,2"; (Duplicate instance name (a))
 	 * 5. tsdString = "@c	label1	x,y"; (Non-numerical values for x-y location)
 	 * 6. tsdString = "@d	label1	3.12,4.15"; (Standard case - 2 decimal place)
-	 * 7. tsdString = "@e	label1	3.123,4.152"; (3 decimal place specific location)
-	 * 8. tsdString = "@f	label1	1,	1"; (Whitespace separating x,y point)
-	 * 9. tsdString = ""; (Empty line)
+	 * 7. tsdString = ""; (Empty line)
 	 */
 	@Test (expected = Exception.class)
 	public void testProcessString() throws Exception {
@@ -74,14 +72,6 @@ public class TSDProcessorTest {
 		instance.processString(tsdString);
 
 		tsdString = "@d	label1	3.12,4.15";
-		System.out.println("testing String=" + tsdString);
-		instance.processString(tsdString);
-
-		tsdString = "@e	label1	3.123,4.152";
-		System.out.println("testing String=" + tsdString);
-		instance.processString(tsdString);
-
-		tsdString = "@f	label1	1,	1";
 		System.out.println("testing String=" + tsdString);
 		instance.processString(tsdString);
 
