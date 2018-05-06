@@ -89,6 +89,10 @@ public class AppData implements DataComponent {
 		loadAlgorithms();
 	}
 
+	public AppData(){
+		//default constructor, mainly used for testing
+	}
+
 	@Override
 	public void loadData(Path dataFilePath) {
 		clear();
@@ -152,6 +156,20 @@ public class AppData implements DataComponent {
 		} catch (IOException e) {
 			appActions.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
 		} catch (NullPointerException e) {
+			//save cancelled
+		}
+	}
+
+	public void saveDataTest(String toSave, Path dataFilePath){
+		try{
+			File file = dataFilePath.toFile();
+
+			FileWriter writer = new FileWriter(file);
+			writer.append(toSave);
+			writer.close();
+		}catch(IOException e){
+			appActions.showErrorDialog(manager.getPropertyValue(IO_ERROR_TITLE.name()), manager.getPropertyValue(IO_SAVE_ERROR_MESSAGE.name()));
+		}catch(NullPointerException e){
 			//save cancelled
 		}
 	}
@@ -525,12 +543,12 @@ public class AppData implements DataComponent {
 		 */
 		Platform.runLater(() -> {
 			XYChart.Series potentialLine = (XYChart.Series) appUI.getChart().getData().get(appUI.getChart().getData().size() - 1);
-			if (potentialLine.getName().equals("classification")) {
+			if (potentialLine.getName().equals(AlgorithmTypes.CLASSIFICATION.toString())) {
 				appUI.getChart().getData().remove(potentialLine);
 			}
 		});
 		line = new XYChart.Series<>();
-		line.setName("classification");
+		line.setName(AlgorithmTypes.CLASSIFICATION.toString());
 
 		line.getData().add(new XYChart.Data(minX, ((NumberAxis) appUI.getChart().getYAxis()).getLowerBound()));
 		line.getData().add(new XYChart.Data(maxX, ((NumberAxis) appUI.getChart().getYAxis()).getLowerBound()));
