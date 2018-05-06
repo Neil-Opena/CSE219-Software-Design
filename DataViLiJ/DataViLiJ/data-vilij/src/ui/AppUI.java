@@ -274,11 +274,13 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(displayInfo);
 	}
 
+	/**
+	 * Adds tooltips to all of the data points which correspond to the instance names
+	 */
 	public void displayInstanceNames() {
 		Platform.runLater(() -> {
 			for (XYChart.Series series : chart.getData()) {
-				if(series.getName().equals("classification")){
-					//maybe add equation?
+				if(series.getName().equals(AlgorithmTypes.CLASSIFICATION.toString())){
 					continue;
 				}
 				for (XYChart.Data point : (ObservableList<XYChart.Data>) series.getData()) {
@@ -313,10 +315,16 @@ public final class AppUI extends UITemplate {
 		setReadOnly(false);
 	}
 
+	/**
+	 * Enables the edit/done toggle
+	 */
 	public void enableEditToggle() {
 		editToggleButton.setDisable(false);
 	}
 
+	/**
+	 * Disables the edit/done toggle
+	 */
 	public void disableEditToggle() {
 		editToggleButton.setDisable(true);
 	}
@@ -358,9 +366,11 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(classificationContainer);
 	}
 
+	/**
+	 * Disables the user from choosing another algorithm
+	 * Disables the user from changing the algorithm configuration
+	 */
 	public void disableAlgorithmChanges() {
-		//disable choosing another algorithm
-		//disable configuring algorithm
 		if (((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)) {
 			for (int i = 0; i < classificationAlgorithms.size(); i++) {
 				classificationAlgorithms.get(i).configButton.setDisable(true);
@@ -375,6 +385,10 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
+	/**
+	 * Enables the user to choose another algorithm
+	 * Enables the user to change the algorithm configuration
+	 */
 	public void enableAlgorithmChanges() {
 		if (((AppData) applicationTemplate.getDataComponent()).getAlgorithmType().equals(AlgorithmTypes.CLASSIFICATION)) {
 			for (int i = 0; i < classificationAlgorithms.size(); i++) {
@@ -416,11 +430,19 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
+	/**
+	 * Disables the run button
+	 * Also disables the screenshot button 
+	 */
 	public void disableRun() {
 		disableScreenShotButton(); //also disables screen shot button
 		runButton.setDisable(true);
 	}
 
+	/**
+	 * Enables the run button
+	 * May also enable the screen shot button if the chart is not empty
+	 */
 	public void enableRun() {
 		if (!chart.getData().isEmpty()) {
 			enableScreenShotButton(); //enables screen shot button if chart is not empty
@@ -428,10 +450,16 @@ public final class AppUI extends UITemplate {
 		runButton.setDisable(false);
 	}
 
+	/**
+	 * Disable the screenshot button
+	 */
 	public void disableScreenShotButton(){
 		scrnshotButton.setDisable(true);
 	}
 
+	/**
+	 * Enables the screenshot button
+	 */
 	public void enableScreenShotButton(){
 		scrnshotButton.setDisable(false);
 	}
@@ -459,10 +487,16 @@ public final class AppUI extends UITemplate {
 		inputRegion.getChildren().add(typeContainer);
 	}
 
+	/**
+	 * Disables the back button
+	 */
 	public void disableBackButton() {
 		backButton.setDisable(true);
 	}
 
+	/**
+	 * Enables the back button
+	 */
 	public void enableBackButton() {
 		backButton.setDisable(false);
 	}
@@ -496,6 +530,10 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
+	/**
+	 * Resets the radio buttons such that their corresponding algorithm is set
+	 * to not be configured as of yet
+	 */
 	private void resetRadioUserData() {
 		classificationRadios.getToggles().forEach(action -> {
 			action.setUserData(false);
@@ -506,7 +544,6 @@ public final class AppUI extends UITemplate {
 		/*
 		user data is used to check if the current radio button = algorithm has been configured
 		 */
-
 	}
 
 	/**
@@ -541,6 +578,9 @@ public final class AppUI extends UITemplate {
 		}
 	}
 
+	/**
+	 * Sets the layout of the algorithm run window to display the iterations of the algorithm
+	 */
 	private void setAlgorithmWindow() {
 		algorithmRunContainer = new VBox();
 		algorithmRunContainer.setSpacing(20);
@@ -564,27 +604,44 @@ public final class AppUI extends UITemplate {
 		algorithmRunWindow.setTitle("Running");
 	}
 
+	/**
+	 * Resets the labels and progress indicator of the algorithm run window
+	 */
 	private void resetAlgorithmRunWindow() {
 		algorithmProgress.setProgress(0);
 		algorithmRunInfo.setText("");
 		messageAlgorithmRunInfo.setText("");
 	}
 
-	;
-
+	/**
+	 * Appends the specified message to the algorithm run window
+	 * @param message Message to be displayed
+	 */
 	public void appendAlgorithmRunWindow(String message) {
 		messageAlgorithmRunInfo.setText(message);
 	}
 
+	/**
+	 * Shows the algorithm run window to the user
+	 */
 	public void showAlgorithmRunWindow() {
 		resetAlgorithmRunWindow();
 		algorithmRunWindow.show();
 	}
 
+	/**
+	 * Closes the algorithm run window
+	 */
 	public void closeAlgorithmRunWindow() {
 		algorithmRunWindow.close();
 	}
 
+	/**
+	 * Updates the progress indicator of the algorithm run window
+	 * As well as the information about the current iteration
+	 * @param percent Progress Indicator percent progress
+	 * @param info Information about the current iteration
+	 */
 	public void updateAlgorithmRunWindow(double percent, String info) {
 		algorithmProgress.setProgress(percent);
 		algorithmRunInfo.setText(info);
@@ -1115,6 +1172,9 @@ public final class AppUI extends UITemplate {
 			}
 		}
 
+		/**
+		 * Resets the fields of the configuration windows
+		 */
 		private void resetConfigWindow() {
 			iterationField.setText("");
 			intervalField.setText("");
