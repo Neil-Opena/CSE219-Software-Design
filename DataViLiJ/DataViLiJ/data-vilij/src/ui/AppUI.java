@@ -1,7 +1,6 @@
 //Neil Opena 110878452
 package ui;
 
-import static java.io.File.separator;
 import java.io.IOException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -46,6 +45,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.util.Duration;
+import static vilij.io.File.separator;
 
 /**
  * This is the application's user interface implementation.

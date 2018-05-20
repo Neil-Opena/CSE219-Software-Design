@@ -10,10 +10,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import vilij.components.UIComponent;
+import static vilij.io.File.separator;
 import vilij.propertymanager.PropertyManager;
 import vilij.settings.PropertyTypes;
 
-import static java.io.File.separator;
 import static vilij.settings.PropertyTypes.*;
 
 /**

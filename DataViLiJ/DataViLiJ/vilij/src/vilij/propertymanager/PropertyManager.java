@@ -9,8 +9,8 @@ import xmlutil.XMLUtilities;
 
 import java.net.URL;
 import java.util.*;
+import static vilij.io.File.separator;
 
-import static java.io.File.separator;
 
 /**
  * This is the core class that defines all the global properties to be used by the Vilij framework.
@@ -97,9 +97,14 @@ public class PropertyManager {
                                                                                        InvalidXMLFileFormatException {
         URL xmlFileResource = klass.getClassLoader()
                                    .getResource(PROPERTIES_RESOURCE_RELATIVE_PATH + separator + xmlfilename);
+	//URL stream = getClass().getClassLoader().getResource("properties/" + xmlfilename);
+	    //System.out.println(PROPERTIES_RESOURCE_RELATIVE_PATH + separator);
+	    //System.out.println(PROPERTIES_RESOURCE_RELATIVE_PATH + File.separator);
+	//System.out.println("original = " + xmlFileResource);
+	//xmlFileResource = stream;
+	    //System.out.println("new = " + xmlFileResource);
         URL schemaFileResource = klass.getClassLoader()
                                       .getResource(PROPERTIES_RESOURCE_RELATIVE_PATH + separator + schemafilename);
-
         Document   document         = xmlUtilities.loadXMLDocument(xmlFileResource, schemaFileResource);
         Node       propertyListNode = xmlUtilities.getNodeWithName(document, PROPERTY_LIST_ELEMENT);
         List<Node> propNodes        = xmlUtilities.getChildrenWithName(propertyListNode, PROPERTY_ELEMENT);
