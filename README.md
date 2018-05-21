@@ -27,22 +27,22 @@ __DataViliJ: Data Visualization Application__
 4. __Homework 4__ <br />
     - DataViLiJ Stage 1 implementation
         - Use Case 1: Start Application Use
-	- Use Case 2: Load Data
-	- Use Case 3: Create New Data
-	- Use Case 4: Save Data
-	- Use Case 5: Select Algorithm Type
-	- Use Case 6: Select Algorithm
-	- Use Case 7: Select Algorithm Running Configuration
+        - Use Case 2: Load Data
+        - Use Case 3: Create New Data
+        - Use Case 4: Save Data
+        - Use Case 5: Select Algorithm Type
+        - Use Case 6: Select Algorithm
+        - Use Case 7: Select Algorithm Running Configuration
 5. __Homework 5__ <br />
     - DataViLiJ Stage 2 implementation
         - Use Case 8: Running an Algorithm
-	- Use Case 9: Export Data Visualization as Image
-	- Use Case 10: Exit Application
+        - Use Case 9: Export Data Visualization as Image
+        - Use Case 10: Exit Application
 6. __Homework 6__ <br />
     - The Complete Data Visualization Project
         - Add all provided algorithms
-	- Reflection implementation
-	- JUnit test creation
+        - Reflection implementation
+        - JUnit test creation
 
 ## Recitations ##
 
